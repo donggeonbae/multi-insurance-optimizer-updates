@@ -5,129 +5,189 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MIO | Multi Insurance Optimizer</title>
   <meta name="description" content="보험설계사용 고지 검토, 진료기록 열람, 보험 설계표 관리 보조 앱 MIO 다운로드 페이지" />
-  <meta name="theme-color" content="#0f3d5e" />
+  <meta name="theme-color" content="#070a0f" />
   <style>
     :root {
-      --bg: #eef8ff;
-      --bg2: #dff1ff;
-      --ink: #0e2538;
-      --muted: #5f7588;
-      --blue: #116bb5;
-      --blue2: #28a5ff;
-      --panel: rgba(255, 255, 255, 0.80);
-      --line: rgba(31, 95, 140, 0.16);
-      --shadow: 0 24px 80px rgba(17, 74, 120, 0.16);
-      --radius: 28px;
+      --bg: #070a0f;
+      --bg2: #0d1320;
+      --ink: #f4f7fb;
+      --muted: #93a4b8;
+      --soft: #cfe2f6;
+      --blue: #4fb3ff;
+      --blue2: #1677c8;
+      --panel: rgba(12, 18, 30, .78);
+      --panel2: rgba(255, 255, 255, .055);
+      --line: rgba(180, 216, 255, .16);
+      --shadow: 0 34px 110px rgba(0, 0, 0, .42);
+      --radius: 30px;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
-        radial-gradient(circle at 10% 3%, rgba(72, 180, 255, 0.36), transparent 32rem),
-        radial-gradient(circle at 88% 8%, rgba(21, 87, 148, 0.18), transparent 29rem),
-        linear-gradient(135deg, var(--bg), var(--bg2) 52%, #f8fcff);
+        radial-gradient(circle at 50% -20%, rgba(55, 137, 255, .30), transparent 34rem),
+        radial-gradient(circle at 12% 18%, rgba(67, 205, 255, .18), transparent 28rem),
+        radial-gradient(circle at 88% 22%, rgba(61, 98, 255, .14), transparent 30rem),
+        linear-gradient(180deg, #070a0f 0%, #0b111d 52%, #070a0f 100%);
+      overflow-x: hidden;
     }
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.45) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.45) 1px, transparent 1px);
-      background-size: 38px 38px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.44), transparent 72%);
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.70), transparent 76%);
     }
     a { color: inherit; }
-    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; position: relative; }
-    header { padding: 28px 0 18px; }
+    .wrap { width: min(1480px, calc(100% - 44px)); margin: 0 auto; position: relative; }
+    header { padding: 26px 0 10px; }
     .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 14px; font-weight: 900; letter-spacing: -.03em; }
-    .brand img {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(22,119,200,.18);
-      background: rgba(255,255,255,.62);
-    }
-    .brand small { display: block; margin-top: 2px; font-weight: 750; color: var(--muted); letter-spacing: -.01em; }
-    .top-links { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .brand { display: flex; align-items: center; gap: 13px; font-weight: 900; letter-spacing: -.04em; }
+    .brand img { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,.08); box-shadow: 0 12px 36px rgba(79,179,255,.16); }
+    .brand small { display: block; margin-top: 1px; color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+    .top-links { display: flex; gap: 10px; align-items: center; }
     .pill {
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.60);
       border-radius: 999px;
-      padding: 9px 13px;
-      text-decoration: none;
-      color: #234a66;
+      background: rgba(255,255,255,.055);
+      color: var(--soft);
+      padding: 9px 14px;
       font-size: 14px;
+      text-decoration: none;
       backdrop-filter: blur(14px);
     }
-    .hero { display: grid; grid-template-columns: minmax(0, .96fr) minmax(420px, 1.04fr); gap: 34px; align-items: center; padding: 46px 0 30px; }
+    .hero { padding: 56px 0 26px; text-align: center; }
     .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 9px 14px; border-radius: 999px;
-      color: #0d5d9a; font-weight: 850; font-size: 14px;
-      background: rgba(255,255,255,.70); border: 1px solid var(--line);
-      box-shadow: 0 8px 26px rgba(25, 107, 172, .10);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: #b9daf6;
+      background: rgba(255,255,255,.055);
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.20);
     }
-    h1 { font-size: clamp(42px, 7vw, 76px); line-height: .98; letter-spacing: -.075em; margin: 24px 0 18px; }
-    .lead { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.55; color: #395b72; margin: 0 0 26px; max-width: 740px; }
-    .cta-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 26px 0 14px; }
+    h1 {
+      max-width: 980px;
+      margin: 22px auto 14px;
+      font-size: clamp(46px, 7vw, 92px);
+      line-height: .96;
+      letter-spacing: -.075em;
+    }
+    .lead {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.58;
+    }
+    .cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 26px 0 12px; }
     .btn {
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      min-height: 62px; border-radius: 20px; padding: 18px 20px;
-      text-decoration: none; font-weight: 900; letter-spacing: -.02em;
-      border: 1px solid rgba(18, 89, 145, .17);
-      transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-width: 230px; min-height: 56px; padding: 15px 20px;
+      border-radius: 16px; text-decoration: none; font-weight: 900; letter-spacing: -.02em;
+      border: 1px solid rgba(172,215,255,.18);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
     }
-    .btn:hover { transform: translateY(-2px); filter: saturate(1.05); }
-    .primary { color: white; background: linear-gradient(135deg, #0e67b0, #26a5ff); box-shadow: 0 18px 42px rgba(22, 119, 200, .28); }
-    .secondary { color: #0e4f84; background: rgba(255,255,255,.76); box-shadow: 0 18px 42px rgba(22, 119, 200, .12); }
-    .icon { font-size: 20px; line-height: 1; }
-    .small-note { color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .snapshot-card {
-      border-radius: 34px;
-      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.58));
-      border: 1px solid rgba(255,255,255,.78);
+    .btn:hover { transform: translateY(-2px); border-color: rgba(172,215,255,.34); }
+    .primary { background: linear-gradient(135deg, #f7fbff, #b9e2ff); color: #07111d; box-shadow: 0 22px 70px rgba(79,179,255,.24); }
+    .secondary { background: rgba(255,255,255,.065); color: var(--ink); }
+    .version { color: #778ca3; font-size: 13px; }
+    .stage { padding: 24px 0 42px; }
+    .demo-shell {
+      position: relative;
+      margin: 0 auto;
+      max-width: 1440px;
+      border: 1px solid rgba(190, 224, 255, .17);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
       box-shadow: var(--shadow);
-      padding: 16px;
+      padding: 14px;
       overflow: hidden;
     }
-    .snapshot-card img { display: block; width: 100%; height: auto; border-radius: 24px; border: 1px solid var(--line); }
-    section { padding: 42px 0; }
-    .section-head { margin: 0 0 18px; display: flex; align-items: end; justify-content: space-between; gap: 18px; }
-    .section-head h2 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.055em; }
-    .section-head p { margin: 0; max-width: 620px; color: var(--muted); line-height: 1.62; }
-    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
-    .card {
-      background: var(--panel); border: 1px solid rgba(255,255,255,.78); border-radius: var(--radius);
-      padding: 24px; box-shadow: 0 16px 50px rgba(28, 88, 132, .10); backdrop-filter: blur(16px);
+    .demo-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(circle at 50% 0%, rgba(79,179,255,.20), transparent 48%);
+      pointer-events: none;
     }
-    .card h2, .card h3 { margin: 0 0 12px; letter-spacing: -.04em; }
-    .card p, .card li { color: #4d6677; line-height: 1.68; }
-    .feature-list { margin: 0; padding-left: 19px; }
-    .wide { grid-column: span 2; }
-    .full { grid-column: 1 / -1; }
-    .notice {
-      background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(225,244,255,.80));
-      border: 1px solid rgba(29, 104, 156, .18);
+    .viewer {
+      position: relative;
+      z-index: 1;
+      aspect-ratio: 16 / 9;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #0b111d;
+      border: 1px solid rgba(205,232,255,.13);
     }
-    .contact-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .mail-link { color: #0e67b0; font-weight: 900; }
-    footer { padding: 44px 0 60px; color: #557086; font-size: 14px; }
-    .footer-line { border-top: 1px solid var(--line); padding-top: 22px; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
-    @media (max-width: 900px) {
-      .hero, .cards { grid-template-columns: 1fr; }
-      .wide, .full { grid-column: auto; }
-      .cta-row { grid-template-columns: 1fr; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.012);
+      transition: opacity .22s ease, transform .22s ease;
+    }
+    .slide.active { opacity: 1; transform: scale(1); }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 3;
+      width: 48px;
+      height: 48px;
+      transform: translateY(-50%);
+      border: 1px solid rgba(220,240,255,.22);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(6, 10, 17, .62);
+      backdrop-filter: blur(16px);
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+    }
+    .arrow:hover { background: rgba(31, 75, 118, .70); }
+    .prev { left: 28px; }
+    .next { right: 28px; }
+    .caption {
+      position: absolute;
+      z-index: 3;
+      left: 28px;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .caption strong { padding: 9px 13px; border-radius: 999px; background: rgba(5,10,18,.68); border: 1px solid rgba(220,240,255,.18); backdrop-filter: blur(14px); }
+    .dots { display: flex; justify-content: center; gap: 8px; margin: 16px 0 0; }
+    .dot { width: 8px; height: 8px; border-radius: 999px; border: 0; background: rgba(220,240,255,.25); cursor: pointer; }
+    .dot.active { width: 26px; background: var(--blue); }
+    .quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 26px auto 0; max-width: 980px; }
+    .quick div { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.045); padding: 16px; color: #c5d7e7; font-weight: 800; }
+    footer { padding: 30px 0 46px; color: #788da3; font-size: 13px; }
+    .footer-line { border-top: 1px solid rgba(190,224,255,.12); padding-top: 18px; display: grid; gap: 6px; }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 24px, 1480px); }
       .top-links { display: none; }
-      .hero { padding-top: 28px; }
-      .wrap { width: min(100% - 24px, 1120px); }
-      .section-head { display: block; }
-      .btn { white-space: normal; }
+      .hero { padding-top: 38px; }
+      .btn { width: 100%; }
+      .quick { grid-template-columns: 1fr; }
+      .arrow { width: 40px; height: 40px; font-size: 24px; }
+      .prev { left: 18px; } .next { right: 18px; }
+      .caption { left: 18px; bottom: 16px; }
     }
   </style>
 </head>
@@ -139,79 +199,70 @@
         <div>MIO<small>Multi Insurance Optimizer</small></div>
       </div>
       <div class="top-links">
-        <a class="pill" href="#download">다운로드</a>
-        <a class="pill" href="#preview">앱 화면</a>
-        <a class="pill" href="#notice">개인정보 안내</a>
-        <a class="pill" href="mailto:donggeonbae.16@gmail.com">문의</a>
+        <a class="pill" href="#download">Download</a>
+        <a class="pill" href="#preview">Preview</a>
       </div>
     </nav>
   </header>
 
   <main class="wrap">
     <section class="hero" id="download">
-      <div>
-        <span class="badge">RAMBLUE · 보험설계사용 업무 보조 앱</span>
-        <h1>고지 검토부터<br>종합 보험 설계까지.</h1>
-        <p class="lead">MIO는 기본진료내역·세부내역서·처방 PDF를 바탕으로 병력 정리, 고지 후보 검토, 제3보험/생명보험/손해보험 설계표 관리를 돕는 로컬 업무 보조 앱입니다.</p>
-        <div class="cta-row">
-          <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe"><span class="icon">↓</span> Windows 설치 프로그램</a>
-          <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.5.13.pkg"><span class="icon">⌘</span> macOS 설치 프로그램</a>
-        </div>
-        <p class="small-note"><strong id="versionLabel">최신 버전 확인 중</strong> · 설치 후 앱 실행 시 자동 업데이트를 확인합니다. Windows SmartScreen이 표시되면 “추가 정보 → 실행”을 선택해야 할 수 있습니다.</p>
+      <span class="badge">RAMBLUE · 보험설계사용 업무 보조 앱</span>
+      <h1>고지 검토와 보험 설계를 한 화면에서.</h1>
+      <p class="lead">진료 PDF를 정리하고, 고지문·진료기록·보험 설계표를 로컬 PC에서 관리합니다.</p>
+      <div class="cta-row">
+        <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
+        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.5.13.pkg">macOS 설치</a>
       </div>
-      <div class="snapshot-card" id="preview" aria-label="MIO 앱 화면 스냅샷">
-        <img src="assets/mio-app-snapshot.png" alt="MIO 앱 고지 검토와 보험 설계표 화면 스냅샷" />
-      </div>
+      <p class="version" id="versionLabel">최신 버전 확인 중</p>
     </section>
 
-    <section>
-      <div class="section-head">
-        <h2>실제 업무 흐름에 맞춘 구성</h2>
-        <p>PDF 분석 결과를 원본 근거와 함께 확인하고, 고지문·상담 기록·보험 설계표까지 끊기지 않게 이어서 정리합니다.</p>
+    <section class="stage" id="preview" aria-label="MIO 사용 예시">
+      <div class="demo-shell">
+        <div class="viewer">
+          <img class="slide active" src="assets/mio-example-disclosure.png" alt="MIO 고지문 복사 사용 예시" />
+          <img class="slide" src="assets/mio-example-records.png" alt="MIO 진료 기록 열람 사용 예시" />
+          <img class="slide" src="assets/mio-example-design.png" alt="MIO 보험 설계표 사용 예시" />
+          <button class="arrow prev" type="button" aria-label="이전 화면">‹</button>
+          <button class="arrow next" type="button" aria-label="다음 화면">›</button>
+          <div class="caption"><strong id="captionText">고지문 복사</strong></div>
+        </div>
+        <div class="dots" aria-label="화면 선택">
+          <button class="dot active" type="button" aria-label="고지문 화면"></button>
+          <button class="dot" type="button" aria-label="진료 기록 화면"></button>
+          <button class="dot" type="button" aria-label="보험 설계 화면"></button>
+        </div>
       </div>
-      <div class="cards">
-        <div class="card">
-          <h3>고지문</h3>
-          <p>건강체/간편체 고지 후보를 섹션별로 정리하고, 수술 검토대상은 체크한 항목만 문구에 반영합니다.</p>
-        </div>
-        <div class="card">
-          <h3>진료 기록 열람</h3>
-          <p>입원·수술·약처방·타임라인을 나누어 보고, 항목별 원본 근거를 펼쳐서 다시 확인할 수 있습니다.</p>
-        </div>
-        <div class="card">
-          <h3>보험 설계표</h3>
-          <p>제3보험·생명보험·손해보험 상품을 선택하고 월보험료 합계를 종합 탭에서 한 번에 봅니다.</p>
-        </div>
-        <div class="card wide">
-          <h3>주요 기능</h3>
-          <ul class="feature-list">
-            <li>고지 후보 자동 분류, 약처방 보강, 수술 검토 체크</li>
-            <li>상담 메모 로컬 저장, Excel/CSV 내보내기, 원본 근거 열람</li>
-            <li>보험협회 상품공시 데이터 기반 상품 선택과 종합 월보험료 정리</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>문의</h3>
-          <p>설치, 업데이트, 사용 관련 문의는 메일로 연락 주세요.</p>
-          <p class="contact-row"><a class="mail-link" href="mailto:donggeonbae.16@gmail.com">donggeonbae.16@gmail.com</a></p>
-        </div>
-        <div class="card notice full" id="notice">
-          <h2>개인정보 및 책임 안내</h2>
-          <p>MIO는 고객 PDF, 분석 결과, 상담 메모, 설계표 등 개인정보성 데이터를 서버에 저장하지 않습니다. 프로그램 사용 중 생성되는 업무 데이터는 사용자의 PC 로컬 저장소에 저장됩니다.</p>
-          <p>사용자의 PC 보안, 파일 공유, 백업/동기화 설정, 외부 전송 과정에서 발생하는 개인정보 유출 및 업무상 판단 결과는 사용자 책임입니다. MIO는 보험 가입·심사·인수 결과를 보장하지 않으며, 최종 고지/설계 판단은 원본 자료와 보험사 기준으로 확인해야 합니다.</p>
-        </div>
+      <div class="quick">
+        <div>고지문 복사</div>
+        <div>진료기록 열람</div>
+        <div>종합 설계표</div>
       </div>
     </section>
   </main>
 
   <footer class="wrap">
     <div class="footer-line">
-      <span>MADE BY RAMBLUE · MIO</span>
-      <span>Contact via donggeonbae.16@gmail.com</span>
+      <span>MIO는 고객 PDF·분석 결과·상담 메모를 서버에 저장하지 않으며 업무 데이터는 로컬 PC에 저장됩니다.</span>
+      <span>개인정보 관리와 최종 고지/설계 판단은 사용자 책임입니다. MADE BY RAMBLUE · contact via donggeonbae.16@gmail.com</span>
     </div>
   </footer>
 
   <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const dots = Array.from(document.querySelectorAll(".dot"));
+    const captions = ["고지문 복사", "진료 기록 열람", "보험 설계표"];
+    let current = 0;
+    function showSlide(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+      dots.forEach((dot, i) => dot.classList.toggle("active", i === current));
+      document.getElementById("captionText").textContent = captions[current];
+    }
+    document.querySelector(".prev").addEventListener("click", () => showSlide(current - 1));
+    document.querySelector(".next").addEventListener("click", () => showSlide(current + 1));
+    dots.forEach((dot, i) => dot.addEventListener("click", () => showSlide(i)));
+
     async function hydrateVersion() {
       try {
         const res = await fetch("https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/update_manifest.json", { cache: "no-store" });
