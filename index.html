@@ -162,22 +162,9 @@
     .arrow:hover { background: rgba(31, 75, 118, .70); }
     .prev { left: 28px; }
     .next { right: 28px; }
-    .caption {
-      position: absolute;
-      z-index: 3;
-      left: 28px;
-      bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .caption strong { padding: 9px 13px; border-radius: 999px; background: rgba(5,10,18,.68); border: 1px solid rgba(220,240,255,.18); backdrop-filter: blur(14px); }
     .dots { display: flex; justify-content: center; gap: 8px; margin: 16px 0 0; }
     .dot { width: 8px; height: 8px; border-radius: 999px; border: 0; background: rgba(220,240,255,.25); cursor: pointer; }
     .dot.active { width: 26px; background: var(--blue); }
-    .quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 26px auto 0; max-width: 980px; }
-    .quick div { border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.045); padding: 16px; color: #c5d7e7; font-weight: 800; }
     footer { padding: 30px 0 46px; color: #788da3; font-size: 13px; }
     .footer-line { border-top: 1px solid rgba(190,224,255,.12); padding-top: 18px; display: grid; gap: 6px; }
     @media (max-width: 760px) {
@@ -185,10 +172,8 @@
       .top-links { display: none; }
       .hero { padding-top: 38px; }
       .btn { width: 100%; }
-      .quick { grid-template-columns: 1fr; }
       .arrow { width: 40px; height: 40px; font-size: 24px; }
       .prev { left: 18px; } .next { right: 18px; }
-      .caption { left: 18px; bottom: 16px; }
     }
   </style>
 </head>
@@ -226,18 +211,12 @@
           <img class="slide" src="assets/mio-example-design.png" alt="MIO 보험 설계표 사용 예시" />
           <button class="arrow prev" type="button" aria-label="이전 화면">‹</button>
           <button class="arrow next" type="button" aria-label="다음 화면">›</button>
-          <div class="caption"><strong id="captionText">고지문 문구 출력</strong></div>
         </div>
         <div class="dots" aria-label="화면 선택">
           <button class="dot active" type="button" aria-label="고지문 화면"></button>
           <button class="dot" type="button" aria-label="진료 기록 화면"></button>
           <button class="dot" type="button" aria-label="보험 설계 화면"></button>
         </div>
-      </div>
-      <div class="quick">
-        <div>고지문 문구 출력</div>
-        <div>진료기록 열람</div>
-        <div>종합 설계표</div>
       </div>
     </section>
   </main>
@@ -252,13 +231,11 @@
   <script>
     const slides = Array.from(document.querySelectorAll(".slide"));
     const dots = Array.from(document.querySelectorAll(".dot"));
-    const captions = ["고지문 문구 출력", "진료 기록 열람", "보험 설계표"];
     let current = 0;
     function showSlide(index) {
       current = (index + slides.length) % slides.length;
       slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
       dots.forEach((dot, i) => dot.classList.toggle("active", i === current));
-      document.getElementById("captionText").textContent = captions[current];
     }
     document.querySelector(".prev").addEventListener("click", () => showSlide(current - 1));
     document.querySelector(".next").addEventListener("click", () => showSlide(current + 1));
