@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MIO - Medical Insurance Organizer</title>
-  <meta name="description" content="보험설계사용 병력 정리, 고지 검토, 보험 설계표 관리 보조 앱 MIO 다운로드 페이지" />
+  <title>MIO | Multi Insurance Optimizer</title>
+  <meta name="description" content="보험설계사용 고지 검토, 진료기록 열람, 보험 설계표 관리 보조 앱 MIO 다운로드 페이지" />
   <meta name="theme-color" content="#0f3d5e" />
   <style>
     :root {
-      --bg: #edf7ff;
+      --bg: #eef8ff;
       --bg2: #dff1ff;
       --ink: #0e2538;
       --muted: #5f7588;
-      --blue: #1677c8;
-      --blue2: #35a3ff;
-      --panel: rgba(255, 255, 255, 0.76);
-      --line: rgba(31, 95, 140, 0.15);
+      --blue: #116bb5;
+      --blue2: #28a5ff;
+      --panel: rgba(255, 255, 255, 0.80);
+      --line: rgba(31, 95, 140, 0.16);
       --shadow: 0 24px 80px rgba(17, 74, 120, 0.16);
       --radius: 28px;
     }
@@ -24,11 +24,11 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 12% 5%, rgba(72, 180, 255, 0.36), transparent 32rem),
-        radial-gradient(circle at 88% 6%, rgba(21, 87, 148, 0.20), transparent 29rem),
+        radial-gradient(circle at 10% 3%, rgba(72, 180, 255, 0.36), transparent 32rem),
+        radial-gradient(circle at 88% 8%, rgba(21, 87, 148, 0.18), transparent 29rem),
         linear-gradient(135deg, var(--bg), var(--bg2) 52%, #f8fcff);
     }
     body::before {
@@ -36,26 +36,27 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.46) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.46) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(255,255,255,.45) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.45) 1px, transparent 1px);
       background-size: 38px 38px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.46), transparent 72%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.44), transparent 72%);
     }
     a { color: inherit; }
-    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; position: relative; }
+    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; position: relative; }
     header { padding: 28px 0 18px; }
     .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 13px; font-weight: 900; letter-spacing: -.03em; }
-    .cat {
-      width: 46px; height: 46px; border-radius: 15px;
-      display: grid; place-items: center;
-      background: linear-gradient(145deg, #e7f6ff, #afd9ff);
-      box-shadow: inset 0 -8px 20px rgba(22, 119, 200, .18), 0 12px 28px rgba(22, 119, 200, .18);
-      font-size: 25px;
+    .brand { display: flex; align-items: center; gap: 14px; font-weight: 900; letter-spacing: -.03em; }
+    .brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(22,119,200,.18);
+      background: rgba(255,255,255,.62);
     }
+    .brand small { display: block; margin-top: 2px; font-weight: 750; color: var(--muted); letter-spacing: -.01em; }
     .top-links { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
     .pill {
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.58);
+      background: rgba(255,255,255,.60);
       border-radius: 999px;
       padding: 9px 13px;
       text-decoration: none;
@@ -63,16 +64,16 @@
       font-size: 14px;
       backdrop-filter: blur(14px);
     }
-    .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 28px; align-items: center; padding: 48px 0 24px; }
+    .hero { display: grid; grid-template-columns: minmax(0, .96fr) minmax(420px, 1.04fr); gap: 34px; align-items: center; padding: 46px 0 30px; }
     .badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 9px 14px; border-radius: 999px;
-      color: #0d5d9a; font-weight: 800; font-size: 14px;
-      background: rgba(255,255,255,.68); border: 1px solid var(--line);
+      color: #0d5d9a; font-weight: 850; font-size: 14px;
+      background: rgba(255,255,255,.70); border: 1px solid var(--line);
       box-shadow: 0 8px 26px rgba(25, 107, 172, .10);
     }
-    h1 { font-size: clamp(42px, 7vw, 78px); line-height: .98; letter-spacing: -.075em; margin: 24px 0 18px; }
-    .lead { font-size: clamp(18px, 2.2vw, 23px); line-height: 1.55; color: #395b72; margin: 0 0 26px; max-width: 740px; }
+    h1 { font-size: clamp(42px, 7vw, 76px); line-height: .98; letter-spacing: -.075em; margin: 24px 0 18px; }
+    .lead { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.55; color: #395b72; margin: 0 0 26px; max-width: 740px; }
     .cta-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 26px 0 14px; }
     .btn {
       display: flex; align-items: center; justify-content: center; gap: 12px;
@@ -80,66 +81,67 @@
       text-decoration: none; font-weight: 900; letter-spacing: -.02em;
       border: 1px solid rgba(18, 89, 145, .17);
       transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+      white-space: nowrap;
     }
     .btn:hover { transform: translateY(-2px); filter: saturate(1.05); }
     .primary { color: white; background: linear-gradient(135deg, #0e67b0, #26a5ff); box-shadow: 0 18px 42px rgba(22, 119, 200, .28); }
-    .secondary { color: #0e4f84; background: rgba(255,255,255,.72); box-shadow: 0 18px 42px rgba(22, 119, 200, .12); }
+    .secondary { color: #0e4f84; background: rgba(255,255,255,.76); box-shadow: 0 18px 42px rgba(22, 119, 200, .12); }
+    .icon { font-size: 20px; line-height: 1; }
     .small-note { color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .mock {
+    .snapshot-card {
       border-radius: 34px;
-      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.54));
-      border: 1px solid rgba(255,255,255,.74);
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.58));
+      border: 1px solid rgba(255,255,255,.78);
       box-shadow: var(--shadow);
-      padding: 18px;
-      position: relative;
+      padding: 16px;
       overflow: hidden;
     }
-    .mock::after {
-      content: ""; position: absolute; right: -60px; top: -60px; width: 180px; height: 180px; border-radius: 999px;
-      background: rgba(48, 168, 255, .20);
-    }
-    .window { background: #f7fbff; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; position: relative; z-index: 1; }
-    .bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 18px; background: rgba(229, 244, 255, .9); border-bottom: 1px solid var(--line); }
-    .dots span { display: inline-block; width: 10px; height: 10px; border-radius: 999px; margin-right: 6px; background: #9ed4ff; }
-    .screen { padding: 20px; display: grid; gap: 14px; }
-    .screen-card { padding: 16px; border-radius: 18px; background: white; border: 1px solid var(--line); box-shadow: 0 8px 22px rgba(36, 94, 136, .08); }
-    .mini-title { font-weight: 900; margin-bottom: 10px; }
-    .gridline { height: 12px; border-radius: 999px; background: linear-gradient(90deg, #cdeaff, #eef8ff); margin: 9px 0; }
-    .gridline:nth-child(3) { width: 76%; } .gridline:nth-child(4) { width: 91%; } .gridline:nth-child(5) { width: 62%; }
-    section { padding: 44px 0; }
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .snapshot-card img { display: block; width: 100%; height: auto; border-radius: 24px; border: 1px solid var(--line); }
+    section { padding: 42px 0; }
+    .section-head { margin: 0 0 18px; display: flex; align-items: end; justify-content: space-between; gap: 18px; }
+    .section-head h2 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.055em; }
+    .section-head p { margin: 0; max-width: 620px; color: var(--muted); line-height: 1.62; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
     .card {
-      background: var(--panel); border: 1px solid rgba(255,255,255,.76); border-radius: var(--radius);
+      background: var(--panel); border: 1px solid rgba(255,255,255,.78); border-radius: var(--radius);
       padding: 24px; box-shadow: 0 16px 50px rgba(28, 88, 132, .10); backdrop-filter: blur(16px);
     }
     .card h2, .card h3 { margin: 0 0 12px; letter-spacing: -.04em; }
     .card p, .card li { color: #4d6677; line-height: 1.68; }
-    .steps { counter-reset: step; display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
-    .steps li { counter-increment: step; display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; }
-    .steps li::before { content: counter(step); width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; color: white; font-weight: 900; background: linear-gradient(135deg, var(--blue), var(--blue2)); }
+    .feature-list { margin: 0; padding-left: 19px; }
     .wide { grid-column: span 2; }
+    .full { grid-column: 1 / -1; }
     .notice {
-      background: linear-gradient(135deg, rgba(255,255,255,.80), rgba(225,244,255,.78));
+      background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(225,244,255,.80));
       border: 1px solid rgba(29, 104, 156, .18);
     }
+    .contact-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .mail-link { color: #0e67b0; font-weight: 900; }
     footer { padding: 44px 0 60px; color: #557086; font-size: 14px; }
     .footer-line { border-top: 1px solid var(--line); padding-top: 22px; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
-    @media (max-width: 860px) {
+    @media (max-width: 900px) {
       .hero, .cards { grid-template-columns: 1fr; }
-      .wide { grid-column: auto; }
+      .wide, .full { grid-column: auto; }
       .cta-row { grid-template-columns: 1fr; }
       .top-links { display: none; }
+      .hero { padding-top: 28px; }
       .wrap { width: min(100% - 24px, 1120px); }
+      .section-head { display: block; }
+      .btn { white-space: normal; }
     }
   </style>
 </head>
 <body>
   <header class="wrap">
     <nav class="nav">
-      <div class="brand"><div class="cat">🐈</div><div>MIO<br><span style="font-weight:700;color:#5f7588">Medical Insurance Organizer</span></div></div>
+      <div class="brand">
+        <img src="assets/mio-cat.png" alt="MIO 파란 고양이 아이콘" />
+        <div>MIO<small>Multi Insurance Optimizer</small></div>
+      </div>
       <div class="top-links">
         <a class="pill" href="#download">다운로드</a>
-        <a class="pill" href="#examples">사용 예시</a>
+        <a class="pill" href="#preview">앱 화면</a>
+        <a class="pill" href="#notice">개인정보 안내</a>
         <a class="pill" href="mailto:donggeonbae.16@gmail.com">문의</a>
       </div>
     </nav>
@@ -149,50 +151,54 @@
     <section class="hero" id="download">
       <div>
         <span class="badge">RAMBLUE · 보험설계사용 업무 보조 앱</span>
-        <h1>진료내역 정리부터<br>고지문과 설계표까지.</h1>
-        <p class="lead">MIO는 기본진료내역·세부내역서·처방 PDF를 바탕으로 상담용 병력 정리, 고지 후보 검토, 제3보험/생명보험/손해보험 설계표 관리를 돕습니다.</p>
+        <h1>고지 검토부터<br>종합 보험 설계까지.</h1>
+        <p class="lead">MIO는 기본진료내역·세부내역서·처방 PDF를 바탕으로 병력 정리, 고지 후보 검토, 제3보험/생명보험/손해보험 설계표 관리를 돕는 로컬 업무 보조 앱입니다.</p>
         <div class="cta-row">
-          <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/ramblue-medical-organizer-updates/releases/latest/download/RAMBLUE_MedicalRecordOrganizer_Setup.exe">⬇ Windows 설치 프로그램</a>
-          <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/ramblue-medical-organizer-updates/releases/latest/download/MIO_MedicalRecordOrganizer_macOS_Setup_v1.5.10.pkg"> macOS 설치 프로그램</a>
+          <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/ramblue-medical-organizer-updates/releases/latest/download/RAMBLUE_MedicalRecordOrganizer_Setup.exe"><span class="icon">↓</span> Windows 설치 프로그램</a>
+          <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/ramblue-medical-organizer-updates/releases/latest/download/MIO_MedicalRecordOrganizer_macOS_Setup_v1.5.10.pkg"><span class="icon">⌘</span> macOS 설치 프로그램</a>
         </div>
         <p class="small-note"><strong id="versionLabel">최신 버전 확인 중</strong> · 설치 후 앱 실행 시 자동 업데이트를 확인합니다. Windows SmartScreen이 표시되면 “추가 정보 → 실행”을 선택해야 할 수 있습니다.</p>
       </div>
-      <div class="mock" aria-label="MIO 앱 화면 예시">
-        <div class="window">
-          <div class="bar"><div class="dots"><span></span><span></span><span></span></div><strong>제3보험 설계·관리</strong></div>
-          <div class="screen">
-            <div class="screen-card"><div class="mini-title">고지문</div><div class="gridline"></div><div class="gridline"></div><div class="gridline"></div></div>
-            <div class="screen-card"><div class="mini-title">보험상품 DB 선택</div><div class="gridline"></div><div class="gridline"></div><div class="gridline"></div></div>
-            <div class="screen-card"><div class="mini-title">합산 월보험료</div><strong style="font-size:28px;color:#0e67b0">127,000원</strong></div>
-          </div>
-        </div>
+      <div class="snapshot-card" id="preview" aria-label="MIO 앱 화면 스냅샷">
+        <img src="assets/mio-app-snapshot.png" alt="MIO 앱 고지 검토와 보험 설계표 화면 스냅샷" />
       </div>
     </section>
 
-    <section id="examples">
+    <section>
+      <div class="section-head">
+        <h2>실제 업무 흐름에 맞춘 구성</h2>
+        <p>PDF 분석 결과를 원본 근거와 함께 확인하고, 고지문·상담 기록·보험 설계표까지 끊기지 않게 이어서 정리합니다.</p>
+      </div>
       <div class="cards">
-        <div class="card wide">
-          <h2>사용 예시</h2>
-          <ol class="steps">
-            <li><span>고객의 기본진료내역 PDF와 세부내역서 PDF를 넣고, 처방 PDF가 있으면 함께 넣습니다.</span></li>
-            <li><span>진료 기록 열람에서 입원·수술·약처방·타임라인을 확인하고 수술 검토대상은 필요한 항목만 고지문에 포함합니다.</span></li>
-            <li><span>건강체/간편체 고지용 문구를 복사해 상담 기록에 저장하고, 원본 근거는 펼쳐서 다시 확인합니다.</span></li>
-            <li><span>제3보험·생명보험·손해보험 설계표에서 보험사 → 상품명 → 담보/플랜 순서로 선택하고 월보험료 합계를 비교합니다.</span></li>
-          </ol>
+        <div class="card">
+          <h3>고지문</h3>
+          <p>건강체/간편체 고지 후보를 섹션별로 정리하고, 수술 검토대상은 체크한 항목만 문구에 반영합니다.</p>
         </div>
         <div class="card">
-          <h3>주요 기능</h3>
-          <p>고지 후보 자동 분류, 약처방 보강, 수술 검토 체크, 상담 메모 저장, 보험상품 공시 DB 선택, Excel/CSV 내보내기를 제공합니다.</p>
+          <h3>진료 기록 열람</h3>
+          <p>입원·수술·약처방·타임라인을 나누어 보고, 항목별 원본 근거를 펼쳐서 다시 확인할 수 있습니다.</p>
         </div>
-        <div class="card notice wide">
-          <h2>개인정보 및 책임 안내</h2>
-          <p>MIO는 고객 PDF, 분석 결과, 상담 메모, 설계표 등 개인정보성 데이터를 서버에 저장하지 않습니다. 프로그램 사용 중 생성되는 업무 데이터는 사용자의 PC 로컬 저장소에 저장됩니다.</p>
-          <p>사용자의 PC 보안, 파일 공유, 백업/동기화 설정, 외부 전송 과정에서 발생하는 개인정보 유출 및 업무상 판단 결과는 사용자 책임입니다. MIO는 보험 가입·심사·인수 결과를 보장하지 않으며, 최종 고지/설계 판단은 원본 자료와 보험사 기준으로 확인해야 합니다.</p>
+        <div class="card">
+          <h3>보험 설계표</h3>
+          <p>제3보험·생명보험·손해보험 상품을 선택하고 월보험료 합계를 종합 탭에서 한 번에 봅니다.</p>
+        </div>
+        <div class="card wide">
+          <h3>주요 기능</h3>
+          <ul class="feature-list">
+            <li>고지 후보 자동 분류, 약처방 보강, 수술 검토 체크</li>
+            <li>상담 메모 로컬 저장, Excel/CSV 내보내기, 원본 근거 열람</li>
+            <li>보험협회 상품공시 데이터 기반 상품 선택과 종합 월보험료 정리</li>
+          </ul>
         </div>
         <div class="card">
           <h3>문의</h3>
-          <p>설치, 업데이트, 사용 관련 문의는 아래 메일로 연락 주세요.</p>
-          <p><a href="mailto:donggeonbae.16@gmail.com"><strong>donggeonbae.16@gmail.com</strong></a></p>
+          <p>설치, 업데이트, 사용 관련 문의는 메일로 연락 주세요.</p>
+          <p class="contact-row"><a class="mail-link" href="mailto:donggeonbae.16@gmail.com">donggeonbae.16@gmail.com</a></p>
+        </div>
+        <div class="card notice full" id="notice">
+          <h2>개인정보 및 책임 안내</h2>
+          <p>MIO는 고객 PDF, 분석 결과, 상담 메모, 설계표 등 개인정보성 데이터를 서버에 저장하지 않습니다. 프로그램 사용 중 생성되는 업무 데이터는 사용자의 PC 로컬 저장소에 저장됩니다.</p>
+          <p>사용자의 PC 보안, 파일 공유, 백업/동기화 설정, 외부 전송 과정에서 발생하는 개인정보 유출 및 업무상 판단 결과는 사용자 책임입니다. MIO는 보험 가입·심사·인수 결과를 보장하지 않으며, 최종 고지/설계 판단은 원본 자료와 보험사 기준으로 확인해야 합니다.</p>
         </div>
       </div>
     </section>
