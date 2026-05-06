@@ -107,42 +107,6 @@
     .secondary { background: rgba(255,255,255,.065); color: var(--ink); }
     .version { color: #778ca3; font-size: 13px; }
     .version a { color: #cfe2f6; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
-    .stage { padding: 24px 0 42px; }
-    .demo-shell {
-      position: relative;
-      margin: 0 auto;
-      max-width: 1260px;
-      border: 1px solid rgba(190, 224, 255, .17);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
-      box-shadow: var(--shadow);
-      padding: 14px;
-      overflow: hidden;
-    }
-    .demo-shell::before {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      background: radial-gradient(circle at 50% 0%, rgba(79,179,255,.20), transparent 48%);
-      pointer-events: none;
-    }
-    .viewer {
-      position: relative;
-      z-index: 1;
-      aspect-ratio: 1213 / 1226;
-      border-radius: 22px;
-      overflow: hidden;
-      background: #0b111d;
-      border: 1px solid rgba(205,232,255,.13);
-    }
-    .preview-image {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #0b111d;
-    }
     footer { padding: 30px 0 46px; color: #788da3; font-size: 13px; }
     .footer-line { border-top: 1px solid rgba(190,224,255,.12); padding-top: 18px; display: grid; gap: 6px; }
     @media (max-width: 760px) {
@@ -162,7 +126,6 @@
       </div>
       <div class="top-links">
         <a class="pill" href="#download">Download</a>
-        <a class="pill" href="#preview">Preview</a>
       </div>
     </nav>
   </header>
@@ -174,17 +137,9 @@
       <p class="lead">진료 PDF를 정리해 고지문, 진료기록, 설계표를 로컬 PC에서 바로 관리하세요.</p>
       <div class="cta-row">
         <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
-        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS 설치</a>
+        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.5.15.pkg">macOS 설치</a>
       </div>
       <p class="version" id="versionLabel">최신 버전 확인 중</p>
-    </section>
-
-    <section class="stage" id="preview" aria-label="MIO 사용 예시">
-      <div class="demo-shell">
-        <div class="viewer">
-          <img class="preview-image" src="assets/mio-example-design.png" alt="MIO 생명보험 설계표 화면" />
-        </div>
-      </div>
     </section>
   </main>
 
@@ -196,14 +151,6 @@
   </footer>
 
   <script>
-    const preview = document.querySelector(".preview-image");
-    const viewer = document.querySelector(".viewer");
-    preview.addEventListener("load", () => {
-      if (preview.naturalWidth && preview.naturalHeight) {
-        viewer.style.aspectRatio = `${preview.naturalWidth} / ${preview.naturalHeight}`;
-      }
-    });
-
     async function hydrateVersion() {
       try {
         const res = await fetch("https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/update_manifest.json", { cache: "no-store" });
