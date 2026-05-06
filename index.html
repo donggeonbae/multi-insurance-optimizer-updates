@@ -102,6 +102,7 @@
     .primary { background: linear-gradient(135deg, #f7fbff, #b9e2ff); color: #07111d; box-shadow: 0 22px 70px rgba(79,179,255,.24); }
     .secondary { background: rgba(255,255,255,.065); color: var(--ink); }
     .version { color: #778ca3; font-size: 13px; }
+    .version a { color: #cfe2f6; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
     .stage { padding: 24px 0 42px; }
     .demo-shell {
       position: relative;
@@ -212,7 +213,7 @@
       <p class="lead">진료 PDF를 정리하고, 고지문·진료기록·보험 설계표를 로컬 PC에서 관리합니다.</p>
       <div class="cta-row">
         <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
-        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.5.13.pkg">macOS 설치</a>
+        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.5.14.pkg">macOS 설치</a>
       </div>
       <p class="version" id="versionLabel">최신 버전 확인 중</p>
     </section>
@@ -220,12 +221,12 @@
     <section class="stage" id="preview" aria-label="MIO 사용 예시">
       <div class="demo-shell">
         <div class="viewer">
-          <img class="slide active" src="assets/mio-example-disclosure.png" alt="MIO 고지문 복사 사용 예시" />
+          <img class="slide active" src="assets/mio-example-disclosure.png" alt="MIO 고지문 문구 출력 사용 예시" />
           <img class="slide" src="assets/mio-example-records.png" alt="MIO 진료 기록 열람 사용 예시" />
           <img class="slide" src="assets/mio-example-design.png" alt="MIO 보험 설계표 사용 예시" />
           <button class="arrow prev" type="button" aria-label="이전 화면">‹</button>
           <button class="arrow next" type="button" aria-label="다음 화면">›</button>
-          <div class="caption"><strong id="captionText">고지문 복사</strong></div>
+          <div class="caption"><strong id="captionText">고지문 문구 출력</strong></div>
         </div>
         <div class="dots" aria-label="화면 선택">
           <button class="dot active" type="button" aria-label="고지문 화면"></button>
@@ -234,7 +235,7 @@
         </div>
       </div>
       <div class="quick">
-        <div>고지문 복사</div>
+        <div>고지문 문구 출력</div>
         <div>진료기록 열람</div>
         <div>종합 설계표</div>
       </div>
@@ -251,7 +252,7 @@
   <script>
     const slides = Array.from(document.querySelectorAll(".slide"));
     const dots = Array.from(document.querySelectorAll(".dot"));
-    const captions = ["고지문 복사", "진료 기록 열람", "보험 설계표"];
+    const captions = ["고지문 문구 출력", "진료 기록 열람", "보험 설계표"];
     let current = 0;
     function showSlide(index) {
       current = (index + slides.length) % slides.length;
@@ -272,7 +273,7 @@
         if (manifest.installer_url) document.getElementById("winDownload").href = manifest.installer_url;
         if (manifest.mac_installer_url) document.getElementById("macDownload").href = manifest.mac_installer_url;
       } catch (err) {
-        document.getElementById("versionLabel").textContent = "최신 버전은 GitHub Releases에서 확인";
+        document.getElementById("versionLabel").innerHTML = '최신 버전은 <a href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest">GitHub Releases</a>에서 확인';
       }
     }
     hydrateVersion();
