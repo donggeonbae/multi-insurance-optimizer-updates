@@ -111,7 +111,7 @@
     .demo-shell {
       position: relative;
       margin: 0 auto;
-      max-width: 1440px;
+      max-width: 1260px;
       border: 1px solid rgba(190, 224, 255, .17);
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
@@ -130,7 +130,7 @@
     .viewer {
       position: relative;
       z-index: 1;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 1186 / 1177;
       border-radius: 22px;
       overflow: hidden;
       background: #0b111d;
@@ -141,7 +141,8 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      background: #0b111d;
       opacity: 0;
       transform: scale(1.012);
       transition: opacity .22s ease, transform .22s ease;
@@ -210,9 +211,9 @@
     <section class="stage" id="preview" aria-label="MIO 사용 예시">
       <div class="demo-shell">
         <div class="viewer">
-          <img class="slide active" src="assets/mio-example-disclosure.png" alt="MIO 고지문 문구 출력 사용 예시" />
-          <img class="slide" src="assets/mio-example-records.png" alt="MIO 진료 기록 열람 사용 예시" />
-          <img class="slide" src="assets/mio-example-design.png" alt="MIO 보험 설계표 사용 예시" />
+          <img class="slide active" src="assets/mio-example-disclosure.png" alt="MIO 제3보험 고지문 화면" />
+          <img class="slide" src="assets/mio-example-records.png" alt="MIO 종합 설계 통합 화면" />
+          <img class="slide" src="assets/mio-example-design.png" alt="MIO 생명보험 설계표 화면" />
           <button class="arrow prev" type="button" aria-label="이전 화면">‹</button>
           <button class="arrow next" type="button" aria-label="다음 화면">›</button>
         </div>
@@ -234,13 +235,21 @@
 
   <script>
     const slides = Array.from(document.querySelectorAll(".slide"));
+    const viewer = document.querySelector(".viewer");
     const dots = Array.from(document.querySelectorAll(".dot"));
     let current = 0;
     function showSlide(index) {
       current = (index + slides.length) % slides.length;
       slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
       dots.forEach((dot, i) => dot.classList.toggle("active", i === current));
+      const active = slides[current];
+      if (active.naturalWidth && active.naturalHeight) {
+        viewer.style.aspectRatio = `${active.naturalWidth} / ${active.naturalHeight}`;
+      }
     }
+    slides.forEach((slide, i) => slide.addEventListener("load", () => {
+      if (i === current) showSlide(current);
+    }));
     document.querySelector(".prev").addEventListener("click", () => showSlide(current - 1));
     document.querySelector(".next").addEventListener("click", () => showSlide(current + 1));
     dots.forEach((dot, i) => dot.addEventListener("click", () => showSlide(i)));
