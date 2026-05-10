@@ -95,7 +95,7 @@
       line-height: 1.58;
     }
     .cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 26px 0 12px; }
-    .mobile-cta { margin-top: 14px; }
+    .mobile-cta { margin-top: 8px; gap: 8px; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       min-width: 230px; min-height: 56px; padding: 15px 20px;
@@ -106,11 +106,21 @@
     .btn:hover { transform: translateY(-2px); border-color: rgba(172,215,255,.34); }
     .primary { background: linear-gradient(135deg, #f7fbff, #b9e2ff); color: #07111d; box-shadow: 0 22px 70px rgba(79,179,255,.24); }
     .secondary { background: rgba(255,255,255,.065); color: var(--ink); }
-    .mobile { background: rgba(79,179,255,.10); color: #d9efff; border-color: rgba(79,179,255,.28); }
-    .ios { background: rgba(255,255,255,.045); color: #b9c7d8; }
-    .disabled { cursor: not-allowed; opacity: .72; }
+    .app-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; padding: 0;
+      border-radius: 14px; text-decoration: none;
+      border: 1px solid rgba(172,215,255,.18);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .app-btn svg { width: 24px; height: 24px; display: block; }
+    .app-btn:hover { transform: translateY(-2px); border-color: rgba(172,215,255,.34); }
+    .android { background: rgba(79,179,255,.10); color: #d9efff; border-color: rgba(79,179,255,.28); }
+    .apple { background: rgba(255,255,255,.045); color: #c6d2df; }
+    .disabled { cursor: not-allowed; opacity: .68; }
     .disabled:hover { transform: none; border-color: rgba(172,215,255,.18); }
-    .mobile-note { margin: 6px 0 0; color: #7f91a7; font-size: 13px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .mobile-note { margin: 6px 0 0; color: #7f91a7; font-size: 12px; }
     .version { color: #778ca3; font-size: 13px; }
     .version a { color: #cfe2f6; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
     .hero-visual {
@@ -207,10 +217,25 @@
         <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS 설치</a>
       </div>
       <div class="cta-row mobile-cta" aria-label="모바일 앱 설치">
-        <a id="androidDownload" class="btn mobile" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk">Android 앱 설치</a>
-        <a id="iosDownload" class="btn ios disabled" href="#" aria-disabled="true" title="iOS 앱은 준비 중입니다">iOS 앱 준비중</a>
+        <a id="androidDownload" class="app-btn android" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk" aria-label="Android 앱 설치" title="Android 앱 설치">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M7 5 5.7 2.9M17 5l1.3-2.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="5" y="6" width="14" height="11" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="9" cy="10" r="1" fill="currentColor"/>
+            <circle cx="15" cy="10" r="1" fill="currentColor"/>
+            <path d="M3.4 9v5M20.6 9v5M8.5 17v3M15.5 17v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span class="sr-only">Android 앱 설치</span>
+        </a>
+        <a id="iosDownload" class="app-btn apple disabled" href="#" aria-disabled="true" aria-label="iOS 앱 준비중" title="iOS 앱은 준비 중입니다">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15.7 3.1c-.2 1.5-.9 2.6-2.1 3.3-.8.5-1.7.7-2.3.6.2-1.3.9-2.5 2-3.2.8-.5 1.7-.8 2.4-.7Z" fill="currentColor"/>
+            <path d="M12.1 7.1c1 0 1.8-.6 3-.6 1.1 0 2.2.5 3 1.3-1.8 1-2.2 3.7-.4 5.1-.5 1.4-1.2 2.7-2.1 3.9-.8 1.1-1.6 2-2.7 2s-1.4-.6-2.6-.6-1.6.6-2.6.6-1.8-.9-2.6-2c-1.6-2.3-2.8-6.4-1.2-9 .8-1.3 2.1-2.1 3.6-2.1 1.1 0 2.1.7 2.7.7.6 0 1.6-.8 2.9-.8Z" fill="currentColor"/>
+          </svg>
+          <span class="sr-only">iOS 앱 준비중</span>
+        </a>
       </div>
-      <p class="mobile-note">Android는 APK 직접 설치용 버튼입니다. iOS 배포 링크는 준비되는 대로 연결됩니다.</p>
+      <p class="mobile-note">Android는 APK 직접 설치, iOS는 준비 중입니다.</p>
       <p class="version" id="versionLabel">최신 버전 확인 중</p>
       <div class="hero-visual" aria-label="MIO 앱 프리뷰 일러스트">
         <img src="assets/mio-hero-preview.webp" alt="MIO 앱 대시보드 프리뷰" />
@@ -283,10 +308,12 @@
         if (manifest.ios_app_url) {
           const iosDownload = document.getElementById("iosDownload");
           iosDownload.href = manifest.ios_app_url;
-          iosDownload.textContent = "iOS 앱 설치";
+          iosDownload.setAttribute("aria-label", "iOS 앱 설치");
+          iosDownload.title = "iOS 앱 설치";
+          const iosLabel = iosDownload.querySelector(".sr-only");
+          if (iosLabel) iosLabel.textContent = "iOS 앱 설치";
           iosDownload.classList.remove("disabled");
           iosDownload.removeAttribute("aria-disabled");
-          iosDownload.removeAttribute("title");
         }
       } catch (err) {
         document.getElementById("versionLabel").innerHTML = '최신 버전은 <a href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest">GitHub Releases</a>에서 확인';
