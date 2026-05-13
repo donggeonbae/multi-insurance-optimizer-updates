@@ -186,7 +186,7 @@ h3 {
   padding: clamp(18px, 2vw, 24px);
 }
 .panel-heading { margin-bottom: 18px; }
-.account-note { position: sticky; top: 18px; }
+.account-note { align-self: start; }
 .account-note ol {
   margin: 12px 0 0;
   padding-left: 21px;
@@ -388,7 +388,6 @@ th {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  .account-note { position: static; }
 }
 
 @media (max-width: 760px) {

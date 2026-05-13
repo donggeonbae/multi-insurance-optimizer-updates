@@ -115,6 +115,7 @@ async function refreshSessionIfNeeded() {
 function renderAuthState() {
   const loggedIn = Boolean(session?.access_token && accountState);
   $("#auth-panel").hidden = loggedIn;
+  $("#account-note").hidden = loggedIn;
   $("#dashboard").hidden = !loggedIn;
 }
 
