@@ -19,6 +19,7 @@ function paymentStatusLabel(value) {
   return {
     pending: "확인 대기",
     paid: "결제완료",
+    cancel_requested: "취소요청",
     cancelled: "취소",
     refunded: "환불",
   }[value] || value || "-";
@@ -195,12 +196,52 @@ function renderLicenses(licenses = []) {
   </table>`;
 }
 
-function renderPayments(payments = []) {
+function renderSubscriptionSummary(subscription = {}) {
+  const target = $("#subscription-summary");
+  if (!target) return;
+  const totalMonths = Number(subscription.total_paid_months || 0);
+  const cancelableMonths = Number(subscription.cancelable_months || 0);
+  const cancelDays = Number(subscription.cancel_request_days || paymentOptions().cancel_policy?.request_days || 7);
+  if (!totalMonths) {
+    target.innerHTML = '<div class="empty">결제완료 이용권이 아직 없습니다.</div>';
+    return;
+  }
+  target.innerHTML = `
+    <div class="subscription-grid">
+      <div><strong>${escapeHtml(totalMonths)}개월</strong><span>총 결제 개월</span></div>
+      <div><strong>${escapeHtml(subscription.active_until || "-")}</strong><span>합산 만료예정</span></div>
+      <div><strong>${escapeHtml(cancelableMonths)}개월</strong><span>취소요청 가능</span></div>
+    </div>
+    <p class="hint">취소요청은 같은 계정에 결제완료 이용권이 2개 이상이고, 해당 이용권 기간이 아직 시작 전이며, 결제확인일로부터 ${escapeHtml(cancelDays)}일 이내일 때만 가능합니다. 실제 환불/매출취소는 스마트스토어 절차로 처리됩니다.</p>`;
+}
+
+function setupCancelPaymentButtons() {
+  for (const button of document.querySelectorAll("[data-cancel-payment]")) {
+    button.addEventListener("click", async () => {
+      clearMessage();
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+      try {
+        const data = await apiPost("request_payment_cancel", { payment_record_id: button.dataset.cancelPayment }, true);
+        renderAccount(data);
+        showMessage(data.payment_message || "취소요청을 등록했습니다.");
+      } catch (error) {
+        showMessage(error.message, true);
+      } finally {
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+      }
+    });
+  }
+}
+
+function renderPayments(payments = [], subscription = {}) {
   const target = $("#payment-list");
   if (!payments.length) {
     target.innerHTML = '<div class="empty">결제내역이 없습니다. 결제 후 요청을 등록해 주세요.</div>';
     return;
   }
+  const cancelableIds = new Set(subscription.cancelable_payment_ids || []);
   const rows = payments.map((payment) => `<tr>
       <td>${escapeHtml(payment.requested_at || "")}</td>
       <td>${paymentStatusLabel(payment.status)}</td>
@@ -210,11 +251,13 @@ function renderPayments(payments = []) {
       <td>${escapeHtml(payment.order_ref || "")}</td>
       <td>${escapeHtml(payment.license_id_text || "")}</td>
       <td>${escapeHtml(payment.paid_at || "")}</td>
+      <td>${cancelableIds.has(payment.id) ? `<button class="button ghost small" type="button" data-cancel-payment="${escapeHtml(payment.id)}">취소요청</button>` : escapeHtml(payment.cancel_requested_at || "")}</td>
     </tr>`).join("");
   target.innerHTML = `<table>
-    <thead><tr><th>요청일</th><th>상태</th><th>수단</th><th>기간</th><th>금액</th><th>주문/메모</th><th>라이선스</th><th>결제확인일</th></tr></thead>
+    <thead><tr><th>요청일</th><th>상태</th><th>수단</th><th>기간</th><th>금액</th><th>주문/메모</th><th>라이선스</th><th>결제확인일</th><th>취소</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
+  setupCancelPaymentButtons();
 }
 
 function renderPaymentInstructions() {
@@ -300,7 +343,8 @@ function renderAccount(data) {
   renderProfile(data.profile, data.user);
   renderTrial(data);
   renderLicenses(data.licenses || []);
-  renderPayments(data.payments || []);
+  renderSubscriptionSummary(data.subscription || {});
+  renderPayments(data.payments || [], data.subscription || {});
   renderPaymentInstructions();
   renderIssuedLicense(data);
 }

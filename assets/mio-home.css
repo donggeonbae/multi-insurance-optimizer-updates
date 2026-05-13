@@ -306,6 +306,12 @@ select option { background: #0b111d; color: var(--ink); }
   border-radius: 13px;
   font-size: 13px;
 }
+.button.small {
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+}
 .hint {
   margin: 0;
   color: var(--muted);
@@ -391,6 +397,36 @@ select option { background: #0b111d; color: var(--ink); }
   display: grid;
   gap: 11px;
   margin-top: 14px;
+}
+.subscription-summary {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+.subscription-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.subscription-grid div {
+  padding: 12px;
+  border: 1px solid rgba(79,179,255,.16);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+}
+.subscription-grid strong,
+.subscription-grid span {
+  display: block;
+}
+.subscription-grid strong {
+  color: var(--ink);
+  font-size: 16px;
+}
+.subscription-grid span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  margin-top: 4px;
 }
 .payment-summary {
   display: flex;
