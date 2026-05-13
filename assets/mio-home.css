@@ -300,6 +300,12 @@ select option { background: #0b111d; color: var(--ink); }
 }
 .button.ghost { background: rgba(255,255,255,.055); color: var(--soft); }
 .button.full { width: 100%; }
+.button.compact {
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 13px;
+  font-size: 13px;
+}
 .hint {
   margin: 0;
   color: var(--muted);
@@ -355,6 +361,57 @@ select option { background: #0b111d; color: var(--ink); }
   background: rgba(255,255,255,.045);
   color: var(--muted);
   line-height: 1.6;
+}
+.payment-instructions {
+  display: grid;
+  gap: 11px;
+  margin: 13px 0 14px;
+  padding: 14px;
+  border: 1px solid rgba(79,179,255,.18);
+  border-radius: 19px;
+  background: linear-gradient(135deg, rgba(79,179,255,.11), rgba(255,255,255,.045));
+}
+.payment-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--soft);
+}
+.payment-summary strong {
+  color: var(--ink);
+  font-size: 15px;
+}
+.payment-summary span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+.payment-lines {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.payment-lines div {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 13px;
+  background: rgba(4, 9, 17, .28);
+}
+.payment-lines dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+.payment-lines dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+  word-break: break-all;
 }
 .table-wrap { overflow-x: auto; }
 table {

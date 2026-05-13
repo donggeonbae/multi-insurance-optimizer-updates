@@ -33,6 +33,35 @@ function providerLabel(value) {
   }[value] || value || "-";
 }
 
+function selectedPaymentProvider() {
+  return $("#payment-form")?.provider?.value || "bank_transfer";
+}
+
+function selectedPaymentMonths() {
+  return Number($("#payment-form")?.purchased_months?.value || 1);
+}
+
+function paymentOptions() {
+  return accountState?.payment_options || {};
+}
+
+function paymentOption(provider) {
+  return paymentOptions()[provider] || {};
+}
+
+function paymentDestinationUrl(provider) {
+  return String(paymentOption(provider).url || "").trim();
+}
+
+function openPaymentDestination(url) {
+  if (!url) return false;
+  const popup = window.open(url, "_blank");
+  if (!popup) return false;
+  popup.opener = null;
+  popup.focus?.();
+  return true;
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -172,6 +201,57 @@ function renderPayments(payments = []) {
   </table>`;
 }
 
+function renderPaymentInstructions() {
+  const target = $("#payment-instructions");
+  if (!target) return;
+  const provider = selectedPaymentProvider();
+  const months = selectedPaymentMonths();
+  const amount = PLAN_PRICE[months] || PLAN_PRICE[1];
+  const option = paymentOption(provider);
+  const summary = `
+    <div class="payment-summary">
+      <strong>${providerLabel(provider)}</strong>
+      <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
+    </div>`;
+
+  if (provider === "bank_transfer") {
+    const lines = [
+      ["은행", option.bank_name],
+      ["계좌번호", option.account_number],
+      ["예금주", option.account_holder],
+      ["입금 메모", option.memo],
+    ].filter(([, value]) => value);
+    if (!lines.length) {
+      target.innerHTML = `${summary}<div class="empty">무통장 입금 계좌가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 계좌 설정을 확인해야 합니다.</div>`;
+      return;
+    }
+    target.innerHTML = `${summary}
+      <dl class="payment-lines">
+        ${lines.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}
+      </dl>
+      <p class="hint">입금자명은 아래 입력한 입금자명/주문자명과 맞춰 주세요. 입금 후 관리자가 확인하면 결제완료로 변경됩니다.</p>
+      ${option.account_number ? '<button class="button ghost full compact" type="button" id="copy-payment-account">계좌번호 복사</button>' : ""}`;
+    $("#copy-payment-account")?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(String(option.account_number || ""));
+        showMessage("계좌번호를 복사했습니다.");
+      } catch {
+        showMessage("자동 복사에 실패했습니다. 계좌번호를 직접 선택해 복사해 주세요.", true);
+      }
+    });
+    return;
+  }
+
+  const url = paymentDestinationUrl(provider);
+  if (!url) {
+    target.innerHTML = `${summary}<div class="empty">${providerLabel(provider)} 주소가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 결제 링크 설정을 확인해야 합니다.</div>`;
+    return;
+  }
+  target.innerHTML = `${summary}
+    <p class="hint">결제 요청을 등록하면 결제창을 새 창으로 열어 드립니다. 자동으로 열리지 않으면 아래 버튼을 눌러 결제를 진행해 주세요.</p>
+    <a class="button ghost full compact" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${providerLabel(provider)} 열기</a>`;
+}
+
 function renderTrial(data = {}) {
   const target = $("#trial-info");
   const trial = data.trial || {};
@@ -212,6 +292,7 @@ function renderAccount(data) {
   renderTrial(data);
   renderLicenses(data.licenses || []);
   renderPayments(data.payments || []);
+  renderPaymentInstructions();
 }
 
 async function loadAccount() {
@@ -346,18 +427,34 @@ function setupForms() {
     }
   });
 
-  $("#payment-form").addEventListener("submit", async (event) => {
+  const paymentForm = $("#payment-form");
+  paymentForm.provider.addEventListener("change", renderPaymentInstructions);
+  paymentForm.purchased_months.addEventListener("change", renderPaymentInstructions);
+  paymentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
     const form = event.currentTarget;
+    let destinationUrl = "";
     try {
       const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
       payload.amount_krw = PLAN_PRICE[payload.purchased_months] || PLAN_PRICE[1];
+      destinationUrl = paymentDestinationUrl(payload.provider);
       const data = await apiPost("create_payment_record", payload, true);
       form.reset();
+      form.provider.value = payload.provider;
+      form.purchased_months.value = String(payload.purchased_months);
       renderAccount(data);
-      showMessage("결제 요청을 등록했습니다. 관리자 확인 후 결제완료로 변경됩니다.");
+      if (payload.provider === "bank_transfer") {
+        showMessage("결제 요청을 등록했습니다. 화면의 계좌로 입금하면 관리자가 확인합니다.");
+      } else if (destinationUrl) {
+        const opened = openPaymentDestination(destinationUrl);
+        showMessage(opened
+          ? "결제 요청을 등록했고 결제창을 열었습니다. 결제 후 관리자가 확인하면 결제완료로 변경됩니다."
+          : "결제 요청을 등록했습니다. 결제창이 자동으로 열리지 않으면 안내 박스의 결제 버튼을 눌러 주세요.");
+      } else {
+        showMessage("결제 요청을 등록했습니다. 결제 링크 설정을 관리자에게 확인해 주세요.");
+      }
     } catch (error) {
       showMessage(error.message, true);
     }
