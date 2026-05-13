@@ -327,30 +327,31 @@ function renderPaymentInstructions() {
       <strong>스마트스토어</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">스마트스토어에서 ${escapeHtml(months)}개월 이용권 구매</a>` : '<div class="empty">스마트스토어 구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
-    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다.</p>
+    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">구매 링크</a>` : '<div class="empty">스마트스토어 구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
+    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
     ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 아직 서버에 설정되지 않아 관리자 확인으로 처리될 수 있습니다.</div>'}`;
 }
 
 function renderIssuedLicense(data = {}) {
   const target = $("#issued-license-key");
   if (!target) return;
-  const key = data.license_key || "";
+  const key = data.license_key || data.account_license_key || "";
   if (!key) {
     target.hidden = true;
     target.innerHTML = "";
     return;
   }
+  const accountKey = !data.license_key && data.account_license_key;
   target.hidden = false;
   target.innerHTML = `
-    <p class="hint">라이선스가 자동 발급되었습니다. 이 키는 다시 표시되지 않을 수 있으니 지금 복사해 주세요.</p>
+    <p class="hint">${accountKey ? "현재 계정에 연결된 활성 라이선스 키입니다. 프로그램에서 자동 등록이 안 되면 복사해 붙여넣으세요." : "라이선스가 자동 발급되었습니다. 프로그램에서 자동 등록이 안 되면 복사해 붙여넣으세요."}</p>
     <textarea class="trial-key" readonly>${escapeHtml(key)}</textarea>
-    <button class="button ghost full" type="button" id="copy-paid-license-key">발급 라이선스 키 복사</button>
+    <button class="button ghost full" type="button" id="copy-paid-license-key">${accountKey ? "계정 라이선스 키 복사" : "발급 라이선스 키 복사"}</button>
   `;
   $("#copy-paid-license-key")?.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(key);
-      showMessage("발급 라이선스 키를 복사했습니다.");
+      showMessage(accountKey ? "계정 라이선스 키를 복사했습니다." : "발급 라이선스 키를 복사했습니다.");
     } catch {
       showMessage("자동 복사에 실패했습니다. 키 영역에서 직접 복사해 주세요.", true);
     }
