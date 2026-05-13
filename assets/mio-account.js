@@ -444,7 +444,7 @@ function setupForms() {
       const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
       button.disabled = true;
-      button.textContent = "네이버페이 결제 준비 중...";
+      button.setAttribute("aria-busy", "true");
       const data = await apiPost("create_naverpay_checkout", payload, true);
       renderAccount(data);
       showMessage("네이버페이 결제창으로 이동합니다.");
@@ -452,7 +452,7 @@ function setupForms() {
     } catch (error) {
       showMessage(error.message, true);
       button.disabled = false;
-      button.textContent = "네이버페이로 바로 구매";
+      button.removeAttribute("aria-busy");
     }
   });
 
