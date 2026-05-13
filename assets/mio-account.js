@@ -267,10 +267,18 @@ function setupForms() {
     event.preventDefault();
     clearMessage();
     try {
-      const data = await apiPost("signup", formDataObject(event.currentTarget));
+      const payload = formDataObject(event.currentTarget);
+      if (payload.password !== payload.password_confirm) {
+        showMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.", true);
+        return;
+      }
+      delete payload.password_confirm;
+      const email = payload.email;
+      const data = await apiPost("signup", payload);
       event.currentTarget.reset();
-      showMessage(data.message || "회원가입 신청이 완료되었습니다. 이메일 인증 후 로그인해 주세요.");
       document.querySelector('[data-auth-tab="login"]')?.click();
+      if ($("#login-form")?.email && email) $("#login-form").email.value = email;
+      showMessage(data.message || "회원가입 신청이 완료되었습니다. 이메일 인증 후 로그인해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }
@@ -296,9 +304,13 @@ function setupForms() {
     event.preventDefault();
     clearMessage();
     try {
-      const data = await apiPost("request_password_reset", formDataObject(event.currentTarget));
+      const payload = formDataObject(event.currentTarget);
+      const email = payload.email;
+      const data = await apiPost("request_password_reset", payload);
       event.currentTarget.reset();
-      showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다.");
+      document.querySelector('[data-auth-tab="login"]')?.click();
+      if ($("#login-form")?.email && email) $("#login-form").email.value = email;
+      showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }

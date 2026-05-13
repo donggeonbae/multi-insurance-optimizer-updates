@@ -91,6 +91,10 @@
               <input name="password" type="password" autocomplete="new-password" minlength="8" required />
             </label>
             <label>
+              비밀번호 확인
+              <input name="password_confirm" type="password" autocomplete="new-password" minlength="8" required />
+            </label>
+            <label>
               이름
               <input name="display_name" type="text" maxlength="120" autocomplete="name" required />
             </label>
@@ -101,10 +105,6 @@
             <label>
               회사/지점명
               <input name="company_name" type="text" maxlength="120" autocomplete="organization" />
-            </label>
-            <label>
-              연락처
-              <input name="phone" type="text" maxlength="40" autocomplete="tel" />
             </label>
           </div>
           <button class="button primary full" type="submit">회원가입</button>
@@ -132,7 +132,7 @@
             <input name="email" type="email" autocomplete="email" required />
           </label>
           <button class="button primary full" type="submit">임시비밀번호 받기</button>
-          <p class="hint">가입된 이메일이면 임시비밀번호가 발송됩니다.</p>
+          <p class="hint">메일로 받은 임시비밀번호는 로그인 탭의 비밀번호 칸에 입력해 주세요.</p>
         </form>
 
         <form id="resend-verification-form" class="auth-form" hidden>
