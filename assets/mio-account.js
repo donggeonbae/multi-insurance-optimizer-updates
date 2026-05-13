@@ -35,6 +35,15 @@ function providerLabel(value) {
   }[value] || value || "-";
 }
 
+function deviceTypeLabel(value) {
+  return {
+    pc: "PC",
+    laptop: "노트북",
+    mobile: "모바일",
+    other: "기타",
+  }[value] || value || "-";
+}
+
 function selectedPaymentProvider() {
   return "smartstore";
 }
@@ -196,6 +205,51 @@ function renderLicenses(licenses = []) {
   </table>`;
 }
 
+function setupReleaseDeviceButtons() {
+  for (const button of document.querySelectorAll("[data-release-device]")) {
+    button.addEventListener("click", async () => {
+      clearMessage();
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+      try {
+        const data = await apiPost("release_account_device", { device_record_id: button.dataset.releaseDevice }, true);
+        renderAccount(data);
+        showMessage(data.device_message || "계정 기기 등록을 해제했습니다.");
+      } catch (error) {
+        showMessage(error.message, true);
+      } finally {
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+      }
+    });
+  }
+}
+
+function renderDevices(devices = [], limit = 3) {
+  const target = $("#device-list");
+  if (!target) return;
+  const activeCount = devices.filter((device) => device.is_active).length;
+  if (!devices.length) {
+    target.innerHTML = `<div class="empty">등록된 앱 기기가 없습니다.<br />프로그램 또는 모바일 앱에서 계정으로 로그인하면 최대 ${escapeHtml(limit)}대까지 등록됩니다.</div>`;
+    return;
+  }
+  const rows = devices.map((device) => `<tr>
+      <td>${escapeHtml(device.device_id || "")}</td>
+      <td>${deviceTypeLabel(device.device_type)}</td>
+      <td>${escapeHtml(device.platform || "")}</td>
+      <td>${device.is_active ? "활성" : "해제됨"}</td>
+      <td>${escapeHtml(device.last_seen_at || "")}</td>
+      <td>${device.is_active ? `<button class="button ghost small" type="button" data-release-device="${escapeHtml(device.id)}">해제</button>` : escapeHtml(device.revoked_at || "")}</td>
+    </tr>`).join("");
+  target.innerHTML = `
+    <p class="hint">활성 기기 ${escapeHtml(activeCount)}/${escapeHtml(limit)}대 · 홈페이지 브라우저 로그인은 포함하지 않습니다.</p>
+    <table>
+      <thead><tr><th>기기 ID</th><th>유형</th><th>플랫폼</th><th>상태</th><th>최근 사용</th><th>관리</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  setupReleaseDeviceButtons();
+}
+
 function renderSubscriptionSummary(subscription = {}) {
   const target = $("#subscription-summary");
   if (!target) return;
@@ -343,6 +397,7 @@ function renderAccount(data) {
   renderProfile(data.profile, data.user);
   renderTrial(data);
   renderLicenses(data.licenses || []);
+  renderDevices(data.devices || [], data.device_limit || 3);
   renderSubscriptionSummary(data.subscription || {});
   renderPayments(data.payments || [], data.subscription || {});
   renderPaymentInstructions();
@@ -380,7 +435,6 @@ function setupAuthTabs() {
       $("#signup-form").hidden = mode !== "signup";
       $("#find-email-form").hidden = mode !== "find-email";
       $("#reset-password-form").hidden = mode !== "reset-password";
-      $("#resend-verification-form").hidden = mode !== "reset-password";
       clearMessage();
     });
   }
@@ -450,19 +504,7 @@ function setupForms() {
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
-      showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
-    } catch (error) {
-      showMessage(error.message, true);
-    }
-  });
-
-  $("#resend-verification-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    clearMessage();
-    const form = event.currentTarget;
-    try {
-      const data = await apiPost("resend_verification", formDataObject(form));
-      showMessage(data.message || "가입된 이메일이면 인증 메일을 다시 보냈습니다.");
+      showMessage(data.message || "입력한 정보와 일치하는 계정이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }
