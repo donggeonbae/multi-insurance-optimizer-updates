@@ -1,4 +1,4 @@
-const ACCOUNT_ENDPOINT = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-account";
+﻿const ACCOUNT_ENDPOINT = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-account";
 const SESSION_KEY = "mio_account_session_v1";
 const PLAN_PRICE = {
   1: 9900,
@@ -228,9 +228,8 @@ function setupReleaseDeviceButtons() {
 function renderDevices(devices = [], limit = 3) {
   const target = $("#device-list");
   if (!target) return;
-  const activeCount = devices.filter((device) => device.is_active).length;
   if (!devices.length) {
-    target.innerHTML = `<div class="empty">등록된 앱 기기가 없습니다.<br />프로그램 또는 모바일 앱에서 계정으로 로그인하면 최대 ${escapeHtml(limit)}대까지 등록됩니다.</div>`;
+    target.innerHTML = `<div class="empty">등록된 앱 기기가 없습니다.<br />프로그램 또는 모바일 앱에서 계정으로 로그인하면 기기가 등록됩니다.</div>`;
     return;
   }
   const rows = devices.map((device) => `<tr>
@@ -242,7 +241,7 @@ function renderDevices(devices = [], limit = 3) {
       <td>${device.is_active ? `<button class="button ghost small" type="button" data-release-device="${escapeHtml(device.id)}">해제</button>` : escapeHtml(device.revoked_at || "")}</td>
     </tr>`).join("");
   target.innerHTML = `
-    <p class="hint">활성 기기 ${escapeHtml(activeCount)}/${escapeHtml(limit)}대 · 홈페이지 브라우저 로그인은 포함하지 않습니다.</p>
+    <p class="hint">프로그램 또는 모바일 앱에서 계정으로 로그인한 기기만 표시합니다. 홈페이지 브라우저 로그인은 포함하지 않습니다.</p>
     <table>
       <thead><tr><th>기기 ID</th><th>유형</th><th>플랫폼</th><th>상태</th><th>최근 사용</th><th>관리</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -327,7 +326,7 @@ function renderPaymentInstructions() {
       <strong>스마트스토어</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">구매 링크</a>` : '<div class="empty">스마트스토어 구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
+    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">구매 링크</a>` : '<div class="empty">구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
     <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
     ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 아직 서버에 설정되지 않아 관리자 확인으로 처리될 수 있습니다.</div>'}`;
 }
@@ -344,18 +343,9 @@ function renderIssuedLicense(data = {}) {
   const accountKey = !data.license_key && data.account_license_key;
   target.hidden = false;
   target.innerHTML = `
-    <p class="hint">${accountKey ? "현재 계정에 연결된 활성 라이선스 키입니다. 프로그램에서 자동 등록이 안 되면 복사해 붙여넣으세요." : "라이선스가 자동 발급되었습니다. 프로그램에서 자동 등록이 안 되면 복사해 붙여넣으세요."}</p>
-    <textarea class="trial-key" readonly>${escapeHtml(key)}</textarea>
-    <button class="button ghost full" type="button" id="copy-paid-license-key">${accountKey ? "계정 라이선스 키 복사" : "발급 라이선스 키 복사"}</button>
+    <p class="hint">${accountKey ? "현재 계정에 활성 라이선스가 연결되어 있습니다." : "라이선스가 자동 발급되었습니다."}</p>
+    <div class="empty">라이선스 키는 화면에 표시하지 않습니다. 유료 라이선스 키는 가입 이메일로 발송됩니다. 이메일에서도 확인되지 않거나 프로그램 인증이 되지 않으면 주문서 캡처와 함께 support@mio.ai.kr로 문의해 주세요.</div>
   `;
-  $("#copy-paid-license-key")?.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(key);
-      showMessage(accountKey ? "계정 라이선스 키를 복사했습니다." : "발급 라이선스 키를 복사했습니다.");
-    } catch {
-      showMessage("자동 복사에 실패했습니다. 키 영역에서 직접 복사해 주세요.", true);
-    }
-  });
 }
 
 function renderTrial(data = {}) {
@@ -369,19 +359,9 @@ function renderTrial(data = {}) {
   }
   if (key) {
     target.innerHTML = `
-      <p class="hint">이메일 인증 후 첫 로그인으로 3일 무료 체험 라이선스가 발급되었습니다. 이 키는 다시 표시되지 않을 수 있으니 지금 복사해 주세요.</p>
-      <textarea class="trial-key" readonly>${escapeHtml(key)}</textarea>
-      <button class="button ghost full" type="button" id="copy-trial-key">체험 라이선스 키 복사</button>
+      <p class="hint">이메일 인증 후 첫 로그인으로 3일 무료 체험 라이선스가 발급되었습니다. 프로그램에서 로그인하면 자동 등록됩니다.</p>
       <p class="hint">체험 만료: ${escapeHtml(expires)}</p>
     `;
-    $("#copy-trial-key")?.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(key);
-        showMessage("체험 라이선스 키를 복사했습니다.");
-      } catch {
-        showMessage("자동 복사에 실패했습니다. 키 영역에서 직접 복사해 주세요.", true);
-      }
-    });
     return;
   }
   if (trial.has_trial_license) {
@@ -531,7 +511,7 @@ function setupForms() {
     event.preventDefault();
     clearMessage();
     if (!session?.access_token) {
-      showMessage("스마트스토어 구매 등록은 로그인 후 이용할 수 있습니다.", true);
+      showMessage("구매 등록은 로그인 후 이용할 수 있습니다.", true);
       return;
     }
     const form = event.currentTarget;
@@ -580,6 +560,32 @@ function setupForms() {
       const data = await apiPost("change_password", formDataObject(form), true);
       form.reset();
       showMessage(data.message || "비밀번호를 변경했습니다.");
+    } catch (error) {
+      showMessage(error.message, true);
+    }
+  });
+
+  const deleteAccountForm = $("#delete-account-form");
+  if (deleteAccountForm) deleteAccountForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage();
+    if (!session?.access_token) {
+      showMessage("로그인이 필요합니다.", true);
+      return;
+    }
+    const form = event.currentTarget;
+    const payload = formDataObject(form);
+    if (payload.confirm_text !== "계정삭제") {
+      showMessage("삭제 확인 문구 `계정삭제`를 정확히 입력해 주세요.", true);
+      return;
+    }
+    try {
+      const data = await apiPost("delete_account", payload, true);
+      form.reset();
+      saveSession(null);
+      accountState = null;
+      renderAuthState();
+      showMessage(data.message || "계정을 삭제했습니다. 같은 이메일로는 다시 가입할 수 없습니다.");
     } catch (error) {
       showMessage(error.message, true);
     }

@@ -154,8 +154,8 @@ h3 {
   box-shadow: 0 18px 60px rgba(0,0,0,.20);
 }
 .price-strip article.featured {
-  border-color: rgba(79,179,255,.38);
-  background: linear-gradient(180deg, rgba(79,179,255,.16), rgba(255,255,255,.055));
+  border-color: var(--line);
+  background: rgba(255,255,255,.055);
 }
 .price-strip strong {
   display: block;
@@ -168,6 +168,14 @@ h3 {
   font-size: 28px;
   font-weight: 900;
   letter-spacing: -.05em;
+}
+.price-strip small {
+  margin-left: 6px;
+  color: var(--success);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  vertical-align: middle;
 }
 
 .account-shell {
@@ -299,6 +307,11 @@ select option { background: #0b111d; color: var(--ink); }
   box-shadow: 0 22px 70px rgba(79,179,255,.24);
 }
 .button.ghost { background: rgba(255,255,255,.055); color: var(--soft); }
+.button.danger {
+  border-color: rgba(255, 130, 130, .32);
+  background: linear-gradient(135deg, rgba(255, 89, 89, .22), rgba(255,255,255,.055));
+  color: #ffd7d7;
+}
 .button.full { width: 100%; }
 .button.compact {
   min-height: 42px;
@@ -369,6 +382,10 @@ select option { background: #0b111d; color: var(--ink); }
   gap: 16px;
 }
 .wide { overflow: hidden; }
+.danger-zone {
+  border-color: rgba(255, 130, 130, .22);
+  background: linear-gradient(180deg, rgba(255, 89, 89, .08), rgba(255,255,255,.05));
+}
 .trial-box { display: grid; gap: 11px; }
 .trial-key {
   min-height: 120px;

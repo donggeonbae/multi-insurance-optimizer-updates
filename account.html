@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MIO 계정관리 | Multi Insurance Optimizer</title>
-  <meta name="description" content="MIO 회원가입, 로그인, 스마트스토어 구매 확인 및 라이선스 연결을 관리하는 계정 페이지입니다." />
+  <meta name="description" content="MIO 회원가입, 로그인, 구매 확인 및 라이선스 연결을 관리하는 계정 페이지입니다." />
   <meta name="theme-color" content="#070a0f" />
   <link rel="icon" href="assets/mio-cat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
       <h1>계정과 이용권을 관리하세요</h1>
       <p class="lead">
         회원가입 후 이메일 인증을 완료하면 3일 무료 체험을 시작할 수 있습니다.
-        스마트스토어 구매 후 주문번호를 입력하면 서버가 결제완료 여부를 확인해 라이선스를 자동 발급합니다.
+        구매 후 주문번호를 입력하면 서버가 결제완료 여부를 확인해 라이선스를 자동 발급합니다.
       </p>
     </section>
 
@@ -45,11 +45,11 @@
       </article>
       <article class="featured">
         <strong>3개월</strong>
-        <span>27,900원</span>
+        <span>27,900원 <small>-6%</small></span>
       </article>
       <article>
         <strong>6개월</strong>
-        <span>54,900원</span>
+        <span>54,900원 <small>-8%</small></span>
       </article>
     </section>
 
@@ -162,7 +162,7 @@
         <h2>이용 절차</h2>
         <ol>
           <li>회원가입 후 이메일 인증</li>
-          <li>3일 무료 체험 또는 스마트스토어 구매</li>
+          <li>3일 무료 체험 또는 구매 등록</li>
           <li>주문번호 확인 후 라이선스 자동 발급</li>
           <li>PC/모바일 앱에서 라이선스 인증</li>
         </ol>
@@ -213,7 +213,7 @@
           </section>
 
           <section class="panel">
-            <h3>스마트스토어 구매 등록</h3>
+            <h3>구매 등록</h3>
             <p class="hint">이용 기간을 선택해 스마트스토어에서 구매한 뒤, 주문번호와 주문자명을 입력하면 서버가 결제완료 여부를 확인해 라이선스를 자동 발급합니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
             <div id="payment-instructions" class="payment-instructions" aria-live="polite"></div>
             <form id="payment-form" class="stack-form">
@@ -221,17 +221,17 @@
                 이용 기간
                 <select name="purchased_months">
                   <option value="1">1개월 · 9,900원</option>
-                  <option value="3">3개월 · 27,900원</option>
-                  <option value="6">6개월 · 54,900원</option>
+                  <option value="3">3개월 · 27,900원 · -6%</option>
+                  <option value="6">6개월 · 54,900원 · -8%</option>
                 </select>
               </label>
               <label>
-                스마트스토어 주문번호
+                주문번호
                 <input name="order_ref" type="text" placeholder="예: 20260514..." required />
               </label>
               <label>
                 주문자명
-                <input name="payer_name" type="text" placeholder="스마트스토어 주문자명" required />
+                <input name="payer_name" type="text" placeholder="주문자명" required />
               </label>
               <label>
                 요청 메모(선택)
@@ -267,6 +267,18 @@
               <button class="button primary full" type="submit">비밀번호 변경</button>
             </form>
           </section>
+
+          <section class="panel danger-zone">
+            <h3>계정 삭제</h3>
+            <p class="hint">계정을 삭제하면 로그인 정보, 기기 등록, 라이선스 연결, 결제내역이 삭제됩니다. 탈퇴 이력이 있는 이메일은 다시 가입할 수 없으며 문의는 support@mio.ai.kr로 접수합니다.</p>
+            <form id="delete-account-form" class="stack-form">
+              <label>
+                삭제 확인 문구
+                <input name="confirm_text" type="text" placeholder="계정삭제" required />
+              </label>
+              <button class="button danger full" type="submit">계정 영구 삭제</button>
+            </form>
+          </section>
         </div>
 
         <section class="panel wide">
@@ -285,11 +297,11 @@
 
   <footer class="wrap site-footer">
     <div class="footer-line">
-      <span>MIO 계정 페이지는 라이선스와 스마트스토어 구매 확인을 위한 페이지입니다.</span>
+      <span>MIO 계정 페이지는 라이선스와 구매 확인을 위한 페이지입니다.</span>
       <span>고객 PDF·상담자료는 홈페이지에 업로드하지 않습니다.</span>
     </div>
   </footer>
 
-  <script src="./assets/mio-account.js?v=20260514-account-devices" defer></script>
+  <script src="./assets/mio-account.js?v=20260514-account-delete" defer></script>
 </body>
 </html>
