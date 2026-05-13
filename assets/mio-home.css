@@ -314,10 +314,26 @@ select option { background: #0b111d; color: var(--ink); }
 }
 .checkbox {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 9px;
+  color: var(--muted);
+  line-height: 1.55;
 }
 .checkbox input { width: auto; }
+.consent-box {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(79,179,255,.18);
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+}
+.consent-box strong { color: var(--ink); }
+.consent-box a {
+  color: var(--accent);
+  font-weight: 900;
+}
 
 .dashboard {
   grid-column: 1 / -1;
