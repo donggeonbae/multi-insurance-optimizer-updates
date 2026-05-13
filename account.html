@@ -194,8 +194,8 @@
           </section>
 
           <section class="panel">
-            <h3>결제 요청</h3>
-            <p class="hint">결제수단을 선택하면 입금 계좌 또는 결제 링크가 바로 표시됩니다. 결제 후 관리자가 확인하면 결제완료로 변경됩니다.</p>
+            <h3>네이버페이 구매</h3>
+            <p class="hint">이용 기간을 선택하고 네이버페이로 결제하면 결제 확인 즉시 라이선스가 계정에 자동 발급·연결됩니다.</p>
             <div id="payment-instructions" class="payment-instructions" aria-live="polite"></div>
             <form id="payment-form" class="stack-form">
               <label>
@@ -206,27 +206,7 @@
                   <option value="6">6개월 · 54,900원</option>
                 </select>
               </label>
-              <label>
-                결제수단
-                <select name="provider">
-                  <option value="bank_transfer">무통장 입금</option>
-                  <option value="smartstore">네이버 스마트스토어</option>
-                  <option value="payment_link">결제링크</option>
-                </select>
-              </label>
-              <label>
-                입금자명 / 주문자명
-                <input name="payer_name" type="text" maxlength="80" />
-              </label>
-              <label>
-                주문번호 또는 메모
-                <input name="order_ref" type="text" maxlength="120" />
-              </label>
-              <label>
-                요청 메모
-                <textarea name="memo" maxlength="300" rows="3"></textarea>
-              </label>
-              <button class="button primary full" type="submit">결제 요청 등록</button>
+              <button id="naverpay-checkout-button" class="button primary full naverpay-button" type="submit">네이버페이로 바로 구매</button>
             </form>
           </section>
 
@@ -277,6 +257,7 @@
     </div>
   </footer>
 
-  <script src="./assets/mio-account.js?v=20260513-payment-flow" defer></script>
+  <script src="https://nsp.pay.naver.com/sdk/js/naverpay.min.js"></script>
+  <script src="./assets/mio-account.js?v=20260514-naverpay-direct" defer></script>
 </body>
 </html>

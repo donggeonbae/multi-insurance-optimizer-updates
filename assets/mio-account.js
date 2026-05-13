@@ -65,6 +65,35 @@ function openPaymentDestination(url, existingPopup = null) {
   return true;
 }
 
+function checkoutQueryPlan() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = Number(params.get("plan") || params.get("months") || 0);
+  return [1, 3, 6].includes(plan) ? plan : 0;
+}
+
+function applyCheckoutQueryDefaults() {
+  const months = checkoutQueryPlan();
+  const form = $("#payment-form");
+  if (months && form?.purchased_months) form.purchased_months.value = String(months);
+}
+
+function naverpayAvailable() {
+  return Boolean(paymentOptions().naverpay?.available);
+}
+
+function openNaverPayCheckout(checkout) {
+  if (!checkout?.open_params) throw new Error("네이버페이 결제 준비 정보가 올바르지 않습니다.");
+  if (!window.Naver?.Pay?.create) throw new Error("네이버페이 결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+  const pay = window.Naver.Pay.create({
+    mode: checkout.mode || paymentOptions().naverpay?.mode || "production",
+    payType: "normal",
+    clientId: checkout.clientId,
+    chainId: checkout.chainId,
+    openType: "page",
+  });
+  pay.open(checkout.open_params);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -207,52 +236,16 @@ function renderPayments(payments = []) {
 function renderPaymentInstructions() {
   const target = $("#payment-instructions");
   if (!target) return;
-  const provider = selectedPaymentProvider();
   const months = selectedPaymentMonths();
   const amount = PLAN_PRICE[months] || PLAN_PRICE[1];
-  const option = paymentOption(provider);
-  const summary = `
+  const available = naverpayAvailable();
+  target.innerHTML = `
     <div class="payment-summary">
-      <strong>${providerLabel(provider)}</strong>
+      <strong>네이버페이</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
-    </div>`;
-
-  if (provider === "bank_transfer") {
-    const lines = [
-      ["은행", option.bank_name],
-      ["계좌번호", option.account_number],
-      ["예금주", option.account_holder],
-      ["입금 메모", option.memo],
-    ].filter(([, value]) => value);
-    if (!lines.length) {
-      target.innerHTML = `${summary}<div class="empty">무통장 입금 계좌가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 계좌 설정을 확인해야 합니다.</div>`;
-      return;
-    }
-    target.innerHTML = `${summary}
-      <dl class="payment-lines">
-        ${lines.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}
-      </dl>
-      <p class="hint">입금자명은 아래 입력한 입금자명/주문자명과 맞춰 주세요. 입금 후 관리자가 확인하면 결제완료로 변경됩니다.</p>
-      ${option.account_number ? '<button class="button ghost full compact" type="button" id="copy-payment-account">계좌번호 복사</button>' : ""}`;
-    $("#copy-payment-account")?.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(String(option.account_number || ""));
-        showMessage("계좌번호를 복사했습니다.");
-      } catch {
-        showMessage("자동 복사에 실패했습니다. 계좌번호를 직접 선택해 복사해 주세요.", true);
-      }
-    });
-    return;
-  }
-
-  const url = paymentDestinationUrl(provider, months);
-  if (!url) {
-    target.innerHTML = `${summary}<div class="empty">선택한 ${escapeHtml(months)}개월 ${providerLabel(provider)} 주소가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 결제 링크 설정을 확인해야 합니다.</div>`;
-    return;
-  }
-  target.innerHTML = `${summary}
-    <p class="hint">결제 요청을 등록하면 선택한 ${escapeHtml(months)}개월 상품 결제창을 새 창으로 열어 드립니다. 자동으로 열리지 않으면 아래 버튼을 눌러 결제를 진행해 주세요.</p>
-    <a class="button ghost full compact" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${providerLabel(provider)} 열기</a>`;
+    </div>
+    <p class="hint">결제 완료 후 네이버페이 승인 결과가 돌아오면 서버가 결제금액을 검증하고 같은 계정에 라이선스를 자동 발급·연결합니다.</p>
+    ${available ? "" : '<div class="empty">네이버페이 API 키가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}`;
 }
 
 function renderTrial(data = {}) {
@@ -291,6 +284,7 @@ function renderTrial(data = {}) {
 function renderAccount(data) {
   accountState = data;
   renderAuthState();
+  applyCheckoutQueryDefaults();
   renderProfile(data.profile, data.user);
   renderTrial(data);
   renderLicenses(data.licenses || []);
@@ -431,40 +425,34 @@ function setupForms() {
   });
 
   const paymentForm = $("#payment-form");
-  paymentForm.provider.addEventListener("change", renderPaymentInstructions);
   paymentForm.purchased_months.addEventListener("change", renderPaymentInstructions);
+  applyCheckoutQueryDefaults();
   paymentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    if (!session?.access_token) {
+      showMessage("네이버페이 구매는 로그인 후 이용할 수 있습니다.", true);
+      return;
+    }
+    if (!naverpayAvailable()) {
+      showMessage("네이버페이 API 키가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.", true);
+      return;
+    }
     const form = event.currentTarget;
-    let destinationUrl = "";
-    let paymentPopup = null;
+    const button = $("#naverpay-checkout-button");
     try {
       const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
-      payload.amount_krw = PLAN_PRICE[payload.purchased_months] || PLAN_PRICE[1];
-      destinationUrl = paymentDestinationUrl(payload.provider, payload.purchased_months);
-      if (payload.provider !== "bank_transfer" && destinationUrl) {
-        paymentPopup = window.open("about:blank", "_blank");
-      }
-      const data = await apiPost("create_payment_record", payload, true);
-      form.reset();
-      form.provider.value = payload.provider;
-      form.purchased_months.value = String(payload.purchased_months);
+      button.disabled = true;
+      button.textContent = "네이버페이 결제 준비 중...";
+      const data = await apiPost("create_naverpay_checkout", payload, true);
       renderAccount(data);
-      if (payload.provider === "bank_transfer") {
-        showMessage("결제 요청을 등록했습니다. 화면의 계좌로 입금하면 관리자가 확인합니다.");
-      } else if (destinationUrl) {
-        const opened = openPaymentDestination(destinationUrl, paymentPopup);
-        showMessage(opened
-          ? "결제 요청을 등록했고 결제창을 열었습니다. 결제 후 관리자가 확인하면 결제완료로 변경됩니다."
-          : "결제 요청을 등록했습니다. 결제창이 자동으로 열리지 않으면 안내 박스의 결제 버튼을 눌러 주세요.");
-      } else {
-        showMessage("결제 요청을 등록했습니다. 결제 링크 설정을 관리자에게 확인해 주세요.");
-      }
+      showMessage("네이버페이 결제창으로 이동합니다.");
+      openNaverPayCheckout(data.naverpay);
     } catch (error) {
-      if (paymentPopup && !paymentPopup.closed) paymentPopup.close();
       showMessage(error.message, true);
+      button.disabled = false;
+      button.textContent = "네이버페이로 바로 구매";
     }
   });
 
@@ -505,4 +493,5 @@ function setupForms() {
 
 setupAuthTabs();
 setupForms();
+applyCheckoutQueryDefaults();
 loadAccount();
