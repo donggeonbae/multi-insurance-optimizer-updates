@@ -53,11 +53,12 @@ function paymentDestinationUrl(provider) {
   return String(paymentOption(provider).url || "").trim();
 }
 
-function openPaymentDestination(url) {
+function openPaymentDestination(url, existingPopup = null) {
   if (!url) return false;
-  const popup = window.open(url, "_blank");
+  const popup = existingPopup || window.open("about:blank", "_blank");
   if (!popup) return false;
   popup.opener = null;
+  popup.location.href = url;
   popup.focus?.();
   return true;
 }
@@ -435,11 +436,15 @@ function setupForms() {
     clearMessage();
     const form = event.currentTarget;
     let destinationUrl = "";
+    let paymentPopup = null;
     try {
       const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
       payload.amount_krw = PLAN_PRICE[payload.purchased_months] || PLAN_PRICE[1];
       destinationUrl = paymentDestinationUrl(payload.provider);
+      if (payload.provider !== "bank_transfer" && destinationUrl) {
+        paymentPopup = window.open("about:blank", "_blank");
+      }
       const data = await apiPost("create_payment_record", payload, true);
       form.reset();
       form.provider.value = payload.provider;
@@ -448,7 +453,7 @@ function setupForms() {
       if (payload.provider === "bank_transfer") {
         showMessage("결제 요청을 등록했습니다. 화면의 계좌로 입금하면 관리자가 확인합니다.");
       } else if (destinationUrl) {
-        const opened = openPaymentDestination(destinationUrl);
+        const opened = openPaymentDestination(destinationUrl, paymentPopup);
         showMessage(opened
           ? "결제 요청을 등록했고 결제창을 열었습니다. 결제 후 관리자가 확인하면 결제완료로 변경됩니다."
           : "결제 요청을 등록했습니다. 결제창이 자동으로 열리지 않으면 안내 박스의 결제 버튼을 눌러 주세요.");
@@ -456,6 +461,7 @@ function setupForms() {
         showMessage("결제 요청을 등록했습니다. 결제 링크 설정을 관리자에게 확인해 주세요.");
       }
     } catch (error) {
+      if (paymentPopup && !paymentPopup.closed) paymentPopup.close();
       showMessage(error.message, true);
     }
   });
