@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MIO 계정관리 | Multi Insurance Optimizer</title>
-  <meta name="description" content="MIO 회원가입, 로그인, 결제요청 및 라이선스 연결을 관리하는 계정 페이지입니다." />
+  <meta name="description" content="MIO 회원가입, 로그인, 스마트스토어 구매 확인 및 라이선스 연결을 관리하는 계정 페이지입니다." />
   <meta name="theme-color" content="#070a0f" />
   <link rel="icon" href="assets/mio-cat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/mio-home.css?v=20260514-naverpay-logo" />
+  <link rel="stylesheet" href="./assets/mio-home.css?v=20260514-smartstore-auto" />
 </head>
 <body>
   <header class="wrap site-top">
@@ -33,7 +33,7 @@
       <h1>계정과 이용권을 관리하세요</h1>
       <p class="lead">
         회원가입 후 이메일 인증을 완료하면 3일 무료 체험을 시작할 수 있습니다.
-        결제요청과 라이선스 연결은 로그인 후 계정관리에서 처리합니다.
+        스마트스토어 구매 후 주문번호를 입력하면 서버가 결제완료 여부를 확인해 라이선스를 자동 발급합니다.
       </p>
     </section>
 
@@ -149,8 +149,8 @@
         <h2>이용 절차</h2>
         <ol>
           <li>회원가입 후 이메일 인증</li>
-          <li>3일 무료 체험 또는 결제요청 등록</li>
-          <li>관리자 확인 후 라이선스 연결</li>
+          <li>3일 무료 체험 또는 스마트스토어 구매</li>
+          <li>주문번호 확인 후 라이선스 자동 발급</li>
           <li>PC/모바일 앱에서 라이선스 인증</li>
         </ol>
       </aside>
@@ -194,8 +194,8 @@
           </section>
 
           <section class="panel">
-            <h3>네이버페이 구매</h3>
-            <p class="hint">이용 기간을 선택하고 네이버페이로 결제하면 결제 확인 즉시 라이선스가 계정에 자동 발급·연결됩니다.</p>
+            <h3>스마트스토어 구매 등록</h3>
+            <p class="hint">이용 기간을 선택해 스마트스토어에서 구매한 뒤, 주문번호와 주문자명을 입력하면 서버가 결제완료 여부를 확인해 라이선스를 자동 발급합니다.</p>
             <div id="payment-instructions" class="payment-instructions" aria-live="polite"></div>
             <form id="payment-form" class="stack-form">
               <label>
@@ -206,8 +206,21 @@
                   <option value="6">6개월 · 54,900원</option>
                 </select>
               </label>
-              <button id="naverpay-checkout-button" class="naverpay-button" type="submit"><img src="./assets/naverpay/btn_npaygr_buy.svg" alt="????? ????" /></button>
+              <label>
+                스마트스토어 주문번호
+                <input name="order_ref" type="text" placeholder="예: 20260514..." required />
+              </label>
+              <label>
+                주문자명
+                <input name="payer_name" type="text" placeholder="스마트스토어 주문자명" required />
+              </label>
+              <label>
+                요청 메모(선택)
+                <input name="memo" type="text" placeholder="확인이 필요한 내용이 있으면 적어주세요." maxlength="300" />
+              </label>
+              <button id="smartstore-verify-button" class="button primary full" type="submit">주문번호 확인 및 이용권 발급</button>
             </form>
+            <div id="issued-license-key" class="issued-license-key" hidden></div>
           </section>
 
           <section class="panel">
@@ -252,12 +265,11 @@
 
   <footer class="wrap site-footer">
     <div class="footer-line">
-      <span>MIO 계정 페이지는 라이선스와 결제요청 관리를 위한 페이지입니다.</span>
+      <span>MIO 계정 페이지는 라이선스와 스마트스토어 구매 확인을 위한 페이지입니다.</span>
       <span>고객 PDF·상담자료는 홈페이지에 업로드하지 않습니다.</span>
     </div>
   </footer>
 
-  <script src="https://nsp.pay.naver.com/sdk/js/naverpay.min.js"></script>
-  <script src="./assets/mio-account.js?v=20260514-naverpay-direct" defer></script>
+  <script src="./assets/mio-account.js?v=20260514-smartstore-auto" defer></script>
 </body>
 </html>

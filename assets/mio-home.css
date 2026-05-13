@@ -371,6 +371,11 @@ select option { background: #0b111d; color: var(--ink); }
   border-radius: 19px;
   background: linear-gradient(135deg, rgba(79,179,255,.11), rgba(255,255,255,.045));
 }
+.issued-license-key {
+  display: grid;
+  gap: 11px;
+  margin-top: 14px;
+}
 .payment-summary {
   display: flex;
   align-items: center;

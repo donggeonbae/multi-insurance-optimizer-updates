@@ -26,6 +26,7 @@ function paymentStatusLabel(value) {
 
 function providerLabel(value) {
   return {
+    naverpay: "네이버페이",
     bank_transfer: "무통장 입금",
     smartstore: "스마트스토어",
     payment_link: "결제링크",
@@ -34,7 +35,7 @@ function providerLabel(value) {
 }
 
 function selectedPaymentProvider() {
-  return $("#payment-form")?.provider?.value || "bank_transfer";
+  return "smartstore";
 }
 
 function selectedPaymentMonths() {
@@ -75,23 +76,6 @@ function applyCheckoutQueryDefaults() {
   const months = checkoutQueryPlan();
   const form = $("#payment-form");
   if (months && form?.purchased_months) form.purchased_months.value = String(months);
-}
-
-function naverpayAvailable() {
-  return Boolean(paymentOptions().naverpay?.available);
-}
-
-function openNaverPayCheckout(checkout) {
-  if (!checkout?.open_params) throw new Error("네이버페이 결제 준비 정보가 올바르지 않습니다.");
-  if (!window.Naver?.Pay?.create) throw new Error("네이버페이 결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
-  const pay = window.Naver.Pay.create({
-    mode: checkout.mode || paymentOptions().naverpay?.mode || "production",
-    payType: "normal",
-    clientId: checkout.clientId,
-    chainId: checkout.chainId,
-    openType: "page",
-  });
-  pay.open(checkout.open_params);
 }
 
 function escapeHtml(value) {
@@ -238,14 +222,42 @@ function renderPaymentInstructions() {
   if (!target) return;
   const months = selectedPaymentMonths();
   const amount = PLAN_PRICE[months] || PLAN_PRICE[1];
-  const available = naverpayAvailable();
+  const smartstore = paymentOption("smartstore");
+  const url = paymentDestinationUrl("smartstore", months);
+  const autoVerify = Boolean(smartstore.auto_verify_available);
   target.innerHTML = `
     <div class="payment-summary">
-      <strong>네이버페이</strong>
+      <strong>스마트스토어</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    <p class="hint">결제 완료 후 네이버페이 승인 결과가 돌아오면 서버가 결제금액을 검증하고 같은 계정에 라이선스를 자동 발급·연결합니다.</p>
-    ${available ? "" : '<div class="empty">네이버페이 API 키가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}`;
+    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">스마트스토어에서 ${escapeHtml(months)}개월 이용권 구매</a>` : '<div class="empty">스마트스토어 구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
+    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다.</p>
+    ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 아직 서버에 설정되지 않아 관리자 확인으로 처리될 수 있습니다.</div>'}`;
+}
+
+function renderIssuedLicense(data = {}) {
+  const target = $("#issued-license-key");
+  if (!target) return;
+  const key = data.license_key || "";
+  if (!key) {
+    target.hidden = true;
+    target.innerHTML = "";
+    return;
+  }
+  target.hidden = false;
+  target.innerHTML = `
+    <p class="hint">라이선스가 자동 발급되었습니다. 이 키는 다시 표시되지 않을 수 있으니 지금 복사해 주세요.</p>
+    <textarea class="trial-key" readonly>${escapeHtml(key)}</textarea>
+    <button class="button ghost full" type="button" id="copy-paid-license-key">발급 라이선스 키 복사</button>
+  `;
+  $("#copy-paid-license-key")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(key);
+      showMessage("발급 라이선스 키를 복사했습니다.");
+    } catch {
+      showMessage("자동 복사에 실패했습니다. 키 영역에서 직접 복사해 주세요.", true);
+    }
+  });
 }
 
 function renderTrial(data = {}) {
@@ -290,6 +302,7 @@ function renderAccount(data) {
   renderLicenses(data.licenses || []);
   renderPayments(data.payments || []);
   renderPaymentInstructions();
+  renderIssuedLicense(data);
 }
 
 async function loadAccount() {
@@ -431,26 +444,28 @@ function setupForms() {
     event.preventDefault();
     clearMessage();
     if (!session?.access_token) {
-      showMessage("네이버페이 구매는 로그인 후 이용할 수 있습니다.", true);
-      return;
-    }
-    if (!naverpayAvailable()) {
-      showMessage("네이버페이 API 키가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.", true);
+      showMessage("스마트스토어 구매 등록은 로그인 후 이용할 수 있습니다.", true);
       return;
     }
     const form = event.currentTarget;
-    const button = $("#naverpay-checkout-button");
+    const button = $("#smartstore-verify-button");
     try {
       const payload = formDataObject(form);
+      payload.provider = "smartstore";
       payload.purchased_months = Number(payload.purchased_months || 1);
       button.disabled = true;
       button.setAttribute("aria-busy", "true");
-      const data = await apiPost("create_naverpay_checkout", payload, true);
+      const data = await apiPost("create_payment_record", payload, true);
       renderAccount(data);
-      showMessage("네이버페이 결제창으로 이동합니다.");
-      openNaverPayCheckout(data.naverpay);
+      if (data.license_key) {
+        form.reset();
+        showMessage(data.payment_message || "결제가 확인되어 라이선스가 자동 발급되었습니다.");
+      } else {
+        showMessage(data.payment_message || "구매내역을 등록했습니다. 관리자 확인 후 라이선스가 연결됩니다.");
+      }
     } catch (error) {
       showMessage(error.message, true);
+    } finally {
       button.disabled = false;
       button.removeAttribute("aria-busy");
     }
