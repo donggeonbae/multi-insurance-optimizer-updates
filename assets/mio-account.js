@@ -49,8 +49,10 @@ function paymentOption(provider) {
   return paymentOptions()[provider] || {};
 }
 
-function paymentDestinationUrl(provider) {
-  return String(paymentOption(provider).url || "").trim();
+function paymentDestinationUrl(provider, months = selectedPaymentMonths()) {
+  const option = paymentOption(provider);
+  const planUrls = option.plan_urls || {};
+  return String(planUrls[String(months)] || option.url || "").trim();
 }
 
 function openPaymentDestination(url, existingPopup = null) {
@@ -243,13 +245,13 @@ function renderPaymentInstructions() {
     return;
   }
 
-  const url = paymentDestinationUrl(provider);
+  const url = paymentDestinationUrl(provider, months);
   if (!url) {
-    target.innerHTML = `${summary}<div class="empty">${providerLabel(provider)} 주소가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 결제 링크 설정을 확인해야 합니다.</div>`;
+    target.innerHTML = `${summary}<div class="empty">선택한 ${escapeHtml(months)}개월 ${providerLabel(provider)} 주소가 아직 설정되지 않았습니다. 결제요청은 등록할 수 있지만, 관리자에게 결제 링크 설정을 확인해야 합니다.</div>`;
     return;
   }
   target.innerHTML = `${summary}
-    <p class="hint">결제 요청을 등록하면 결제창을 새 창으로 열어 드립니다. 자동으로 열리지 않으면 아래 버튼을 눌러 결제를 진행해 주세요.</p>
+    <p class="hint">결제 요청을 등록하면 선택한 ${escapeHtml(months)}개월 상품 결제창을 새 창으로 열어 드립니다. 자동으로 열리지 않으면 아래 버튼을 눌러 결제를 진행해 주세요.</p>
     <a class="button ghost full compact" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${providerLabel(provider)} 열기</a>`;
 }
 
@@ -441,7 +443,7 @@ function setupForms() {
       const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
       payload.amount_krw = PLAN_PRICE[payload.purchased_months] || PLAN_PRICE[1];
-      destinationUrl = paymentDestinationUrl(payload.provider);
+      destinationUrl = paymentDestinationUrl(payload.provider, payload.purchased_months);
       if (payload.provider !== "bank_transfer" && destinationUrl) {
         paymentPopup = window.open("about:blank", "_blank");
       }
