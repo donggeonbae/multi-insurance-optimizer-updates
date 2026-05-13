@@ -254,8 +254,9 @@ function setupForms() {
   $("#login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("login", formDataObject(event.currentTarget));
+      const data = await apiPost("login", formDataObject(form));
       renderAccount(data);
       showMessage("로그인되었습니다.");
     } catch (error) {
@@ -266,8 +267,9 @@ function setupForms() {
   $("#signup-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const payload = formDataObject(event.currentTarget);
+      const payload = formDataObject(form);
       if (payload.password !== payload.password_confirm) {
         showMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.", true);
         return;
@@ -275,7 +277,7 @@ function setupForms() {
       delete payload.password_confirm;
       const email = payload.email;
       const data = await apiPost("signup", payload);
-      event.currentTarget.reset();
+      form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
       showMessage(data.message || "회원가입 신청이 완료되었습니다. 이메일 인증 후 로그인해 주세요.");
@@ -287,8 +289,9 @@ function setupForms() {
   $("#find-email-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("find_email", formDataObject(event.currentTarget));
+      const data = await apiPost("find_email", formDataObject(form));
       const emails = data.emails || [];
       const target = $("#found-email-list");
       target.hidden = false;
@@ -303,11 +306,12 @@ function setupForms() {
   $("#reset-password-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const payload = formDataObject(event.currentTarget);
+      const payload = formDataObject(form);
       const email = payload.email;
       const data = await apiPost("request_password_reset", payload);
-      event.currentTarget.reset();
+      form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
       showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
@@ -319,8 +323,9 @@ function setupForms() {
   $("#resend-verification-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("resend_verification", formDataObject(event.currentTarget));
+      const data = await apiPost("resend_verification", formDataObject(form));
       showMessage(data.message || "가입된 이메일이면 인증 메일을 다시 보냈습니다.");
     } catch (error) {
       showMessage(error.message, true);
@@ -330,8 +335,9 @@ function setupForms() {
   $("#profile-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("update_profile", formDataObject(event.currentTarget), true);
+      const data = await apiPost("update_profile", formDataObject(form), true);
       renderAccount(data);
       showMessage("계정 정보를 저장했습니다.");
     } catch (error) {
@@ -342,12 +348,13 @@ function setupForms() {
   $("#payment-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const payload = formDataObject(event.currentTarget);
+      const payload = formDataObject(form);
       payload.purchased_months = Number(payload.purchased_months || 1);
       payload.amount_krw = PLAN_PRICE[payload.purchased_months] || PLAN_PRICE[1];
       const data = await apiPost("create_payment_record", payload, true);
-      event.currentTarget.reset();
+      form.reset();
       renderAccount(data);
       showMessage("결제 요청을 등록했습니다. 관리자 확인 후 결제완료로 변경됩니다.");
     } catch (error) {
@@ -358,9 +365,10 @@ function setupForms() {
   $("#license-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("link_license_key", formDataObject(event.currentTarget), true);
-      event.currentTarget.reset();
+      const data = await apiPost("link_license_key", formDataObject(form), true);
+      form.reset();
       renderAccount(data);
       showMessage("라이선스를 계정에 연결했습니다.");
     } catch (error) {
@@ -371,9 +379,10 @@ function setupForms() {
   $("#change-password-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+    const form = event.currentTarget;
     try {
-      const data = await apiPost("change_password", formDataObject(event.currentTarget), true);
-      event.currentTarget.reset();
+      const data = await apiPost("change_password", formDataObject(form), true);
+      form.reset();
       showMessage(data.message || "비밀번호를 변경했습니다.");
     } catch (error) {
       showMessage(error.message, true);
