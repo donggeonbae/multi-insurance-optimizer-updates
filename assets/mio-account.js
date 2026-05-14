@@ -5,9 +5,18 @@ const PLAN_PRICE = {
   3: 27900,
   6: 54900,
 };
+const ADMIN_EMAIL = "donggeonbae.16@gmail.com";
+const ADMIN_PAGE_SIZE = 10;
 
 let session = loadSession();
 let accountState = null;
+let adminState = {
+  payments: [],
+  accounts: [],
+  paymentPage: 1,
+  accountPage: 1,
+  loaded: false,
+};
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -95,6 +104,16 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function escapeDash(value) {
+  const text = String(value ?? "").trim();
+  return text ? escapeHtml(text) : "-";
+}
+
+function isAdminAccount(data = accountState) {
+  const email = String(data?.user?.email || data?.profile?.email || "").trim().toLowerCase();
+  return email === ADMIN_EMAIL;
 }
 
 function loadSession() {
@@ -313,6 +332,197 @@ function renderPayments(payments = [], subscription = {}) {
   setupCancelPaymentButtons();
 }
 
+function pageItems(items, page) {
+  const total = Math.max(1, Math.ceil(items.length / ADMIN_PAGE_SIZE));
+  const safePage = Math.min(total, Math.max(1, Number(page || 1)));
+  const start = (safePage - 1) * ADMIN_PAGE_SIZE;
+  return { total, safePage, rows: items.slice(start, start + ADMIN_PAGE_SIZE) };
+}
+
+function renderPagination(targetSelector, page, total, onPage) {
+  const target = $(targetSelector);
+  if (!target) return;
+  if (total <= 1) {
+    target.innerHTML = "";
+    return;
+  }
+  target.innerHTML = `
+    <button class="button ghost small" type="button" data-page="prev">이전</button>
+    <span class="hint">${escapeHtml(page)} / ${escapeHtml(total)}</span>
+    <button class="button ghost small" type="button" data-page="next">다음</button>
+  `;
+  target.querySelector('[data-page="prev"]')?.addEventListener("click", () => onPage(page - 1));
+  target.querySelector('[data-page="next"]')?.addEventListener("click", () => onPage(page + 1));
+}
+
+async function refreshAdminData() {
+  if (!isAdminAccount()) {
+    renderAdminPanel(false);
+    return;
+  }
+  try {
+    const [paymentData, accountData] = await Promise.all([
+      apiPost("admin_list_payment_records", {}, true),
+      apiPost("admin_list_account_profiles", {}, true),
+    ]);
+    adminState.payments = paymentData.payments || [];
+    adminState.accounts = accountData.accounts || [];
+    adminState.loaded = true;
+    renderAdminPanel(true);
+  } catch (error) {
+    renderAdminPanel(true);
+    showMessage(error.message || "관리자 정보를 불러오지 못했습니다.", true);
+  }
+}
+
+function renderAdminPanel(visible = isAdminAccount()) {
+  const panel = $("#admin-panel");
+  if (!panel) return;
+  panel.hidden = !visible;
+  if (!visible) return;
+  renderAdminPayments();
+  renderAdminAccounts();
+}
+
+function renderAdminPayments() {
+  const target = $("#admin-payment-list");
+  if (!target) return;
+  if (!adminState.loaded) {
+    target.innerHTML = '<div class="empty">관리자 결제내역을 불러오는 중입니다.</div>';
+    return;
+  }
+  if (!adminState.payments.length) {
+    target.innerHTML = '<div class="empty">결제내역이 없습니다.</div>';
+    renderPagination("#admin-payment-pagination", 1, 1, () => {});
+    return;
+  }
+  const { total, safePage, rows } = pageItems(adminState.payments, adminState.paymentPage);
+  adminState.paymentPage = safePage;
+  const body = rows.map((payment) => {
+    const profile = payment.profile || {};
+    return `<tr>
+      <td>${escapeDash(payment.requested_at)}</td>
+      <td>${escapeDash(profile.email)}</td>
+      <td>${escapeDash(profile.display_name)}</td>
+      <td>${paymentStatusLabel(payment.status)}</td>
+      <td>${escapeHtml(payment.purchased_months || 1)}개월</td>
+      <td>${formatKrw(payment.amount_krw)}</td>
+      <td>${escapeDash(payment.order_ref)}</td>
+      <td>${escapeDash(payment.payer_name)}</td>
+      <td>${escapeDash(payment.license_id_text)}</td>
+      <td>
+        <details>
+          <summary>관리</summary>
+          <form class="stack-form admin-payment-form" data-admin-payment="${escapeHtml(payment.id)}">
+            <input name="status" value="${escapeHtml(payment.status || "pending")}" placeholder="pending/paid/cancelled/refunded" />
+            <input name="purchased_months" value="${escapeHtml(payment.purchased_months || 1)}" placeholder="개월" />
+            <input name="amount_krw" value="${escapeHtml(payment.amount_krw || PLAN_PRICE[payment.purchased_months] || PLAN_PRICE[1])}" placeholder="금액" />
+            <input name="order_ref" value="${escapeHtml(payment.order_ref || "")}" placeholder="주문번호" />
+            <input name="payer_name" value="${escapeHtml(payment.payer_name || "")}" placeholder="주문자명" />
+            <input name="license_id_text" value="${escapeHtml(payment.license_id_text || "")}" placeholder="라이선스 ID(선택)" />
+            <input name="admin_memo" value="${escapeHtml(payment.admin_memo || "")}" placeholder="관리자 메모" />
+            <button class="button primary compact" type="submit">저장</button>
+            <button class="button danger compact" type="button" data-admin-delete-payment="${escapeHtml(payment.id)}">삭제</button>
+          </form>
+        </details>
+      </td>
+    </tr>`;
+  }).join("");
+  target.innerHTML = `<table>
+    <thead><tr><th>요청일</th><th>이메일</th><th>이름</th><th>상태</th><th>기간</th><th>금액</th><th>주문번호</th><th>주문자</th><th>라이선스</th><th>관리</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+  renderPagination("#admin-payment-pagination", safePage, total, (nextPage) => {
+    adminState.paymentPage = nextPage;
+    renderAdminPayments();
+  });
+  setupAdminPaymentControls();
+}
+
+function renderAdminAccounts() {
+  const target = $("#admin-account-list");
+  if (!target) return;
+  if (!adminState.loaded) {
+    target.innerHTML = '<div class="empty">관리자 계정 목록을 불러오는 중입니다.</div>';
+    return;
+  }
+  if (!adminState.accounts.length) {
+    target.innerHTML = '<div class="empty">계정이 없습니다.</div>';
+    renderPagination("#admin-account-pagination", 1, 1, () => {});
+    return;
+  }
+  const { total, safePage, rows } = pageItems(adminState.accounts, adminState.accountPage);
+  adminState.accountPage = safePage;
+  const body = rows.map((account) => `<tr>
+      <td>${escapeDash(account.email)}</td>
+      <td>${escapeDash(account.display_name)}</td>
+      <td>${escapeDash(account.company_name)}</td>
+      <td>${escapeDash(account.trial_expires_at)}</td>
+      <td>${escapeDash(account.created_at)}</td>
+      <td><button class="button danger small" type="button" data-admin-delete-account="${escapeHtml(account.user_id)}">계정 삭제</button></td>
+    </tr>`).join("");
+  target.innerHTML = `<table>
+    <thead><tr><th>이메일</th><th>이름</th><th>회사/지점</th><th>체험 만료</th><th>가입일</th><th>관리</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+  renderPagination("#admin-account-pagination", safePage, total, (nextPage) => {
+    adminState.accountPage = nextPage;
+    renderAdminAccounts();
+  });
+  setupAdminAccountControls();
+}
+
+function setupAdminPaymentControls() {
+  for (const form of document.querySelectorAll(".admin-payment-form")) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage();
+      const payload = formDataObject(form);
+      payload.payment_record_id = form.dataset.adminPayment;
+      payload.purchased_months = Number(payload.purchased_months || 1);
+      payload.amount_krw = Number(payload.amount_krw || 0);
+      try {
+        const data = await apiPost("admin_update_payment_record", payload, true);
+        showMessage(data.message || "결제내역을 저장했습니다.");
+        await refreshAdminData();
+        await loadAccount();
+      } catch (error) {
+        showMessage(error.message, true);
+      }
+    });
+  }
+  for (const button of document.querySelectorAll("[data-admin-delete-payment]")) {
+    button.addEventListener("click", async () => {
+      if (!confirm("이 결제내역을 삭제할까요? 연결된 이용권 만료일도 재계산됩니다.")) return;
+      clearMessage();
+      try {
+        const data = await apiPost("admin_delete_payment_record", { payment_record_id: button.dataset.adminDeletePayment }, true);
+        showMessage(data.message || "결제내역을 삭제했습니다.");
+        await refreshAdminData();
+        await loadAccount();
+      } catch (error) {
+        showMessage(error.message, true);
+      }
+    });
+  }
+}
+
+function setupAdminAccountControls() {
+  for (const button of document.querySelectorAll("[data-admin-delete-account]")) {
+    button.addEventListener("click", async () => {
+      if (!confirm("이 계정을 삭제할까요? 탈퇴 이력이 남아 같은 이메일 재가입이 차단됩니다.")) return;
+      clearMessage();
+      try {
+        const data = await apiPost("admin_delete_account", { account_user_id: button.dataset.adminDeleteAccount }, true);
+        showMessage(data.message || "계정을 삭제했습니다.");
+        await refreshAdminData();
+      } catch (error) {
+        showMessage(error.message, true);
+      }
+    });
+  }
+}
+
 function renderPaymentInstructions() {
   const target = $("#payment-instructions");
   if (!target) return;
@@ -383,6 +593,13 @@ function renderAccount(data) {
   renderPayments(data.payments || [], data.subscription || {});
   renderPaymentInstructions();
   renderIssuedLicense(data);
+  if (isAdminAccount(data)) {
+    renderAdminPanel(true);
+    if (!adminState.loaded) refreshAdminData();
+  } else {
+    adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
+    renderAdminPanel(false);
+  }
 }
 
 async function loadAccount() {
@@ -421,6 +638,17 @@ function setupAuthTabs() {
   }
 }
 
+function setupAdminTabs() {
+  for (const tab of document.querySelectorAll("[data-admin-tab]")) {
+    tab.addEventListener("click", () => {
+      const mode = tab.dataset.adminTab;
+      document.querySelectorAll("[data-admin-tab]").forEach((item) => item.classList.toggle("active", item === tab));
+      $("#admin-payments-panel").hidden = mode !== "payments";
+      $("#admin-accounts-panel").hidden = mode !== "accounts";
+    });
+  }
+}
+
 function setupForms() {
   $("#login-form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -451,7 +679,7 @@ function setupForms() {
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
-      showMessage(data.message || "회원가입 신청이 완료되었습니다. 이메일 인증 후 로그인해 주세요.");
+      showMessage(data.message || "회원가입 신청이 완료되었습니다. 입력한 이메일함에서 MIO 인증 메일의 링크를 클릭하면 인증됩니다. 인증 후 로그인해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }
@@ -584,7 +812,9 @@ function setupForms() {
       form.reset();
       saveSession(null);
       accountState = null;
+      adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
       renderAuthState();
+      renderAdminPanel(false);
       showMessage(data.message || "계정을 삭제했습니다. 같은 이메일로는 다시 가입할 수 없습니다.");
     } catch (error) {
       showMessage(error.message, true);
@@ -594,12 +824,15 @@ function setupForms() {
   $("#logout-button").addEventListener("click", () => {
     saveSession(null);
     accountState = null;
+    adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
     renderAuthState();
+    renderAdminPanel(false);
     showMessage("로그아웃되었습니다.");
   });
 }
 
 setupAuthTabs();
+setupAdminTabs();
 setupForms();
 applyCheckoutQueryDefaults();
 loadAccount();

@@ -182,7 +182,17 @@
     .footer-line { border-top: 1px solid rgba(190,224,255,.12); padding-top: 18px; display: grid; gap: 6px; }
     @media (max-width: 760px) {
       .wrap { width: min(100% - 24px, 1480px); }
-      .top-links { display: none; }
+      .nav { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .top-links {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0 0 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .top-links .pill { flex: 0 0 auto; padding: 8px 12px; font-size: 13px; }
       .hero { padding-top: 38px; }
       .btn { width: 100%; }
       .app-btn { width: 56px; min-width: 56px; height: 56px; }

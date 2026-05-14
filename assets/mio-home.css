@@ -242,6 +242,9 @@ h3 {
   color: var(--ink);
   box-shadow: 0 12px 28px rgba(0,0,0,.20);
 }
+.tabs.admin-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
 .auth-form,
 .stack-form {
@@ -488,6 +491,13 @@ select option { background: #0b111d; color: var(--ink); }
   word-break: break-all;
 }
 .table-wrap { overflow-x: auto; }
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
 table {
   width: 100%;
   border-collapse: collapse;
