@@ -29,7 +29,7 @@ function renderSuccess(data) {
       <div><dt>만료일</dt><dd>${escapeHtml(data.expires_at || "-")}</dd></div>
     </dl>
     ${key ? `<textarea class="trial-key" readonly>${escapeHtml(key)}</textarea><button id="copy-license-key" class="button primary full" type="button">라이선스 키 복사</button>` : ""}
-    <p class="hint">계정 페이지의 내 라이선스 목록에도 자동 연결되었습니다. 프로그램의 라이선스 입력란에 위 키를 붙여넣어 등록해 주세요.</p>
+    <p class="hint">계정 페이지의 내 라이선스 목록에도 자동 연결되었습니다. 프로그램에서는 같은 계정으로 로그인하면 자동 인증됩니다. 자동 인증이 되지 않으면 홈페이지 계정 페이지의 '라이선스 연결' 칸에 위 키를 붙여넣어 연결해 주세요.</p>
     <p><a class="button ghost compact" href="./account.html">계정 페이지로 돌아가기</a></p>`;
   document.querySelector("#copy-license-key")?.addEventListener("click", async () => {
     try {

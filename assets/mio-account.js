@@ -554,7 +554,7 @@ function renderIssuedLicense(data = {}) {
   target.hidden = false;
   target.innerHTML = `
     <p class="hint">${accountKey ? "현재 계정에 활성 라이선스가 연결되어 있습니다." : "라이선스가 자동 발급되었습니다."}</p>
-    <div class="empty">라이선스 키는 화면에 표시하지 않습니다. 유료 라이선스 키는 가입 이메일로 발송됩니다. 이메일에서도 확인되지 않거나 프로그램 인증이 되지 않으면 주문서 캡처와 함께 support@mio.ai.kr로 문의해 주세요.</div>
+    <div class="empty">라이선스 키는 화면에 표시하지 않습니다. 유료 라이선스 키는 가입 이메일로 발송됩니다. 프로그램에서 같은 계정으로 로그인하면 자동 인증됩니다. 자동 인증이 되지 않으면 이메일의 라이선스 키를 이 페이지의 '라이선스 연결' 칸에 붙여넣어 연결해 주세요. 이메일에서도 확인되지 않으면 주문서 캡처와 함께 support@mio.ai.kr로 문의해 주세요.</div>
   `;
 }
 
