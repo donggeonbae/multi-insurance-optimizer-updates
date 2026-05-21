@@ -50,7 +50,7 @@ function deviceTypeLabel(value) {
 }
 
 function selectedPaymentProvider() {
-  return $("#payment-form")?.provider?.value || "smartstore";
+  return "smartstore";
 }
 
 function selectedPaymentMonths() {
@@ -97,8 +97,6 @@ function applyCheckoutQueryDefaults() {
   const months = checkoutQueryPlan();
   const form = $("#payment-form");
   if (months && form?.purchased_months) form.purchased_months.value = String(months);
-  const provider = checkoutQueryProvider();
-  if (provider && form?.provider) form.provider.value = provider;
 }
 
 function escapeHtml(value) {
@@ -364,7 +362,7 @@ async function startSocialLogin(provider) {
     showMessage(providerDisabledMessage(normalizedProvider), true);
     return;
   }
-  const redirectUrl = new URL(`${window.location.origin}${window.location.pathname}`);
+  const redirectUrl = new URL(`${window.location.origin}/account.html`);
   redirectUrl.searchParams.set("social", "1");
   redirectUrl.searchParams.set("social_provider", normalizedProvider);
   const appRedirect = requestedAppRedirectUrl();
@@ -479,10 +477,11 @@ async function refreshSessionIfNeeded() {
 function renderAuthState() {
   const loggedIn = Boolean(session?.access_token && accountState);
   $("#auth-panel").hidden = loggedIn;
-  $("#account-note").hidden = loggedIn;
+  const accountNote = $("#account-note");
+  if (accountNote) accountNote.hidden = loggedIn;
   $("#dashboard").hidden = !loggedIn;
-  const priceStrip = $("#price-strip");
-  if (priceStrip) priceStrip.hidden = !loggedIn;
+  const accountStepsStrip = $("#account-steps-strip");
+  if (accountStepsStrip) accountStepsStrip.hidden = loggedIn;
 }
 
 function renderProfile(profile = {}, user = {}) {
@@ -631,47 +630,49 @@ function renderPaymentInstructions() {
   if (!target) return;
   const months = selectedPaymentMonths();
   const amount = PLAN_PRICE[months] || PLAN_PRICE[1];
-  const provider = selectedPaymentProvider();
   const orderGroup = $("#payment-order-group");
   const payerGroup = $("#payment-payer-group");
   const orderInput = $("#payment-form")?.order_ref;
   const payerInput = $("#payment-form")?.payer_name;
   const submitButton = $("#payment-submit-button");
   if (orderGroup && payerGroup && orderInput && payerInput) {
-    const needsSmartStoreOrder = provider === "smartstore";
-    orderGroup.hidden = !needsSmartStoreOrder;
-    payerGroup.hidden = !needsSmartStoreOrder;
-    orderInput.required = needsSmartStoreOrder;
-    payerInput.required = needsSmartStoreOrder;
-    orderInput.disabled = !needsSmartStoreOrder;
-    payerInput.disabled = !needsSmartStoreOrder;
+    orderGroup.hidden = false;
+    payerGroup.hidden = false;
+    orderInput.required = true;
+    payerInput.required = true;
+    orderInput.disabled = false;
+    payerInput.disabled = false;
   }
-  if (submitButton) {
-    submitButton.textContent = provider === "kakaopay" ? "카카오페이 결제 시작" : "주문번호 확인 및 이용권 발급";
-  }
-  if (provider === "kakaopay") {
-    const kakaoPay = paymentOption("kakaopay");
-    const available = Boolean(kakaoPay.checkout_available || kakaoPay.available);
-    target.innerHTML = `
-      <div class="payment-summary">
-        <strong>카카오페이</strong>
-        <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
-      </div>
-      <p class="hint">카카오페이 결제창에서 결제를 완료하면 이 계정에 이용권이 자동 발급됩니다. 라이선스가 계정에 연결된 이후에는 환불되지 않습니다.</p>
-      ${available ? "" : '<div class="empty">카카오페이는 가맹점 심사와 서버 키 설정이 끝난 뒤 활성화됩니다. 지금은 스마트스토어 구매 등록을 이용해 주세요.</div>'}`;
-    return;
-  }
+  if (submitButton) submitButton.textContent = "주문번호 확인 및 이용권 발급";
+
   const smartstore = paymentOption("smartstore");
-  const url = paymentDestinationUrl("smartstore", months);
+  const naverUrl = paymentDestinationUrl("smartstore", months);
   const autoVerify = Boolean(smartstore.auto_verify_available);
+  const kakaoPay = paymentOption("kakaopay");
+  const kakaoAvailable = Boolean(kakaoPay.checkout_available || kakaoPay.available);
+  const kakaoButton = $("#kakaopay-checkout-button");
+  if (kakaoButton) {
+    kakaoButton.disabled = !kakaoAvailable;
+    kakaoButton.classList.toggle("disabled", !kakaoAvailable);
+    kakaoButton.title = kakaoAvailable ? "" : "카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 사용할 수 있습니다.";
+  }
+  const naverLink = $("#naverpay-buy-link");
+  if (naverLink) {
+    naverLink.href = naverUrl || "#";
+    naverLink.classList.toggle("disabled", !naverUrl);
+    naverLink.setAttribute("aria-disabled", naverUrl ? "false" : "true");
+    naverLink.title = naverUrl ? "" : "네이버페이 구매 페이지가 아직 서버에 설정되지 않았습니다.";
+  }
+
   target.innerHTML = `
     <div class="payment-summary">
-      <strong>스마트스토어</strong>
+      <strong>이용권</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">구매 링크</a>` : '<div class="empty">구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
-    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다. 라이선스가 계정에 연결된 이후에는 환불되지 않습니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
-    ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}`;
+    <p class="hint">카카오페이는 버튼을 누르면 바로 결제창으로 이동하고, 결제 완료 후 계정에 이용권이 자동 발급됩니다.</p>
+    <p class="hint">네이버페이는 구매 페이지에서 결제한 뒤 아래 주문번호와 주문자명을 입력하면 서버가 결제완료 상태를 확인해 라이선스를 발급합니다.</p>
+    ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}
+    ${kakaoAvailable ? "" : '<div class="empty">카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 활성화됩니다.</div>'}`;
 }
 
 function renderIssuedLicense(data = {}) {
@@ -794,6 +795,37 @@ async function handleKakaoPayReturn() {
     return true;
   } finally {
     cleanKakaoPayReturnUrl();
+  }
+}
+
+async function startKakaoPayCheckout() {
+  clearMessage();
+  if (!session?.access_token) {
+    showMessage("카카오페이 결제는 로그인 후 이용할 수 있습니다.", true);
+    return;
+  }
+  const form = $("#payment-form");
+  const button = $("#kakaopay-checkout-button");
+  const checkoutPopup = window.open("about:blank", "_blank");
+  try {
+    const payload = formDataObject(form);
+    payload.provider = "kakaopay";
+    payload.purchased_months = Number(payload.purchased_months || 1);
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    const data = await apiPost("create_kakaopay_checkout", payload, true);
+    if (openPaymentDestination(data.next_redirect_url, checkoutPopup)) {
+      showMessage(data.payment_message || "카카오페이 결제창으로 이동합니다.");
+    } else {
+      showMessage("팝업이 차단되어 결제창을 열지 못했습니다. 브라우저 팝업 허용 후 다시 시도해 주세요.", true);
+    }
+  } catch (error) {
+    if (checkoutPopup && !checkoutPopup.closed) checkoutPopup.close();
+    showMessage(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.removeAttribute("aria-busy");
+    renderPaymentInstructions();
   }
 }
 
@@ -954,8 +986,8 @@ function setupForms() {
   });
 
   const paymentForm = $("#payment-form");
-  paymentForm.provider?.addEventListener("change", renderPaymentInstructions);
   paymentForm.purchased_months.addEventListener("change", renderPaymentInstructions);
+  $("#kakaopay-checkout-button")?.addEventListener("click", startKakaoPayCheckout);
   applyCheckoutQueryDefaults();
   paymentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -966,23 +998,12 @@ function setupForms() {
     }
     const form = event.currentTarget;
     const button = $("#payment-submit-button");
-    const provider = selectedPaymentProvider();
-    const checkoutPopup = provider === "kakaopay" ? window.open("about:blank", "_blank") : null;
     try {
       const payload = formDataObject(form);
-      payload.provider = provider;
+      payload.provider = "smartstore";
       payload.purchased_months = Number(payload.purchased_months || 1);
       button.disabled = true;
       button.setAttribute("aria-busy", "true");
-      if (provider === "kakaopay") {
-        const data = await apiPost("create_kakaopay_checkout", payload, true);
-        if (openPaymentDestination(data.next_redirect_url, checkoutPopup)) {
-          showMessage(data.payment_message || "카카오페이 결제창으로 이동합니다.");
-        } else {
-          showMessage("팝업이 차단되어 결제창을 열지 못했습니다. 브라우저 팝업 허용 후 다시 시도해 주세요.", true);
-        }
-        return;
-      }
       const data = await apiPost("create_payment_record", payload, true);
       renderAccount(data);
       if (data.license_key) {
@@ -992,7 +1013,6 @@ function setupForms() {
         showMessage(data.payment_message || "결제 확인은 완료됐지만 자동 발급 결과를 확인하지 못했습니다. support@mio.ai.kr로 문의해 주세요.");
       }
     } catch (error) {
-      if (checkoutPopup && !checkoutPopup.closed) checkoutPopup.close();
       showMessage(error.message, true);
     } finally {
       button.disabled = false;

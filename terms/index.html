@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MIO 이용약관 | Multi Insurance Optimizer</title>
+  <meta name="description" content="MIO 홈페이지, PC 프로그램, 모바일 앱, 계정, 결제 확인 및 라이선스 운영에 적용되는 서비스 이용약관" />
+  <meta name="theme-color" content="#070a0f" />
+  <link rel="icon" href="../assets/mio-cat.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/mio-home.css?v=20260514-terms-detail" />
+  <style>
+    .terms-meta { color: var(--muted); text-align: center; margin-top: 10px; }
+    .terms-layout { display: grid; grid-template-columns: minmax(220px, .34fr) minmax(0, 1fr); gap: 18px; align-items: start; margin: 18px 0 72px; }
+    .terms-toc { position: sticky; top: 18px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.055); box-shadow: var(--shadow); backdrop-filter: blur(18px); padding: 20px; }
+    .terms-toc h2 { font-size: 20px; letter-spacing: -.035em; margin-bottom: 8px; }
+    .terms-toc p { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .terms-toc ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: terms-toc; }
+    .terms-toc li { counter-increment: terms-toc; }
+    .terms-toc a { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; align-items: center; padding: 9px 10px; border: 1px solid rgba(180,216,255,.10); border-radius: 14px; color: var(--soft); text-decoration: none; background: rgba(4,9,17,.24); font-size: 13px; font-weight: 800; }
+    .terms-toc a::before { content: counter(terms-toc); display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: rgba(79,179,255,.13); color: #b9daf6; font-size: 12px; }
+    .terms-toc a:hover { border-color: rgba(79,179,255,.38); background: rgba(79,179,255,.10); }
+    .terms-shell { display: grid; gap: 18px; }
+    .terms-card { scroll-margin-top: 24px; border: 1px solid var(--line); border-radius: 26px; background: var(--panel); padding: clamp(20px, 3vw, 32px); box-shadow: var(--shadow); }
+    .terms-card h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .terms-card h3 { margin-top: 20px; }
+    .terms-card p, .terms-card li, .terms-card dd { color: var(--soft); line-height: 1.78; }
+    .terms-card p { margin: 0 0 12px; }
+    .terms-card ul, .terms-card ol { margin: 10px 0 0; padding-left: 1.25rem; }
+    .terms-card li + li { margin-top: 7px; }
+    .terms-card a { color: #b9e2ff; font-weight: 900; text-decoration-thickness: .08em; text-underline-offset: .18em; }
+    .section-permalink { display: inline-grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border: 1px solid rgba(79,179,255,.28); border-radius: 10px; color: #b9e2ff; background: rgba(79,179,255,.10); font-size: 16px; text-decoration: none; }
+    .section-summary { margin: 0 0 14px; padding: 12px 14px; border: 1px solid rgba(79,179,255,.18); border-radius: 16px; background: rgba(79,179,255,.08); color: #d9ecff; font-weight: 800; line-height: 1.65; }
+    .summary-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .summary-table th, .summary-table td { white-space: normal; vertical-align: top; }
+    .summary-table td:first-child { width: 190px; color: #b9daf6; font-weight: 900; }
+    .definition-list { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 10px 14px; margin: 12px 0 0; }
+    .definition-list dt { color: #b9daf6; font-weight: 900; }
+    .definition-list dd { margin: 0; }
+    .business-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .business-table th, .business-table td { white-space: normal; vertical-align: top; text-align: left; }
+    .business-table th { width: 190px; color: #b9daf6; }
+    .price-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+    .price-list div { border: 1px solid rgba(79,179,255,.16); border-radius: 17px; background: rgba(255,255,255,.045); padding: 14px; }
+    .price-list strong, .price-list span { display: block; }
+    .price-list strong { color: var(--ink); }
+    .price-list span { margin-top: 6px; color: var(--success); font-weight: 900; }
+    .back-to-toc { display: inline-flex; margin-top: 16px; color: var(--muted) !important; font-size: 13px; text-decoration: none !important; }
+    .legal-note { border-color: rgba(255, 210, 120, .28); background: rgba(255, 210, 120, .08); }
+    @media (max-width: 980px) {
+      .terms-layout { grid-template-columns: 1fr; }
+      .terms-toc { position: static; }
+    }
+    @media (max-width: 760px) {
+      .definition-list, .price-list { grid-template-columns: 1fr; }
+      .summary-table td:first-child { width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap site-top">
+    <nav class="nav" aria-label="주요 메뉴">
+      <a class="brand" href="../" aria-label="MIO 홈">
+        <img src="../assets/mio-cat.png" alt="" />
+        <span>MIO<small>Multi Insurance Optimizer</small></span>
+      </a>
+      <div class="top-links">
+        <a class="pill" href="../">홈</a>
+        <a class="pill" href="../account/">계정</a>
+        <a class="pill active" href="../terms/">이용약관</a>
+        <a class="pill" href="../privacy/">개인정보처리방침</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="account-hero">
+      <span class="badge">Terms of Service</span>
+      <h1>서비스 이용약관 및 계정·라이선스 운영 안내</h1>
+      <p class="lead">MIO 홈페이지, PC 프로그램, 모바일 앱, 계정, 결제 확인, 라이선스 인증에 공통 적용되는 기준입니다.</p>
+      <p class="terms-meta">시행일: 2026년 5월 14일 · 문의: <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a></p>
+    </section>
+
+    <section class="terms-layout">
+      <aside id="terms-toc" class="terms-toc" aria-label="이용약관 목차">
+        <h2>이 문서의 내용</h2>
+        <p>각 조항 제목과 목차 항목은 바로가기 링크로 연결되어 있습니다.</p>
+        <ol>
+          <li><a href="#summary">요약</a></li>
+          <li><a href="#definitions">정의</a></li>
+          <li><a href="#service-nature">서비스의 성격</a></li>
+          <li><a href="#account-terms">계정 및 인증</a></li>
+          <li><a href="#license-terms">무료 체험·라이선스·기기</a></li>
+          <li><a href="#payment-terms">이용권·결제·구매 확인</a></li>
+          <li><a href="#refund-terms">취소 및 환불</a></li>
+          <li><a href="#data-privacy">사용자 자료와 개인정보</a></li>
+          <li><a href="#acceptable-use">이용자의 의무와 금지행위</a></li>
+          <li><a href="#intellectual-property">지식재산권</a></li>
+          <li><a href="#updates-support">업데이트·장애·외부 서비스</a></li>
+          <li><a href="#termination">이용 제한·해지·계정 삭제</a></li>
+          <li><a href="#warranty-liability">보증 제한 및 책임 제한</a></li>
+          <li><a href="#seller-info">사업자 정보</a></li>
+          <li><a href="#communications">전자적 고지와 문의</a></li>
+          <li><a href="#changes-misc">약관 변경과 기타</a></li>
+        </ol>
+      </aside>
+
+      <section class="terms-shell" aria-label="이용약관 본문">
+        <article id="summary" class="terms-card">
+          <h2><a class="section-permalink" href="#summary" aria-label="요약 바로가기">#</a>요약</h2>
+          <p class="section-summary">아래 요약은 이해를 돕기 위한 안내이며, 실제 적용 기준은 각 조항 본문입니다.</p>
+          <table class="summary-table">
+            <thead>
+              <tr><th>구분</th><th>주요 내용</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>서비스</td><td>MIO는 보험설계 업무에서 자료 정리와 고지 검토 후보 확인을 돕는 보조 도구입니다.</td></tr>
+              <tr><td>최종 판단</td><td>진단, 치료, 보험 인수심사, 법률·세무 판단을 대신하지 않으며 최종 확인은 사용자 책임입니다.</td></tr>
+              <tr><td>계정</td><td>유효한 이메일 인증이 필요하고, 탈퇴 이력이 있는 이메일은 재가입이 제한됩니다.</td></tr>
+              <tr><td>기기</td><td>PC 프로그램은 계정당 최대 2대, 모바일 앱은 최대 1대까지 등록됩니다. 홈페이지 로그인은 등록 기기 수에 포함하지 않습니다.</td></tr>
+              <tr><td>결제</td><td>1개월 9,900원, 3개월 27,900원, 6개월 54,900원(VAT 포함) 이용권을 구매 후 주문번호와 주문자명으로 확인합니다.</td></tr>
+              <tr><td>자료</td><td>고객 PDF와 분석 결과는 기본적으로 사용자 기기에서 처리되며, 계정 서버에는 라이선스 운영에 필요한 최소 정보만 저장합니다.</td></tr>
+            </tbody>
+          </table>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="definitions" class="terms-card">
+          <h2><a class="section-permalink" href="#definitions" aria-label="정의 바로가기">#</a>1. 정의</h2>
+          <p class="section-summary">약관에서 반복되는 용어를 먼저 정리합니다.</p>
+          <dl class="definition-list">
+            <dt>서비스</dt><dd>MIO 홈페이지, 계정 페이지, PC 프로그램, 모바일 앱, 라이선스 서버, 결제 확인 및 업데이트 제공 기능을 말합니다.</dd>
+            <dt>이용자</dt><dd>서비스에 접속하거나 계정을 만들고 MIO를 사용하는 개인 또는 법인·단체를 말합니다.</dd>
+            <dt>계정</dt><dd>이메일, 비밀번호, 이름, 생년월일 등으로 식별되는 로그인 단위입니다.</dd>
+            <dt>라이선스</dt><dd>정해진 기간 동안 MIO 프로그램과 모바일 앱을 이용할 수 있도록 서버에 등록되는 이용 권한입니다.</dd>
+            <dt>기기</dt><dd>PC 프로그램 또는 모바일 앱에서 계정 인증에 사용되는 단말 식별값을 말합니다.</dd>
+            <dt>사용자 자료</dt><dd>이용자가 선택하거나 입력한 PDF, 요양급여내역, 처방/조제 정보, 상담 메모, 내보내기 파일 등 업무 자료를 말합니다.</dd>
+            <dt>외부 서비스</dt><dd>스마트스토어, 결제 링크, 이메일 발송, 클라우드, GitHub Pages 등 MIO 운영에 연결될 수 있는 제3자 서비스를 말합니다.</dd>
+          </dl>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="service-nature" class="terms-card legal-note">
+          <h2><a class="section-permalink" href="#service-nature" aria-label="서비스의 성격 바로가기">#</a>2. 서비스의 성격</h2>
+          <p class="section-summary">MIO는 보험설계 업무 보조 프로그램이며, 의료기기나 보험회사의 심사 시스템이 아닙니다.</p>
+          <ul>
+            <li>MIO는 병원 진료기록 PDF, 요양급여내역, 처방/조제 정보 등을 정리하고 고지 검토 후보를 확인하도록 돕는 도구입니다.</li>
+            <li>MIO가 표시하는 결과, 후보, 경고, 요약, 내보내기 파일은 자동 확정 판단이 아니라 검토 보조자료입니다.</li>
+            <li>MIO는 질병의 진단·치료·완화·예방, 의학적 판단, 보험 인수심사 확정, 보험금 지급 가능성 판단, 법률·세무 자문을 제공하지 않습니다.</li>
+            <li>최종 고지, 청약, 고객 설명, 상품 적합성·적정성, 회사 내부 승인, 법령 준수 여부는 이용자가 원본 자료와 해당 보험사·회사의 기준에 따라 확인해야 합니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="account-terms" class="terms-card">
+          <h2><a class="section-permalink" href="#account-terms" aria-label="계정 및 인증 바로가기">#</a>3. 계정 및 인증</h2>
+          <p class="section-summary">계정은 유효한 이메일과 본인 확인에 필요한 최소 정보로 운영됩니다.</p>
+          <ul>
+            <li>회원가입에는 이메일, 비밀번호, 이름, 생년월일, 회사/지점명 등 계정 식별과 중복가입 방지에 필요한 정보가 사용됩니다.</li>
+            <li>회원가입 시 비밀번호와 비밀번호 확인을 입력해야 하며, 로그인 전 이메일 인증이 필요합니다.</li>
+            <li>Google/Gmail, Kakao, Naver 등 소셜 로그인은 외부 제공자 인증이 완료된 Supabase OAuth/OIDC 세션으로 처리되며, 해당 세션은 별도 이메일 인증 없이 인증 완료 계정으로 취급할 수 있습니다.</li>
+            <li>소셜 로그인 제공자의 정책 변경, 계정 정지, 이메일 제공 제한, 외부 인증 장애가 있으면 로그인 또는 계정 연결이 제한될 수 있습니다.</li>
+            <li>한 이메일 주소는 하나의 계정에만 사용할 수 있습니다. 계정 삭제 또는 탈퇴 이력이 있는 이메일은 재가입이 제한되며, 필요한 경우 <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a>로 문의해야 합니다.</li>
+            <li>이용자는 계정과 비밀번호를 안전하게 관리해야 하며, 계정 공유·대여·재판매·무단 양도 또는 제3자의 무단 사용으로 발생한 문제는 이용자 책임입니다.</li>
+            <li>회원가입, 로그인, 아이디 찾기, 비밀번호 찾기, 비밀번호 변경, 계정 정보 변경 기능은 홈페이지와 프로그램 내 계정 화면에서 제공될 수 있습니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="license-terms" class="terms-card">
+          <h2><a class="section-permalink" href="#license-terms" aria-label="무료 체험·라이선스·기기 바로가기">#</a>4. 무료 체험·라이선스·기기</h2>
+          <p class="section-summary">무료 체험과 유료 이용권은 계정 기반 라이선스로 관리됩니다.</p>
+          <ul>
+            <li>이메일 인증 후 3일 무료 체험 라이선스가 제공될 수 있습니다. 무료 체험 라이선스 키는 이메일로 별도 발송하지 않을 수 있습니다.</li>
+            <li>유료 라이선스가 발급되면 가입 이메일로 라이선스 안내가 발송될 수 있습니다. 이메일에서도 확인되지 않거나 인증이 되지 않으면 주문서 캡처와 함께 고객지원으로 문의해 주세요.</li>
+            <li>PC 프로그램은 같은 계정 기준 최대 2대, 모바일 앱은 최대 1대까지 기기 등록이 가능합니다. 홈페이지 브라우저 로그인은 기기 수에 포함하지 않습니다.</li>
+            <li>기기 교체, 분실, 사용 종료가 발생하면 계정 내 기기 관리 또는 프로그램의 라이선스 제거 기능으로 등록을 해제할 수 있습니다.</li>
+            <li>라이선스 키 또는 계정 인증을 우회하거나, 허용 범위를 초과하여 복제·배포·공유하는 행위는 금지됩니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="payment-terms" class="terms-card">
+          <h2><a class="section-permalink" href="#payment-terms" aria-label="이용권·결제·구매 확인 바로가기">#</a>5. 이용권·결제·구매 확인</h2>
+          <p class="section-summary">이용권은 외부 구매 링크에서 결제하고, 주문번호와 주문자명으로 서버 확인 후 계정에 연결됩니다.</p>
+          <div class="price-list" aria-label="현재 이용권 가격">
+            <div><strong>1개월</strong><span>9,900원 · VAT 포함</span></div>
+            <div><strong>3개월</strong><span>27,900원 · VAT 포함</span></div>
+            <div><strong>6개월</strong><span>54,900원 · VAT 포함</span></div>
+          </div>
+          <ul>
+            <li>현재 제공되는 이용권은 1개월, 3개월, 6개월 단위입니다. 가격과 제공 방식은 향후 변경될 수 있으나, 이미 발급되어 진행 중인 이용기간에는 소급 적용하지 않습니다.</li>
+            <li>이용기간은 결제 확인 및 라이선스 발급이 완료된 날 또는 기존 유료 라이선스 만료일 이후부터 서버가 월 단위로 계산한 만료일까지 적용됩니다.</li>
+            <li>같은 계정으로 여러 이용권을 구매하면 이용기간은 합산되어 표시됩니다.</li>
+            <li>구매 후 계정 페이지 또는 프로그램에서 주문번호와 주문자명을 입력하면, 서버가 결제완료 상태를 확인해 라이선스를 발급하거나 기존 계정 라이선스의 만료일을 반영합니다.</li>
+            <li>주문번호가 이미 처리되었거나 다른 계정에 등록된 경우 중복 발급되지 않습니다. 주문번호, 주문자명, 구매 기간, 결제금액이 일치하지 않으면 발급이 보류될 수 있습니다.</li>
+            <li>외부 결제·판매 시스템의 장애, 주문 데이터 지연, API 제한으로 확인이 늦어질 수 있습니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="refund-terms" class="terms-card">
+          <h2><a class="section-permalink" href="#refund-terms" aria-label="취소 및 환불 바로가기">#</a>6. 취소 및 환불</h2>
+          <p class="section-summary">취소 가능 여부는 라이선스 사용 시작 여부와 외부 결제 시스템의 환불 절차를 함께 따릅니다.</p>
+          <ul>
+            <li>라이선스가 아직 발급되지 않았고 계정에 연결되지 않은 주문은 외부 판매/결제 시스템의 절차에 따라 취소 또는 환불을 요청할 수 있습니다.</li>
+            <li>결제 확인 후 라이선스가 계정에 연결된 이후에는 디지털 소프트웨어 이용권 제공이 완료된 것으로 보아 환불되지 않습니다.</li>
+            <li>같은 계정에서 결제완료 이용권이 여러 개 누적된 경우, 아직 시작되지 않은 미래 이용기간에 해당하는 주문은 계정 화면에서 취소요청 대상으로 표시될 수 있습니다.</li>
+            <li>실제 매출취소와 환불 처리는 구매가 이루어진 외부 판매/결제 시스템의 정책과 처리 가능 기간을 따릅니다.</li>
+            <li>이미 사용 중인 기간, 라이선스 발급 후 단순변심, 계정 공유·인증 우회 등 약관 위반이 확인된 경우 취소 또는 환불이 제한될 수 있습니다.</li>
+            <li>상품 내용이 표시·광고와 다르거나 정상 이용이 불가능한 경우에는 관계 법령 및 소비자분쟁해결기준에 따라 처리합니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="data-privacy" class="terms-card">
+          <h2><a class="section-permalink" href="#data-privacy" aria-label="사용자 자료와 개인정보 바로가기">#</a>7. 사용자 자료와 개인정보</h2>
+          <p class="section-summary">고객 원본자료는 이용자가 권한을 확보해 관리해야 하며, 계정 서버에는 운영에 필요한 최소 정보만 저장합니다.</p>
+          <ul>
+            <li>PDF 원본, 분석 결과, 상담 메모, 내보내기 파일 등 업무 자료는 기본적으로 사용자 기기에서 처리됩니다.</li>
+            <li>계정 서버에는 계정 정보, 이메일 인증 상태, 결제 확인 정보, 라이선스 연결 정보, 기기 ID, 기기 유형 등 서비스 운영에 필요한 정보가 저장됩니다.</li>
+            <li>이용자는 고객·피보험자·환자 등 제3자의 자료를 처리할 정당한 권한과 동의를 확보해야 하며, 주민등록번호, 연락처, 병원명, 진단명, 처방정보 등 개인정보와 민감정보를 관련 법령과 회사 내부 기준에 따라 보호해야 합니다.</li>
+            <li>원격지원, 화면공유, 캡처, 파일 전송 시에는 실제 고객자료 대신 테스트 자료를 사용하거나 식별정보를 가린 뒤 진행해야 합니다.</li>
+            <li>개인정보 수집·이용·보관·파기 기준은 <a href="../privacy/">개인정보처리방침</a>을 따릅니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="acceptable-use" class="terms-card">
+          <h2><a class="section-permalink" href="#acceptable-use" aria-label="이용자의 의무와 금지행위 바로가기">#</a>8. 이용자의 의무와 금지행위</h2>
+          <p class="section-summary">서비스는 합법적이고 정당한 업무 목적 범위에서만 사용해야 합니다.</p>
+          <ul>
+            <li>이용자는 보험업법, 금융소비자보호 관련 규정, 개인정보보호법, 의료정보·민감정보 처리 기준, 소속 회사의 내부 규정을 준수해야 합니다.</li>
+            <li>정당한 권한 없이 제3자의 자료를 처리하거나, 고객에게 검토되지 않은 결과를 확정적 사실처럼 안내해서는 안 됩니다.</li>
+            <li>서비스를 역분석, 복제, 재배포, 임대, 판매, 우회 인증, 자동 대량 요청, 취약점 악용, 악성코드 배포, 서비스 방해 목적으로 사용할 수 없습니다.</li>
+            <li>계정, 라이선스 키, 관리자 권한, API 키, 결제 확인 정보를 공유하거나 유출해서는 안 됩니다.</li>
+            <li>서비스의 명칭, 로고, 화면, 문서, 결과물을 오인 가능하게 표시하거나 MIO의 승인 없이 공식 대리점·제휴사처럼 표시해서는 안 됩니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="intellectual-property" class="terms-card">
+          <h2><a class="section-permalink" href="#intellectual-property" aria-label="지식재산권 바로가기">#</a>9. 지식재산권</h2>
+          <p class="section-summary">MIO 프로그램과 문서의 권리는 운영자에게 있고, 이용자는 계약된 범위에서만 사용할 수 있습니다.</p>
+          <ul>
+            <li>MIO의 프로그램, 소스코드, 알고리즘, 화면 구성, 문서, 로고, 업데이트, 서버 기능에 관한 지식재산권은 MIO 운영자 또는 정당한 권리자에게 귀속됩니다.</li>
+            <li>이용자는 유효한 계정과 라이선스 범위에서 MIO를 사용할 수 있는 비독점적·양도불가·재판매불가 이용권만 부여받습니다.</li>
+            <li>이용자가 처리하는 고객 PDF, 상담 메모, 업무 자료의 권리는 이용자 또는 정당한 권리자에게 있으며, MIO는 해당 자료의 소유권을 주장하지 않습니다.</li>
+            <li>이용자가 제공한 일반적인 오류 제보, 기능 제안, 개선 의견은 개인·고객 식별정보를 제외한 범위에서 서비스 개선에 활용될 수 있습니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="updates-support" class="terms-card">
+          <h2><a class="section-permalink" href="#updates-support" aria-label="업데이트·장애·외부 서비스 바로가기">#</a>10. 업데이트·장애·외부 서비스</h2>
+          <p class="section-summary">기능 개선과 안정화를 위해 프로그램, 서버, 홈페이지는 변경될 수 있습니다.</p>
+          <ul>
+            <li>기능 개선, 오류 수정, 보안 패치, 외부 API 변경, 운영정책 변경에 따라 서비스 일부가 업데이트되거나 변경될 수 있습니다.</li>
+            <li>중요 업데이트는 홈페이지, 프로그램, 이메일 등 전자적 방법으로 안내될 수 있습니다. 업데이트 수신 동의 여부와 관계없이 보안·계정·결제 등 필수 운영 고지는 발송될 수 있습니다.</li>
+            <li>외부 결제·판매 시스템, 이메일 서비스, 클라우드, 도메인, GitHub Pages 등 MIO가 직접 통제할 수 없는 서비스의 장애나 정책 변경으로 일부 기능이 지연 또는 제한될 수 있습니다.</li>
+            <li>서비스 안정성, 보안, 법령 준수, 긴급 장애 대응을 위해 사전 고지 없이 일부 기능이 일시 중지될 수 있습니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="termination" class="terms-card">
+          <h2><a class="section-permalink" href="#termination" aria-label="이용 제한·해지·계정 삭제 바로가기">#</a>11. 이용 제한·해지·계정 삭제</h2>
+          <p class="section-summary">이용자는 계정을 삭제할 수 있고, 약관 위반 시 서비스 이용이 제한될 수 있습니다.</p>
+          <ul>
+            <li>이용자는 계정 화면에서 계정 삭제를 요청할 수 있습니다. 계정 삭제 시 로그인 정보, 기기 등록, 라이선스 연결, 결제내역 표시가 삭제 또는 비활성화될 수 있습니다.</li>
+            <li>탈퇴 이력이 있는 이메일은 재가입할 수 없으며, 복구 또는 재가입 문의는 고객지원으로 접수해야 합니다.</li>
+            <li>이용자가 약관을 위반하거나, 결제 취소·환불 악용, 계정 공유, 인증 우회, 불법 자료 처리, 서비스 장애 유발 행위를 한 경우 서비스 이용이 제한될 수 있습니다.</li>
+            <li>법령상 보관 의무, 분쟁 대응, 부정가입 방지, 결제 확인을 위해 필요한 정보는 개인정보처리방침과 관계 법령에 따라 일정 기간 보관될 수 있습니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="warranty-liability" class="terms-card legal-note">
+          <h2><a class="section-permalink" href="#warranty-liability" aria-label="보증 제한 및 책임 제한 바로가기">#</a>12. 보증 제한 및 책임 제한</h2>
+          <p class="section-summary">MIO는 업무 효율을 높이는 보조 도구이며, 모든 결과의 완전성·정확성·무중단성을 보증하지 않습니다.</p>
+          <ul>
+            <li>MIO는 원본 PDF 품질, 발급기관 양식 변경, 암호화 상태, OCR 품질, 누락된 기록, 보험사 질문 문구 차이 등에 따라 결과가 달라질 수 있습니다.</li>
+            <li>이용자는 프로그램 결과를 원본 자료, 보험사 고지서, 약관, 회사 내부 기준과 대조해 검토해야 합니다.</li>
+            <li>관계 법령상 허용되는 범위에서, MIO 운영자는 서비스 이용 또는 이용 불능으로 발생한 간접손해, 특별손해, 영업손실, 평판손실, 제3자 클레임에 대해 책임을 제한합니다.</li>
+            <li>유료 이용자에 대한 손해배상 책임이 인정되는 경우에도, 고의 또는 중대한 과실이 없는 한 책임 범위는 최근 3개월 동안 해당 계정이 실제 지급한 이용료를 한도로 합니다. 다만 소비자보호 등 강행 법규가 우선하는 경우 그 법규를 따릅니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="seller-info" class="terms-card">
+          <h2><a class="section-permalink" href="#seller-info" aria-label="사업자 정보 바로가기">#</a>13. 사업자 정보</h2>
+          <p class="section-summary">통신판매 및 소프트웨어 제공에 관한 기본 사업자 정보를 고지합니다.</p>
+          <table class="business-table">
+            <tbody>
+              <tr><th>상호</th><td>람블루</td></tr>
+              <tr><th>대표자</th><td>배동건</td></tr>
+              <tr><th>사업자등록번호</th><td>725-18-02418</td></tr>
+              <tr><th>통신판매업신고번호</th><td>2026-서울관악-0941</td></tr>
+              <tr><th>사업자 구분</th><td>개인사업자</td></tr>
+              <tr><th>업태/업종</th><td>정보통신업 / 응용 소프트웨어 개발 및 공급업</td></tr>
+              <tr><th>사업장소재지</th><td>서울특별시 관악구 서림길 82 (삼양) 505호</td></tr>
+              <tr><th>문의</th><td><a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a></td></tr>
+            </tbody>
+          </table>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="communications" class="terms-card">
+          <h2><a class="section-permalink" href="#communications" aria-label="전자적 고지와 문의 바로가기">#</a>14. 전자적 고지와 문의</h2>
+          <p class="section-summary">MIO는 홈페이지, 프로그램 화면, 이메일 등 전자적 방법으로 주요 내용을 안내합니다.</p>
+          <ul>
+            <li>이용자는 계정 생성 및 서비스 이용과 관련해 이메일, 홈페이지, 프로그램 화면, 모바일 앱 알림 등 전자적 방식의 고지를 받을 수 있습니다.</li>
+            <li>결제, 라이선스, 보안, 약관·개인정보처리방침 변경, 서비스 장애 등 필수 운영 고지는 마케팅 수신 동의 여부와 관계없이 발송될 수 있습니다.</li>
+            <li>업데이트 소식, 기능 안내, 프로모션 등 선택적 안내는 이용자의 수신 동의 범위에서 발송됩니다.</li>
+            <li>문의는 <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a>로 접수합니다. 결제 후 인증되지 않았거나 키 발급이 되지 않은 경우 주문서 캡처와 계정 이메일을 함께 보내 주세요.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+
+        <article id="changes-misc" class="terms-card">
+          <h2><a class="section-permalink" href="#changes-misc" aria-label="약관 변경과 기타 바로가기">#</a>15. 약관 변경과 기타</h2>
+          <p class="section-summary">약관이 변경되면 시행일과 변경 내용을 전자적 방법으로 안내합니다.</p>
+          <ul>
+            <li>MIO 운영자는 법령, 서비스 구조, 결제 방식, 라이선스 정책, 보안상 필요에 따라 약관을 변경할 수 있습니다.</li>
+            <li>이용자에게 불리하거나 중요한 변경은 시행 전 합리적인 기간 동안 홈페이지, 프로그램, 이메일 등으로 고지합니다. 단순 오탈자, 표현 정리, 링크 수정 등 실질적 권리·의무에 영향을 주지 않는 변경은 즉시 반영될 수 있습니다.</li>
+            <li>변경 시행 후 서비스를 계속 이용하면 변경된 약관에 동의한 것으로 볼 수 있습니다. 동의하지 않는 경우 이용자는 계정 삭제 또는 유료 이용기간 종료 후 이용 중단을 선택할 수 있습니다.</li>
+            <li>이 약관과 개인정보처리방침, 결제 화면, 구매 페이지, 별도 계약서 또는 발주서가 충돌하는 경우에는 해당 항목에 더 구체적으로 적용되는 문서가 우선합니다.</li>
+            <li>이 약관은 대한민국 법령을 기준으로 해석하며, 분쟁의 관할은 민사소송법 등 관계 법령에 따릅니다.</li>
+          </ul>
+          <a class="back-to-toc" href="#terms-toc">목차로 돌아가기</a>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-line">
+      <span>© MIO. Service terms for account, license, payment verification, PC program and mobile app.</span>
+      <span>본 문서는 서비스 운영 안내를 위한 약관이며, 개별 기업 계약은 별도 계약서가 우선할 수 있습니다.</span>
+      <div class="business-footer" aria-label="사업자 정보">
+        <span><strong>상호</strong> 람블루</span>
+        <span><strong>대표자</strong> 배동건 · <strong>사업자등록번호</strong> 725-18-02418 · <strong>통신판매업신고번호</strong> 2026-서울관악-0941</span>
+        <span><strong>사업장소재지</strong> 서울특별시 관악구 서림길 82 (삼양) 505호 · <strong>업태/업종</strong> 정보통신업 / 응용 소프트웨어 개발 및 공급업</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -140,36 +140,36 @@ h3 {
   text-transform: uppercase;
 }
 
-.price-strip {
+.process-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 10px 0 26px;
 }
-.price-strip article {
+.process-strip article {
   border: 1px solid var(--line);
   border-radius: 22px;
   background: rgba(255,255,255,.055);
   padding: 18px 20px;
   box-shadow: 0 18px 60px rgba(0,0,0,.20);
 }
-.price-strip article.featured {
+.process-strip article.featured {
   border-color: var(--line);
   background: rgba(255,255,255,.055);
 }
-.price-strip strong {
+.process-strip strong {
   display: block;
   color: var(--soft);
   font-size: 15px;
 }
-.price-strip span {
+.process-strip span {
   display: block;
   margin-top: 8px;
-  font-size: 28px;
+  font-size: 17px;
   font-weight: 900;
-  letter-spacing: -.05em;
+  letter-spacing: -.035em;
 }
-.price-strip small {
+.process-strip small {
   margin-left: 6px;
   color: var(--success);
   font-size: 13px;
@@ -697,6 +697,32 @@ select option { background: #0b111d; color: var(--ink); }
   color: var(--muted);
   line-height: 1.6;
 }
+
+.payment-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+.button.kakao-pay {
+  border-color: #fee500;
+  background: #fee500;
+  color: rgba(0,0,0,.85);
+  box-shadow: 0 18px 42px rgba(254,229,0,.16);
+}
+.button.naver-pay {
+  border-color: #03a94d;
+  background: #03a94d;
+  color: #fff;
+  box-shadow: 0 18px 42px rgba(3,169,77,.18);
+}
+.button.disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .55;
+  filter: grayscale(.22);
+  pointer-events: none;
+}
 .payment-instructions {
   display: grid;
   gap: 11px;
@@ -852,7 +878,8 @@ th {
   }
   .top-links { gap: 8px; }
   .account-hero { padding-top: 40px; }
-  .price-strip,
+  .process-strip,
+  .payment-action-grid,
   .form-grid,
   .tabs {
     grid-template-columns: 1fr;
