@@ -14,7 +14,7 @@
   --success: #7ee7bb;
   --shadow: 0 34px 110px rgba(0, 0, 0, .42);
   --radius: 30px;
-  font-family: "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Inter", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -531,7 +531,7 @@ select option { background: #0b111d; color: var(--ink); }
   border-color: #747775;
   background: #fff;
   color: #1f1f1f;
-  font-family: "Roboto", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", "Roboto", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
 }
 .social-button.kakao {
   border-color: #fee500;
