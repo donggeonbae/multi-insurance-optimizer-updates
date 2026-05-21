@@ -1,22 +1,19 @@
-﻿const ACCOUNT_ENDPOINT = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-account";
+const ACCOUNT_ENDPOINT = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-account";
+const SUPABASE_PROJECT_URL = "https://osccvepkxhmrfomtfgfj.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6mCr5tiS8IfI6BuXnok9hw_TIDHYUKf";
+const SUPABASE_AUTH_STORAGE_KEY = "mio_supabase_social_session_v1";
 const SESSION_KEY = "mio_account_session_v1";
+const REMEMBER_EMAIL_KEY = "mio_account_remembered_email_v1";
 const PLAN_PRICE = {
   1: 9900,
   3: 27900,
   6: 54900,
 };
-const ADMIN_EMAIL = "donggeonbae.16@gmail.com";
-const ADMIN_PAGE_SIZE = 10;
 
 let session = loadSession();
 let accountState = null;
-let adminState = {
-  payments: [],
-  accounts: [],
-  paymentPage: 1,
-  accountPage: 1,
-  loaded: false,
-};
+let supabaseAuthClient = null;
+let socialProviderAvailability = null;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -26,7 +23,7 @@ function formatKrw(value) {
 
 function paymentStatusLabel(value) {
   return {
-    pending: "확인 대기",
+    pending: "등록 오류",
     paid: "결제완료",
     cancel_requested: "취소요청",
     cancelled: "취소",
@@ -36,6 +33,7 @@ function paymentStatusLabel(value) {
 
 function providerLabel(value) {
   return {
+    kakaopay: "카카오페이",
     naverpay: "네이버페이",
     bank_transfer: "무통장 입금",
     smartstore: "스마트스토어",
@@ -47,14 +45,12 @@ function providerLabel(value) {
 function deviceTypeLabel(value) {
   return {
     pc: "PC",
-    laptop: "노트북",
     mobile: "모바일",
-    other: "기타",
-  }[value] || value || "-";
+  }[value] || "PC";
 }
 
 function selectedPaymentProvider() {
-  return "smartstore";
+  return $("#payment-form")?.provider?.value || "smartstore";
 }
 
 function selectedPaymentMonths() {
@@ -91,10 +87,18 @@ function checkoutQueryPlan() {
   return [1, 3, 6].includes(plan) ? plan : 0;
 }
 
+function checkoutQueryProvider() {
+  const params = new URLSearchParams(window.location.search);
+  const provider = (params.get("payment_provider") || params.get("provider") || "").toLowerCase();
+  return ["smartstore", "kakaopay"].includes(provider) ? provider : "";
+}
+
 function applyCheckoutQueryDefaults() {
   const months = checkoutQueryPlan();
   const form = $("#payment-form");
   if (months && form?.purchased_months) form.purchased_months.value = String(months);
+  const provider = checkoutQueryProvider();
+  if (provider && form?.provider) form.provider.value = provider;
 }
 
 function escapeHtml(value) {
@@ -104,16 +108,6 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
-
-function escapeDash(value) {
-  const text = String(value ?? "").trim();
-  return text ? escapeHtml(text) : "-";
-}
-
-function isAdminAccount(data = accountState) {
-  const email = String(data?.user?.email || data?.profile?.email || "").trim().toLowerCase();
-  return email === ADMIN_EMAIL;
 }
 
 function loadSession() {
@@ -131,6 +125,302 @@ function saveSession(nextSession) {
   } else {
     localStorage.removeItem(SESSION_KEY);
   }
+}
+
+function socialAuthClient() {
+  if (supabaseAuthClient) return supabaseAuthClient;
+  const createClient = window.supabase?.createClient;
+  if (!createClient) return null;
+  supabaseAuthClient = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: {
+      storageKey: SUPABASE_AUTH_STORAGE_KEY,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
+  return supabaseAuthClient;
+}
+
+function currentCleanAuthUrl({ keepAppRedirect = true } = {}) {
+  const url = new URL(window.location.href);
+  url.hash = "";
+  for (const key of ["code", "error", "error_code", "error_description", "social", "social_provider"]) {
+    url.searchParams.delete(key);
+  }
+  if (!keepAppRedirect) url.searchParams.delete("app_redirect");
+  return url.toString();
+}
+
+function requestedSocialProvider() {
+  const value = new URLSearchParams(window.location.search).get("social_provider") || "";
+  if (["google", "kakao", "custom:naver"].includes(value)) return value;
+  if (value === "naver") return "custom:naver";
+  return "";
+}
+
+function oauthProviderLabel(provider) {
+  return {
+    google: "Google",
+    kakao: "카카오",
+    "custom:naver": "네이버",
+  }[provider] || provider || "소셜";
+}
+
+function normalizeSocialProvider(provider = "") {
+  return provider === "naver" ? "custom:naver" : provider;
+}
+
+function isNaverSocialProvider(provider = "") {
+  return normalizeSocialProvider(provider) === "custom:naver";
+}
+
+function naverSocialBridgeStartUrl(redirectUrl) {
+  const url = new URL(`${ACCOUNT_ENDPOINT}/social/naver/start`);
+  url.searchParams.set("redirect_to", redirectUrl.toString());
+  return url.toString();
+}
+
+function providerDisabledMessage(provider) {
+  return `${oauthProviderLabel(provider)} 로그인은 관리자 콘솔 설정이 완료된 뒤 사용할 수 있습니다. 이메일 로그인 또는 인증메일 회원가입을 이용해 주세요.`;
+}
+
+function isSocialProviderDisabled(provider) {
+  const normalizedProvider = normalizeSocialProvider(provider);
+  return socialProviderAvailability && socialProviderAvailability[normalizedProvider] === false;
+}
+
+function applySocialProviderAvailability() {
+  for (const button of document.querySelectorAll("[data-oauth-provider]")) {
+    const provider = normalizeSocialProvider(button.dataset.oauthProvider || "");
+    const disabled = isSocialProviderDisabled(provider);
+    button.disabled = disabled;
+    button.classList.toggle("disabled", disabled);
+    button.title = disabled ? providerDisabledMessage(provider) : "";
+    button.setAttribute("aria-disabled", disabled ? "true" : "false");
+  }
+  renderSocialProviderStatus();
+}
+
+function socialProviderStateLabel(provider) {
+  const normalizedProvider = normalizeSocialProvider(provider);
+  if (!socialProviderAvailability) {
+    return `${oauthProviderLabel(normalizedProvider)} 확인 중`;
+  }
+  if (socialProviderAvailability[normalizedProvider] === undefined) {
+    return `${oauthProviderLabel(normalizedProvider)} 설정 확인 필요`;
+  }
+  return socialProviderAvailability[normalizedProvider]
+    ? `${oauthProviderLabel(normalizedProvider)} 사용 가능`
+    : `${oauthProviderLabel(normalizedProvider)} 준비 중`;
+}
+
+function renderSocialProviderStatus() {
+  const box = $("#social-provider-status");
+  if (!box) return;
+  const providers = ["google", "kakao", "custom:naver"];
+  const hasUnavailable = Boolean(socialProviderAvailability) && providers.some((provider) => socialProviderAvailability[provider] !== true);
+  box.hidden = !hasUnavailable;
+  box.classList.toggle("warning", hasUnavailable);
+  box.textContent = hasUnavailable ? providers.map(socialProviderStateLabel).join(" · ") : "";
+}
+
+async function refreshSocialProviderAvailability() {
+  const availability = {};
+  try {
+    const response = await fetch(`${SUPABASE_PROJECT_URL}/auth/v1/settings`, {
+      headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
+    });
+    if (response.ok) {
+      const settings = await response.json();
+      const external = settings?.external || {};
+      availability.google = Boolean(external.google);
+      availability.kakao = Boolean(external.kakao);
+      if (Object.prototype.hasOwnProperty.call(external, "custom:naver") || Object.prototype.hasOwnProperty.call(external, "naver")) {
+        availability["custom:naver"] = Boolean(external["custom:naver"] || external.naver);
+      }
+    }
+  } catch {
+    // Supabase settings are advisory. Keep buttons enabled unless a provider is
+    // explicitly reported as disabled by a reachable source.
+  }
+  try {
+    const socialResponse = await fetch(`${ACCOUNT_ENDPOINT}/social/status`);
+    if (socialResponse.ok) {
+      const socialStatus = await socialResponse.json();
+      const providers = socialStatus?.providers || {};
+      if (Object.prototype.hasOwnProperty.call(providers, "custom:naver") || Object.prototype.hasOwnProperty.call(providers, "naver")) {
+        availability["custom:naver"] = Boolean(providers["custom:naver"] || providers.naver);
+      }
+    }
+  } catch {
+    // Naver bridge status is advisory; the bridge start endpoint will surface
+    // provider-specific failures if it becomes unavailable.
+  }
+  socialProviderAvailability = Object.keys(availability).length ? availability : null;
+  applySocialProviderAvailability();
+}
+
+function allowedAppRedirectUrl(rawValue = "") {
+  const value = String(rawValue || "").trim();
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    const isLocalLoopback = ["http:", "https:"].includes(url.protocol)
+      && ["127.0.0.1", "localhost"].includes(url.hostname)
+      && url.pathname === "/callback";
+    const isMioScheme = url.protocol === "mio:" && url.hostname === "auth" && url.pathname === "/callback";
+    return (isLocalLoopback || isMioScheme) ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+function requestedAppRedirectUrl() {
+  return allowedAppRedirectUrl(new URLSearchParams(window.location.search).get("app_redirect") || "");
+}
+
+function hasOAuthReturnPayload() {
+  const url = new URL(window.location.href);
+  const hash = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+  return Boolean(
+    url.searchParams.get("code")
+      || url.searchParams.get("error")
+      || hash.get("access_token")
+      || hash.get("error"),
+  );
+}
+
+function oauthReturnErrorMessage() {
+  const url = new URL(window.location.href);
+  const hash = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+  const message = url.searchParams.get("error_description") || hash.get("error_description");
+  const code = url.searchParams.get("error") || hash.get("error");
+  if (!message && !code) return "";
+  return message || `소셜 로그인에 실패했습니다: ${code}`;
+}
+
+function publicSessionFromSupabaseSession(authSession) {
+  return {
+    access_token: authSession?.access_token || "",
+    refresh_token: authSession?.refresh_token || "",
+    expires_in: authSession?.expires_in || 0,
+    expires_at: authSession?.expires_at || 0,
+    token_type: authSession?.token_type || "bearer",
+    user: authSession?.user || null,
+  };
+}
+
+function sessionFromUrlFragment() {
+  const hash = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+  const accessToken = (hash.get("access_token") || "").trim();
+  if (!accessToken) return null;
+  return {
+    access_token: accessToken,
+    refresh_token: hash.get("refresh_token") || "",
+    expires_in: hash.get("expires_in") || 0,
+    expires_at: hash.get("expires_at") || 0,
+    token_type: hash.get("token_type") || "bearer",
+    user: null,
+  };
+}
+
+async function adoptSocialAuthSessionFromUrl() {
+  const client = socialAuthClient();
+  if (!client) return false;
+  const errorMessage = oauthReturnErrorMessage();
+  if (errorMessage) {
+    window.history.replaceState({}, document.title, currentCleanAuthUrl());
+    showMessage(errorMessage, true);
+    return false;
+  }
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+  if (code) {
+    const { error } = await client.auth.exchangeCodeForSession(code);
+    if (error) {
+      window.history.replaceState({}, document.title, currentCleanAuthUrl());
+      showMessage(error.message || "소셜 로그인 세션을 확인하지 못했습니다.", true);
+      return false;
+    }
+  }
+  const { data, error } = await client.auth.getSession();
+  const authSession = data?.session;
+  const publicSession = authSession?.access_token
+    ? publicSessionFromSupabaseSession(authSession)
+    : sessionFromUrlFragment();
+  if (error && !publicSession?.access_token) return false;
+  if (!publicSession?.access_token) return false;
+  saveSession(publicSession);
+  if (code || window.location.hash.includes("access_token")) {
+    window.history.replaceState({}, document.title, currentCleanAuthUrl());
+  }
+  return true;
+}
+
+async function startSocialLogin(provider) {
+  const normalizedProvider = normalizeSocialProvider(provider);
+  if (isSocialProviderDisabled(normalizedProvider)) {
+    showMessage(providerDisabledMessage(normalizedProvider), true);
+    return;
+  }
+  const redirectUrl = new URL(`${window.location.origin}${window.location.pathname}`);
+  redirectUrl.searchParams.set("social", "1");
+  redirectUrl.searchParams.set("social_provider", normalizedProvider);
+  const appRedirect = requestedAppRedirectUrl();
+  if (appRedirect) redirectUrl.searchParams.set("app_redirect", appRedirect);
+  const appState = new URLSearchParams(window.location.search).get("state") || "";
+  if (appState) redirectUrl.searchParams.set("state", appState);
+  if (isNaverSocialProvider(normalizedProvider)) {
+    window.location.assign(naverSocialBridgeStartUrl(redirectUrl));
+    return;
+  }
+  const client = socialAuthClient();
+  if (!client) {
+    showMessage("소셜 로그인 스크립트를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.", true);
+    return;
+  }
+  const { error } = await client.auth.signInWithOAuth({
+    provider: normalizedProvider,
+    options: { redirectTo: redirectUrl.toString() },
+  });
+  if (error) {
+    const message = /provider is not enabled|unsupported provider/i.test(error.message || "")
+      ? providerDisabledMessage(normalizedProvider)
+      : (error.message || "소셜 로그인을 시작하지 못했습니다.");
+    showMessage(message, true);
+  }
+}
+
+async function maybeAutoStartSocialLoginFromUrl() {
+  const provider = requestedSocialProvider();
+  if (!provider || hasOAuthReturnPayload()) return false;
+  showMessage(`${oauthProviderLabel(provider)} 로그인 페이지로 이동합니다...`);
+  await startSocialLogin(provider);
+  return true;
+}
+
+function appRedirectWithSessionUrl(appRedirect, authSession) {
+  const url = new URL(appRedirect);
+  const fragment = new URLSearchParams();
+  fragment.set("access_token", authSession?.access_token || "");
+  fragment.set("refresh_token", authSession?.refresh_token || "");
+  fragment.set("expires_at", String(authSession?.expires_at || ""));
+  fragment.set("expires_in", String(authSession?.expires_in || ""));
+  fragment.set("token_type", authSession?.token_type || "bearer");
+  fragment.set("provider", requestedSocialProvider() || "social");
+  fragment.set("state", new URLSearchParams(window.location.search).get("state") || "");
+  url.hash = fragment.toString();
+  return url.toString();
+}
+
+function maybeReturnSessionToApp() {
+  const appRedirect = requestedAppRedirectUrl();
+  if (!appRedirect || !session?.access_token) return false;
+  const url = appRedirectWithSessionUrl(appRedirect, session);
+  showMessage("소셜 로그인이 완료되었습니다. 앱으로 돌아갑니다...");
+  window.location.replace(url);
+  return true;
 }
 
 function showMessage(message, isError = false) {
@@ -191,6 +481,8 @@ function renderAuthState() {
   $("#auth-panel").hidden = loggedIn;
   $("#account-note").hidden = loggedIn;
   $("#dashboard").hidden = !loggedIn;
+  const priceStrip = $("#price-strip");
+  if (priceStrip) priceStrip.hidden = !loggedIn;
 }
 
 function renderProfile(profile = {}, user = {}) {
@@ -244,11 +536,13 @@ function setupReleaseDeviceButtons() {
   }
 }
 
-function renderDevices(devices = [], limit = 3) {
+function renderDevices(devices = [], limits = {}) {
   const target = $("#device-list");
   if (!target) return;
+  const pcLimit = Number(limits.pc || 2);
+  const mobileLimit = Number(limits.mobile || 1);
   if (!devices.length) {
-    target.innerHTML = `<div class="empty">등록된 앱 기기가 없습니다.<br />프로그램 또는 모바일 앱에서 계정으로 로그인하면 기기가 등록됩니다.</div>`;
+    target.innerHTML = `<div class="empty">등록된 앱 기기가 없습니다.<br />프로그램 또는 모바일 앱에서 계정으로 로그인하면 기기가 등록됩니다.<br />계정당 PC 최대 ${pcLimit}대, 모바일 최대 ${mobileLimit}대까지 등록할 수 있습니다.</div>`;
     return;
   }
   const rows = devices.map((device) => `<tr>
@@ -260,7 +554,7 @@ function renderDevices(devices = [], limit = 3) {
       <td>${device.is_active ? `<button class="button ghost small" type="button" data-release-device="${escapeHtml(device.id)}">해제</button>` : escapeHtml(device.revoked_at || "")}</td>
     </tr>`).join("");
   target.innerHTML = `
-    <p class="hint">프로그램 또는 모바일 앱에서 계정으로 로그인한 기기만 표시합니다. 홈페이지 브라우저 로그인은 포함하지 않습니다.</p>
+    <p class="hint">프로그램 또는 모바일 앱에서 계정으로 로그인한 기기만 표시합니다. 홈페이지 브라우저 로그인은 포함하지 않습니다. 계정당 PC 최대 ${pcLimit}대, 모바일 최대 ${mobileLimit}대까지 등록할 수 있습니다.</p>
     <table>
       <thead><tr><th>기기 ID</th><th>유형</th><th>플랫폼</th><th>상태</th><th>최근 사용</th><th>관리</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -284,7 +578,7 @@ function renderSubscriptionSummary(subscription = {}) {
       <div><strong>${escapeHtml(subscription.active_until || "-")}</strong><span>합산 만료예정</span></div>
       <div><strong>${escapeHtml(cancelableMonths)}개월</strong><span>취소요청 가능</span></div>
     </div>
-    <p class="hint">취소요청은 같은 계정에 결제완료 이용권이 2개 이상이고, 해당 이용권 기간이 아직 시작 전이며, 결제확인일로부터 ${escapeHtml(cancelDays)}일 이내일 때만 가능합니다. 실제 환불/매출취소는 스마트스토어 절차로 처리됩니다.</p>`;
+    <p class="hint">취소요청은 같은 계정에 결제완료 이용권이 2개 이상이고, 해당 이용권 기간이 아직 시작 전이며, 결제확인일로부터 ${escapeHtml(cancelDays)}일 이내일 때만 가능합니다. 라이선스가 계정에 연결된 이후에는 환불되지 않으며, 실제 환불/매출취소는 스마트스토어 절차로 처리됩니다.</p>`;
 }
 
 function setupCancelPaymentButtons() {
@@ -332,202 +626,41 @@ function renderPayments(payments = [], subscription = {}) {
   setupCancelPaymentButtons();
 }
 
-function pageItems(items, page) {
-  const total = Math.max(1, Math.ceil(items.length / ADMIN_PAGE_SIZE));
-  const safePage = Math.min(total, Math.max(1, Number(page || 1)));
-  const start = (safePage - 1) * ADMIN_PAGE_SIZE;
-  return { total, safePage, rows: items.slice(start, start + ADMIN_PAGE_SIZE) };
-}
-
-function renderPagination(targetSelector, page, total, onPage) {
-  const target = $(targetSelector);
-  if (!target) return;
-  if (total <= 1) {
-    target.innerHTML = "";
-    return;
-  }
-  target.innerHTML = `
-    <button class="button ghost small" type="button" data-page="prev">이전</button>
-    <span class="hint">${escapeHtml(page)} / ${escapeHtml(total)}</span>
-    <button class="button ghost small" type="button" data-page="next">다음</button>
-  `;
-  target.querySelector('[data-page="prev"]')?.addEventListener("click", () => onPage(page - 1));
-  target.querySelector('[data-page="next"]')?.addEventListener("click", () => onPage(page + 1));
-}
-
-async function refreshAdminData() {
-  if (!isAdminAccount()) {
-    renderAdminPanel(false);
-    return;
-  }
-  try {
-    const [paymentData, accountData] = await Promise.all([
-      apiPost("admin_list_payment_records", {}, true),
-      apiPost("admin_list_account_profiles", {}, true),
-    ]);
-    adminState.payments = paymentData.payments || [];
-    adminState.accounts = accountData.accounts || [];
-    adminState.loaded = true;
-    renderAdminPanel(true);
-  } catch (error) {
-    renderAdminPanel(true);
-    showMessage(error.message || "관리자 정보를 불러오지 못했습니다.", true);
-  }
-}
-
-function renderAdminPanel(visible = isAdminAccount()) {
-  const panel = $("#admin-panel");
-  if (!panel) return;
-  panel.hidden = !visible;
-  if (!visible) return;
-  renderAdminPayments();
-  renderAdminAccounts();
-}
-
-function renderAdminPayments() {
-  const target = $("#admin-payment-list");
-  if (!target) return;
-  if (!adminState.loaded) {
-    target.innerHTML = '<div class="empty">관리자 결제내역을 불러오는 중입니다.</div>';
-    return;
-  }
-  if (!adminState.payments.length) {
-    target.innerHTML = '<div class="empty">결제내역이 없습니다.</div>';
-    renderPagination("#admin-payment-pagination", 1, 1, () => {});
-    return;
-  }
-  const { total, safePage, rows } = pageItems(adminState.payments, adminState.paymentPage);
-  adminState.paymentPage = safePage;
-  const body = rows.map((payment) => {
-    const profile = payment.profile || {};
-    return `<tr>
-      <td>${escapeDash(payment.requested_at)}</td>
-      <td>${escapeDash(profile.email)}</td>
-      <td>${escapeDash(profile.display_name)}</td>
-      <td>${paymentStatusLabel(payment.status)}</td>
-      <td>${escapeHtml(payment.purchased_months || 1)}개월</td>
-      <td>${formatKrw(payment.amount_krw)}</td>
-      <td>${escapeDash(payment.order_ref)}</td>
-      <td>${escapeDash(payment.payer_name)}</td>
-      <td>${escapeDash(payment.license_id_text)}</td>
-      <td>
-        <details>
-          <summary>관리</summary>
-          <form class="stack-form admin-payment-form" data-admin-payment="${escapeHtml(payment.id)}">
-            <input name="status" value="${escapeHtml(payment.status || "pending")}" placeholder="pending/paid/cancelled/refunded" />
-            <input name="purchased_months" value="${escapeHtml(payment.purchased_months || 1)}" placeholder="개월" />
-            <input name="amount_krw" value="${escapeHtml(payment.amount_krw || PLAN_PRICE[payment.purchased_months] || PLAN_PRICE[1])}" placeholder="금액" />
-            <input name="order_ref" value="${escapeHtml(payment.order_ref || "")}" placeholder="주문번호" />
-            <input name="payer_name" value="${escapeHtml(payment.payer_name || "")}" placeholder="주문자명" />
-            <input name="license_id_text" value="${escapeHtml(payment.license_id_text || "")}" placeholder="라이선스 ID(선택)" />
-            <input name="admin_memo" value="${escapeHtml(payment.admin_memo || "")}" placeholder="관리자 메모" />
-            <button class="button primary compact" type="submit">저장</button>
-            <button class="button danger compact" type="button" data-admin-delete-payment="${escapeHtml(payment.id)}">삭제</button>
-          </form>
-        </details>
-      </td>
-    </tr>`;
-  }).join("");
-  target.innerHTML = `<table>
-    <thead><tr><th>요청일</th><th>이메일</th><th>이름</th><th>상태</th><th>기간</th><th>금액</th><th>주문번호</th><th>주문자</th><th>라이선스</th><th>관리</th></tr></thead>
-    <tbody>${body}</tbody>
-  </table>`;
-  renderPagination("#admin-payment-pagination", safePage, total, (nextPage) => {
-    adminState.paymentPage = nextPage;
-    renderAdminPayments();
-  });
-  setupAdminPaymentControls();
-}
-
-function renderAdminAccounts() {
-  const target = $("#admin-account-list");
-  if (!target) return;
-  if (!adminState.loaded) {
-    target.innerHTML = '<div class="empty">관리자 계정 목록을 불러오는 중입니다.</div>';
-    return;
-  }
-  if (!adminState.accounts.length) {
-    target.innerHTML = '<div class="empty">계정이 없습니다.</div>';
-    renderPagination("#admin-account-pagination", 1, 1, () => {});
-    return;
-  }
-  const { total, safePage, rows } = pageItems(adminState.accounts, adminState.accountPage);
-  adminState.accountPage = safePage;
-  const body = rows.map((account) => `<tr>
-      <td>${escapeDash(account.email)}</td>
-      <td>${escapeDash(account.display_name)}</td>
-      <td>${escapeDash(account.company_name)}</td>
-      <td>${escapeDash(account.trial_expires_at)}</td>
-      <td>${escapeDash(account.created_at)}</td>
-      <td><button class="button danger small" type="button" data-admin-delete-account="${escapeHtml(account.user_id)}">계정 삭제</button></td>
-    </tr>`).join("");
-  target.innerHTML = `<table>
-    <thead><tr><th>이메일</th><th>이름</th><th>회사/지점</th><th>체험 만료</th><th>가입일</th><th>관리</th></tr></thead>
-    <tbody>${body}</tbody>
-  </table>`;
-  renderPagination("#admin-account-pagination", safePage, total, (nextPage) => {
-    adminState.accountPage = nextPage;
-    renderAdminAccounts();
-  });
-  setupAdminAccountControls();
-}
-
-function setupAdminPaymentControls() {
-  for (const form of document.querySelectorAll(".admin-payment-form")) {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearMessage();
-      const payload = formDataObject(form);
-      payload.payment_record_id = form.dataset.adminPayment;
-      payload.purchased_months = Number(payload.purchased_months || 1);
-      payload.amount_krw = Number(payload.amount_krw || 0);
-      try {
-        const data = await apiPost("admin_update_payment_record", payload, true);
-        showMessage(data.message || "결제내역을 저장했습니다.");
-        await refreshAdminData();
-        await loadAccount();
-      } catch (error) {
-        showMessage(error.message, true);
-      }
-    });
-  }
-  for (const button of document.querySelectorAll("[data-admin-delete-payment]")) {
-    button.addEventListener("click", async () => {
-      if (!confirm("이 결제내역을 삭제할까요? 연결된 이용권 만료일도 재계산됩니다.")) return;
-      clearMessage();
-      try {
-        const data = await apiPost("admin_delete_payment_record", { payment_record_id: button.dataset.adminDeletePayment }, true);
-        showMessage(data.message || "결제내역을 삭제했습니다.");
-        await refreshAdminData();
-        await loadAccount();
-      } catch (error) {
-        showMessage(error.message, true);
-      }
-    });
-  }
-}
-
-function setupAdminAccountControls() {
-  for (const button of document.querySelectorAll("[data-admin-delete-account]")) {
-    button.addEventListener("click", async () => {
-      if (!confirm("이 계정을 삭제할까요? 탈퇴 이력이 남아 같은 이메일 재가입이 차단됩니다.")) return;
-      clearMessage();
-      try {
-        const data = await apiPost("admin_delete_account", { account_user_id: button.dataset.adminDeleteAccount }, true);
-        showMessage(data.message || "계정을 삭제했습니다.");
-        await refreshAdminData();
-      } catch (error) {
-        showMessage(error.message, true);
-      }
-    });
-  }
-}
-
 function renderPaymentInstructions() {
   const target = $("#payment-instructions");
   if (!target) return;
   const months = selectedPaymentMonths();
   const amount = PLAN_PRICE[months] || PLAN_PRICE[1];
+  const provider = selectedPaymentProvider();
+  const orderGroup = $("#payment-order-group");
+  const payerGroup = $("#payment-payer-group");
+  const orderInput = $("#payment-form")?.order_ref;
+  const payerInput = $("#payment-form")?.payer_name;
+  const submitButton = $("#payment-submit-button");
+  if (orderGroup && payerGroup && orderInput && payerInput) {
+    const needsSmartStoreOrder = provider === "smartstore";
+    orderGroup.hidden = !needsSmartStoreOrder;
+    payerGroup.hidden = !needsSmartStoreOrder;
+    orderInput.required = needsSmartStoreOrder;
+    payerInput.required = needsSmartStoreOrder;
+    orderInput.disabled = !needsSmartStoreOrder;
+    payerInput.disabled = !needsSmartStoreOrder;
+  }
+  if (submitButton) {
+    submitButton.textContent = provider === "kakaopay" ? "카카오페이 결제 시작" : "주문번호 확인 및 이용권 발급";
+  }
+  if (provider === "kakaopay") {
+    const kakaoPay = paymentOption("kakaopay");
+    const available = Boolean(kakaoPay.checkout_available || kakaoPay.available);
+    target.innerHTML = `
+      <div class="payment-summary">
+        <strong>카카오페이</strong>
+        <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
+      </div>
+      <p class="hint">카카오페이 결제창에서 결제를 완료하면 이 계정에 이용권이 자동 발급됩니다. 라이선스가 계정에 연결된 이후에는 환불되지 않습니다.</p>
+      ${available ? "" : '<div class="empty">카카오페이는 가맹점 심사와 서버 키 설정이 끝난 뒤 활성화됩니다. 지금은 스마트스토어 구매 등록을 이용해 주세요.</div>'}`;
+    return;
+  }
   const smartstore = paymentOption("smartstore");
   const url = paymentDestinationUrl("smartstore", months);
   const autoVerify = Boolean(smartstore.auto_verify_available);
@@ -537,8 +670,8 @@ function renderPaymentInstructions() {
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
     ${url ? `<a class="button ghost full" id="smartstore-buy-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">구매 링크</a>` : '<div class="empty">구매 링크가 아직 서버에 설정되지 않았습니다. 관리자에게 문의해 주세요.</div>'}
-    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
-    ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 아직 서버에 설정되지 않아 관리자 확인으로 처리될 수 있습니다.</div>'}`;
+    <p class="hint">구매 후 주문번호와 주문자명을 입력하면 서버가 네이버 커머스API로 결제완료 상태를 확인합니다. 라이선스가 계정에 연결된 이후에는 환불되지 않습니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
+    ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}`;
 }
 
 function renderIssuedLicense(data = {}) {
@@ -588,18 +721,11 @@ function renderAccount(data) {
   renderProfile(data.profile, data.user);
   renderTrial(data);
   renderLicenses(data.licenses || []);
-  renderDevices(data.devices || [], data.device_limit || 3);
+  renderDevices(data.devices || [], { pc: data.pc_device_limit || 2, mobile: data.mobile_device_limit || 1 });
   renderSubscriptionSummary(data.subscription || {});
   renderPayments(data.payments || [], data.subscription || {});
   renderPaymentInstructions();
   renderIssuedLicense(data);
-  if (isAdminAccount(data)) {
-    renderAdminPanel(true);
-    if (!adminState.loaded) refreshAdminData();
-  } else {
-    adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
-    renderAdminPanel(false);
-  }
 }
 
 async function loadAccount() {
@@ -624,27 +750,117 @@ async function loadAccount() {
   }
 }
 
+function cleanKakaoPayReturnUrl() {
+  const url = new URL(window.location.href);
+  for (const key of ["kakaopay_result", "partner_order_id", "pg_token"]) {
+    url.searchParams.delete(key);
+  }
+  window.history.replaceState({}, document.title, url.toString());
+}
+
+async function handleKakaoPayReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const result = params.get("kakaopay_result");
+  if (!result) return false;
+  const partnerOrderId = params.get("partner_order_id") || "";
+  const pgToken = params.get("pg_token") || "";
+  try {
+    if (result === "cancel") {
+      showMessage("카카오페이 결제가 취소되었습니다.", true);
+      return true;
+    }
+    if (result === "fail") {
+      showMessage("카카오페이 결제가 완료되지 않았습니다. 다시 시도해 주세요.", true);
+      return true;
+    }
+    if (result !== "approve") return false;
+    if (!session?.access_token) {
+      showMessage("카카오페이 결제 승인을 마무리하려면 먼저 같은 계정으로 로그인해 주세요.", true);
+      return true;
+    }
+    if (!partnerOrderId || !pgToken) {
+      showMessage("카카오페이 승인 정보가 부족합니다. 다시 결제해 주세요.", true);
+      return true;
+    }
+    const data = await apiPost("approve_kakaopay_checkout", {
+      partner_order_id: partnerOrderId,
+      pg_token: pgToken,
+    }, true);
+    renderAccount(data);
+    showMessage(data.payment_message || "카카오페이 결제가 확인되어 라이선스가 자동 발급되었습니다.");
+    return true;
+  } catch (error) {
+    showMessage(error.message || "카카오페이 결제 승인 중 오류가 발생했습니다.", true);
+    return true;
+  } finally {
+    cleanKakaoPayReturnUrl();
+  }
+}
+
 function setupAuthTabs() {
   for (const tab of document.querySelectorAll("[data-auth-tab]")) {
     tab.addEventListener("click", () => {
       const mode = tab.dataset.authTab;
+      const loginMode = mode === "login";
       document.querySelectorAll("[data-auth-tab]").forEach((item) => item.classList.toggle("active", item === tab));
-      $("#login-form").hidden = mode !== "login";
+      $("#login-form").hidden = !loginMode;
       $("#signup-form").hidden = mode !== "signup";
       $("#find-email-form").hidden = mode !== "find-email";
       $("#reset-password-form").hidden = mode !== "reset-password";
+      document.querySelectorAll(".login-only-content").forEach((item) => {
+        item.hidden = !loginMode;
+      });
       clearMessage();
     });
   }
 }
 
-function setupAdminTabs() {
-  for (const tab of document.querySelectorAll("[data-admin-tab]")) {
-    tab.addEventListener("click", () => {
-      const mode = tab.dataset.adminTab;
-      document.querySelectorAll("[data-admin-tab]").forEach((item) => item.classList.toggle("active", item === tab));
-      $("#admin-payments-panel").hidden = mode !== "payments";
-      $("#admin-accounts-panel").hidden = mode !== "accounts";
+function setupRememberedEmail() {
+  const form = $("#login-form");
+  const checkbox = $("#remember-email");
+  if (!form?.email || !checkbox) return;
+  try {
+    const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+    if (savedEmail) {
+      form.email.value = savedEmail;
+      checkbox.checked = true;
+    }
+  } catch {
+    // Local storage can be unavailable in restricted browser modes.
+  }
+}
+
+function saveRememberedEmailIfNeeded(form) {
+  const checkbox = $("#remember-email");
+  if (!form?.email || !checkbox) return;
+  try {
+    if (checkbox.checked) {
+      localStorage.setItem(REMEMBER_EMAIL_KEY, form.email.value.trim());
+    } else {
+      localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    }
+  } catch {
+    // Remember-email is convenience only; login should continue.
+  }
+}
+
+function setupSocialLoginButtons() {
+  for (const button of document.querySelectorAll("[data-oauth-provider]")) {
+    button.addEventListener("click", async () => {
+      clearMessage();
+      const provider = button.dataset.oauthProvider;
+      if (isSocialProviderDisabled(provider)) {
+        showMessage(providerDisabledMessage(provider), true);
+        return;
+      }
+      button.setAttribute("aria-busy", "true");
+      button.disabled = true;
+      try {
+        await startSocialLogin(provider);
+      } finally {
+        button.removeAttribute("aria-busy");
+        button.disabled = false;
+      }
     });
   }
 }
@@ -655,6 +871,7 @@ function setupForms() {
     clearMessage();
     const form = event.currentTarget;
     try {
+      saveRememberedEmailIfNeeded(form);
       const data = await apiPost("login", formDataObject(form));
       renderAccount(data);
       showMessage("로그인되었습니다.");
@@ -673,13 +890,17 @@ function setupForms() {
         showMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.", true);
         return;
       }
+      if (!payload.terms_accepted || !payload.privacy_accepted) {
+        showMessage("필수 확인사항인 서비스 이용약관과 개인정보처리방침 동의를 모두 체크해 주세요.", true);
+        return;
+      }
       delete payload.password_confirm;
       const email = payload.email;
       const data = await apiPost("signup", payload);
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
-      showMessage(data.message || "회원가입 신청이 완료되었습니다. 입력한 이메일함에서 MIO 인증 메일의 링크를 클릭하면 인증됩니다. 인증 후 로그인해 주세요.");
+      showMessage(data.message || "인증메일을 발송했습니다. 입력한 이메일함에서 인증 링크를 클릭해 인증을 완료한 뒤 로그인해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }
@@ -733,6 +954,7 @@ function setupForms() {
   });
 
   const paymentForm = $("#payment-form");
+  paymentForm.provider?.addEventListener("change", renderPaymentInstructions);
   paymentForm.purchased_months.addEventListener("change", renderPaymentInstructions);
   applyCheckoutQueryDefaults();
   paymentForm.addEventListener("submit", async (event) => {
@@ -743,22 +965,34 @@ function setupForms() {
       return;
     }
     const form = event.currentTarget;
-    const button = $("#smartstore-verify-button");
+    const button = $("#payment-submit-button");
+    const provider = selectedPaymentProvider();
+    const checkoutPopup = provider === "kakaopay" ? window.open("about:blank", "_blank") : null;
     try {
       const payload = formDataObject(form);
-      payload.provider = "smartstore";
+      payload.provider = provider;
       payload.purchased_months = Number(payload.purchased_months || 1);
       button.disabled = true;
       button.setAttribute("aria-busy", "true");
+      if (provider === "kakaopay") {
+        const data = await apiPost("create_kakaopay_checkout", payload, true);
+        if (openPaymentDestination(data.next_redirect_url, checkoutPopup)) {
+          showMessage(data.payment_message || "카카오페이 결제창으로 이동합니다.");
+        } else {
+          showMessage("팝업이 차단되어 결제창을 열지 못했습니다. 브라우저 팝업 허용 후 다시 시도해 주세요.", true);
+        }
+        return;
+      }
       const data = await apiPost("create_payment_record", payload, true);
       renderAccount(data);
       if (data.license_key) {
         form.reset();
         showMessage(data.payment_message || "결제가 확인되어 라이선스가 자동 발급되었습니다.");
       } else {
-        showMessage(data.payment_message || "구매내역을 등록했습니다. 관리자 확인 후 라이선스가 연결됩니다.");
+        showMessage(data.payment_message || "결제 확인은 완료됐지만 자동 발급 결과를 확인하지 못했습니다. support@mio.ai.kr로 문의해 주세요.");
       }
     } catch (error) {
+      if (checkoutPopup && !checkoutPopup.closed) checkoutPopup.close();
       showMessage(error.message, true);
     } finally {
       button.disabled = false;
@@ -812,9 +1046,7 @@ function setupForms() {
       form.reset();
       saveSession(null);
       accountState = null;
-      adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
       renderAuthState();
-      renderAdminPanel(false);
       showMessage(data.message || "계정을 삭제했습니다. 같은 이메일로는 다시 가입할 수 없습니다.");
     } catch (error) {
       showMessage(error.message, true);
@@ -822,17 +1054,29 @@ function setupForms() {
   });
 
   $("#logout-button").addEventListener("click", () => {
+    socialAuthClient()?.auth.signOut({ scope: "local" }).catch(() => {});
     saveSession(null);
     accountState = null;
-    adminState = { payments: [], accounts: [], paymentPage: 1, accountPage: 1, loaded: false };
     renderAuthState();
-    renderAdminPanel(false);
     showMessage("로그아웃되었습니다.");
   });
 }
 
-setupAuthTabs();
-setupAdminTabs();
-setupForms();
-applyCheckoutQueryDefaults();
-loadAccount();
+async function bootAccountPage() {
+  setupAuthTabs();
+  setupRememberedEmail();
+  setupForms();
+  setupSocialLoginButtons();
+  renderSocialProviderStatus();
+  await refreshSocialProviderAvailability();
+  applyCheckoutQueryDefaults();
+  if (await maybeAutoStartSocialLoginFromUrl()) return;
+  const adoptedSocialSession = await adoptSocialAuthSessionFromUrl();
+  if (adoptedSocialSession && maybeReturnSessionToApp()) return;
+  await loadAccount();
+  await handleKakaoPayReturn();
+  if (maybeReturnSessionToApp()) return;
+  if (adoptedSocialSession && accountState) showMessage("소셜 계정으로 로그인되었습니다.");
+}
+
+bootAccountPage();
