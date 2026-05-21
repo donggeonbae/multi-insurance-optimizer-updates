@@ -704,6 +704,22 @@ select option { background: #0b111d; color: var(--ink); }
   gap: 10px;
   margin: 10px 0 14px;
 }
+.payment-method-button {
+  min-height: 58px;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.12;
+}
+.payment-method-button span {
+  font-size: 13px;
+  font-weight: 800;
+  opacity: .92;
+}
+.payment-method-button strong {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+}
 .button.kakao-pay {
   border-color: #fee500;
   background: #fee500;

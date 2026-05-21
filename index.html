@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MIO | Multi Insurance Optimizer</title>
-  <meta name="description" content="보험설계사용 고지 검토, 진료기록 열람, 보험 설계표 관리 보조 앱 MIO 다운로드 페이지" />
+  <title>MIO | 보험 설계·고객 관리 프로그램</title>
+  <meta name="description" content="MIO는 보험설계 업무의 고지 검토, 보험 설계, 보장 비교, 고객 관리를 보조하는 프로그램입니다." />
   <meta name="theme-color" content="#070a0f" />
   <link rel="icon" href="assets/mio-cat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,17 +13,16 @@
   <style>
     :root {
       --bg: #070a0f;
-      --bg2: #0d1320;
-      --ink: #f4f7fb;
-      --muted: #93a4b8;
-      --soft: #cfe2f6;
-      --blue: #4fb3ff;
-      --blue2: #1677c8;
-      --panel: rgba(12, 18, 30, .78);
-      --panel2: rgba(255, 255, 255, .055);
-      --line: rgba(180, 216, 255, .16);
-      --shadow: 0 34px 110px rgba(0, 0, 0, .42);
-      --radius: 30px;
+      --ink: #f7fbff;
+      --muted: #91a4bb;
+      --soft: #d7e8fb;
+      --blue: #54b8ff;
+      --blue2: #1b75d0;
+      --panel: rgba(12, 18, 30, .74);
+      --panel2: rgba(255,255,255,.065);
+      --line: rgba(190, 224, 255, .16);
+      --line2: rgba(190, 224, 255, .28);
+      --shadow: 0 28px 92px rgba(0,0,0,.40);
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -31,12 +30,11 @@
       margin: 0;
       min-height: 100vh;
       color: var(--ink);
-      font-family: "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      font-family: "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 50% -20%, rgba(55, 137, 255, .30), transparent 34rem),
-        radial-gradient(circle at 12% 18%, rgba(67, 205, 255, .18), transparent 28rem),
-        radial-gradient(circle at 88% 22%, rgba(61, 98, 255, .14), transparent 30rem),
-        linear-gradient(180deg, #070a0f 0%, #0b111d 52%, #070a0f 100%);
+        radial-gradient(circle at 18% 8%, rgba(84,184,255,.28), transparent 28rem),
+        radial-gradient(circle at 82% 18%, rgba(74,97,255,.16), transparent 31rem),
+        linear-gradient(180deg, #070a0f 0%, #0b111d 58%, #070a0f 100%);
       overflow-x: hidden;
     }
     body::before {
@@ -44,18 +42,21 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 44px 44px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.70), transparent 76%);
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.66), transparent 78%);
     }
     a { color: inherit; }
-    .wrap { width: min(1480px, calc(100% - 44px)); margin: 0 auto; position: relative; }
-    header { padding: 26px 0 10px; }
+    h1, h2, h3, p { word-break: keep-all; }
+    .wrap { width: min(1180px, calc(100% - 44px)); margin: 0 auto; position: relative; }
+    header { padding: 22px 0 6px; }
     .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-    .brand { display: flex; align-items: center; gap: 13px; font-weight: 900; letter-spacing: -.04em; }
-    .brand img { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,.08); box-shadow: 0 12px 36px rgba(79,179,255,.16); }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: -.04em; }
+    .brand img { width: 42px; height: 42px; border-radius: 14px; background: rgba(255,255,255,.08); box-shadow: 0 14px 36px rgba(84,184,255,.16); }
     .brand small { display: block; margin-top: 1px; color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
-    .top-links { display: flex; gap: 10px; align-items: center; }
+    .top-links { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .pill {
       border: 1px solid var(--line);
       border-radius: 999px;
@@ -66,8 +67,16 @@
       text-decoration: none;
       backdrop-filter: blur(14px);
     }
-    .hero { padding: 56px 0 26px; text-align: center; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(480px, 1.1fr);
+      gap: clamp(24px, 4vw, 54px);
+      align-items: center;
+      padding: 58px 0 34px;
+    }
+    .hero-copy { display: grid; gap: 18px; align-content: start; }
     .badge {
+      width: max-content;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -76,130 +85,138 @@
       padding: 8px 14px;
       color: #b9daf6;
       background: rgba(255,255,255,.055);
-      font-weight: 800;
-      font-size: 14px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.20);
+      font-weight: 900;
+      font-size: 13px;
+      box-shadow: 0 16px 42px rgba(0,0,0,.18);
     }
     h1 {
-      max-width: 1180px;
-      margin: 22px auto 14px;
-      font-size: clamp(42px, 5.8vw, 78px);
-      line-height: .96;
+      margin: 0;
+      font-size: clamp(42px, 5.3vw, 76px);
+      line-height: .98;
       letter-spacing: -.075em;
     }
     .lead {
-      max-width: 960px;
-      margin: 0 auto 24px;
-      color: var(--muted);
-      font-size: clamp(17px, 2vw, 21px);
-      line-height: 1.58;
+      margin: 0;
+      color: var(--soft);
+      font-size: clamp(19px, 2.2vw, 27px);
+      line-height: 1.42;
+      font-weight: 800;
+      letter-spacing: -.035em;
     }
-    .cta-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 26px 0 12px; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 9px; }
+    .hero-tags span {
+      border: 1px solid rgba(84,184,255,.24);
+      border-radius: 999px;
+      background: rgba(84,184,255,.09);
+      color: #cce9ff;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .cta-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      min-width: 230px; min-height: 56px; padding: 15px 20px;
-      border-radius: 16px; text-decoration: none; font-weight: 900; letter-spacing: -.02em;
+      min-width: 190px; min-height: 52px; padding: 14px 18px;
+      border-radius: 15px; text-decoration: none; font-weight: 900; letter-spacing: -.02em;
       border: 1px solid rgba(172,215,255,.18);
       transition: transform .16s ease, border-color .16s ease, background .16s ease;
     }
     .btn:hover { transform: translateY(-2px); border-color: rgba(172,215,255,.34); }
-    .primary { background: linear-gradient(135deg, #f7fbff, #b9e2ff); color: #07111d; box-shadow: 0 22px 70px rgba(79,179,255,.24); }
+    .primary { background: linear-gradient(135deg, #f7fbff, #b9e2ff); color: #07111d; box-shadow: 0 22px 70px rgba(79,179,255,.22); }
     .secondary { background: rgba(255,255,255,.065); color: var(--ink); }
     .app-btn {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 56px; height: 56px; padding: 0;
-      border-radius: 16px; text-decoration: none; flex: 0 0 56px;
+      width: 52px; height: 52px; padding: 0;
+      border-radius: 15px; text-decoration: none; flex: 0 0 52px;
       border: 1px solid rgba(172,215,255,.18);
       transition: transform .16s ease, border-color .16s ease, background .16s ease;
     }
-    .app-btn svg { width: 31px; height: 31px; display: block; }
+    .app-btn svg { width: 29px; height: 29px; display: block; }
     .app-btn:hover { transform: translateY(-2px); border-color: rgba(172,215,255,.34); }
     .android { background: rgba(61,220,132,.12); color: #c5f6da; border-color: rgba(61,220,132,.32); }
     .apple { background: rgba(255,255,255,.05); color: #d8e2ee; }
-    .disabled { cursor: not-allowed; opacity: .68; }
+    .disabled { cursor: not-allowed; opacity: .66; }
     .disabled:hover { transform: none; border-color: rgba(172,215,255,.18); }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-    .mobile-note { margin: 6px 0 0; color: #7f91a7; font-size: 12px; }
-    .version { color: #778ca3; font-size: 13px; }
+    .mobile-note, .version { margin: 0; color: #7f91a7; font-size: 12px; }
     .version a { color: #cfe2f6; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
-    .hero-visual {
-      width: min(1180px, 100%);
-      margin: 34px auto 0;
-      border: 1px solid rgba(190,224,255,.18);
-      border-radius: 32px;
-      overflow: hidden;
-      background: rgba(255,255,255,.055);
-      box-shadow: 0 30px 96px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.035) inset;
-    }
-    .hero-visual img { display: block; width: 100%; height: auto; }
-    .section { padding: 34px 0 34px; }
-    .section-head { display: grid; gap: 12px; justify-items: center; text-align: center; margin-bottom: 22px; }
-    .eyebrow { color: #ff5a66; font-weight: 900; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
-    h2 {
-      margin: 0;
-      font-size: clamp(30px, 4vw, 52px);
-      line-height: 1.04;
-      letter-spacing: -.06em;
-    }
-    .section-desc { max-width: 820px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
-    .preview-shell {
-      border: 1px solid var(--line);
-      border-radius: 34px;
-      background: linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.035));
-      padding: clamp(12px, 2vw, 20px);
-      box-shadow: var(--shadow);
+    .native-preview {
+      border: 1px solid var(--line2);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.035) inset;
+      padding: 16px;
       overflow: hidden;
     }
-    .preview-shell img { display: block; width: 100%; border-radius: 24px; }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 16px;
+    .native-window {
+      border: 1px solid rgba(219,234,254,.20);
+      border-radius: 22px;
+      background: #f7f8fb;
+      color: #0f172a;
+      overflow: hidden;
+      box-shadow: 0 22px 60px rgba(0,0,0,.24);
     }
+    .native-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #e2e8f0; }
+    .traffic { display: flex; gap: 7px; }
+    .traffic i { width: 11px; height: 11px; border-radius: 999px; display: block; }
+    .traffic i:nth-child(1) { background: #ff5f57; }
+    .traffic i:nth-child(2) { background: #febc2e; }
+    .traffic i:nth-child(3) { background: #28c840; }
+    .native-version { font-size: 12px; color: #64748b; font-weight: 800; }
+    .native-body { display: grid; grid-template-columns: 152px minmax(0, 1fr); min-height: 430px; }
+    .native-side { background: #0f172a; color: #cbd5e1; padding: 18px 14px; display: grid; align-content: start; gap: 9px; }
+    .native-side strong { display: block; color: #fff; font-size: 24px; letter-spacing: -.04em; margin-bottom: 8px; }
+    .native-side span { border-radius: 12px; padding: 9px 10px; font-size: 13px; font-weight: 800; }
+    .native-side span.active { background: #2563eb; color: #fff; }
+    .native-main { padding: 18px; display: grid; gap: 14px; }
+    .native-title { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .native-title h2 { margin: 0; font-size: 26px; letter-spacing: -.055em; }
+    .native-title p { margin: 5px 0 0; color: #64748b; font-size: 13px; }
+    .native-pill { border-radius: 999px; background: #e0f2fe; color: #075985; padding: 7px 10px; font-size: 12px; font-weight: 900; white-space: nowrap; }
+    .native-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .native-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 13px; }
+    .native-card b { display: block; font-size: 18px; }
+    .native-card span { color: #64748b; font-size: 12px; font-weight: 800; }
+    .native-table { border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #fff; }
+    .native-row { display: grid; grid-template-columns: 1.1fr .8fr .8fr .8fr; }
+    .native-row > span { min-height: 38px; padding: 10px; border-bottom: 1px solid #edf2f7; border-right: 1px solid #edf2f7; font-size: 12px; color: #334155; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .native-row > span:last-child { border-right: none; }
+    .native-row.head span { background: #f8fafc; color: #0f172a; font-weight: 900; }
+    .native-row:last-child span { border-bottom: none; }
+    .section { padding: 20px 0 44px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
+    .eyebrow { color: #ff6b75; font-weight: 900; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    .section h2 { margin: 0; font-size: clamp(26px, 3.2vw, 42px); letter-spacing: -.06em; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
     .feature-card {
       border: 1px solid var(--line);
       border-radius: 24px;
       background: rgba(255,255,255,.055);
-      overflow: hidden;
-      box-shadow: 0 18px 60px rgba(0,0,0,.26);
+      padding: 20px;
+      min-height: 172px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.22);
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
     }
-    .feature-card img { width: 100%; aspect-ratio: 1.32 / 1; object-fit: cover; object-position: top center; display: block; }
-    .feature-card div { padding: 16px 16px 18px; }
-    .feature-card strong { display: block; font-size: 17px; letter-spacing: -.03em; }
+    .feature-card small { color: #8ecfff; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .feature-card strong { display: block; font-size: 21px; letter-spacing: -.04em; }
     .feature-card p { margin: 7px 0 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
-    .privacy-note {
-      margin-top: 16px;
-      border: 1px solid rgba(79,179,255,.22);
-      border-radius: 20px;
-      padding: 14px 16px;
-      color: #b9daf6;
-      background: rgba(79,179,255,.08);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    footer { padding: 30px 0 46px; color: #788da3; font-size: 13px; }
+    footer { padding: 20px 0 42px; color: #788da3; font-size: 13px; }
     .footer-line { border-top: 1px solid rgba(190,224,255,.12); padding-top: 18px; display: grid; gap: 6px; }
-    @media (max-width: 760px) {
-      .wrap { width: min(100% - 24px, 1480px); }
+    @media (max-width: 900px) {
+      .wrap { width: min(100% - 24px, 1180px); }
       .nav { align-items: flex-start; flex-direction: column; gap: 12px; }
-      .top-links {
-        display: flex;
-        width: 100%;
-        gap: 8px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding: 0 0 4px;
-        -webkit-overflow-scrolling: touch;
-      }
+      .top-links { width: 100%; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding: 0 0 4px; -webkit-overflow-scrolling: touch; }
       .top-links .pill { flex: 0 0 auto; padding: 8px 12px; font-size: 13px; }
-      .hero { padding-top: 38px; }
-      .btn { width: 100%; }
-      .app-btn { width: 56px; min-width: 56px; height: 56px; }
-      .feature-grid { grid-template-columns: 1fr; }
-    }
-    @media (min-width: 761px) and (max-width: 1120px) {
-      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { grid-template-columns: 1fr; padding-top: 36px; }
+      .cta-row .btn { width: 100%; }
+      .native-body { grid-template-columns: 1fr; }
+      .native-side { display: none; }
+      .native-cards, .feature-grid { grid-template-columns: 1fr; }
+      .native-row { grid-template-columns: 1.1fr .8fr .8fr; }
+      .native-row span:nth-child(4) { display: none; }
+      .section-head { display: grid; align-items: start; }
     }
   </style>
 </head>
@@ -207,7 +224,7 @@
   <header class="wrap">
     <nav class="nav">
       <div class="brand">
-        <img src="assets/mio-cat.png" alt="MIO 파란 고양이 아이콘" />
+        <img src="assets/mio-cat.png" alt="MIO 아이콘" />
         <div>MIO<small>Multi Insurance Optimizer</small></div>
       </div>
       <div class="top-links">
@@ -221,88 +238,119 @@
 
   <main class="wrap">
     <section class="hero" id="download">
-      <span class="badge">보험설계사용 업무 보조 앱</span>
-      <h1>MIO로 고지 검토부터 보험 설계까지</h1>
-      <p class="lead">진료 PDF를 정리해 고지문, 진료기록, 설계표를 로컬 PC에서 바로 관리하세요.</p>
-      <div class="cta-row" aria-label="설치 버튼">
-        <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
-        <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS 설치</a>
-        <a id="androidDownload" class="app-btn android" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk" aria-label="Android 앱 설치" title="Android 앱 설치">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M8 5.2 6.7 3M16 5.2 17.3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <path d="M7 8.2c.4-2.2 2.4-3.9 5-3.9s4.6 1.7 5 3.9H7Z" fill="currentColor"/>
-            <path d="M6.8 9.2h10.4v6.3c0 .9-.7 1.6-1.6 1.6h-.8v2.1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.1h-2v2.1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.1h-.8c-.9 0-1.6-.7-1.6-1.6V9.2Z" fill="currentColor"/>
-            <path d="M3.8 9.9v4.9M20.2 9.9v4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <circle cx="10" cy="6.7" r=".55" fill="#07111d"/>
-            <circle cx="14" cy="6.7" r=".55" fill="#07111d"/>
-          </svg>
-          <span class="sr-only">Android 앱 설치</span>
-        </a>
-        <a id="iosDownload" class="app-btn apple disabled" href="#" aria-disabled="true" aria-label="iOS 앱 준비중" title="iOS 앱은 준비 중입니다">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M15.7 3.1c-.2 1.5-.9 2.6-2.1 3.3-.8.5-1.7.7-2.3.6.2-1.3.9-2.5 2-3.2.8-.5 1.7-.8 2.4-.7Z" fill="currentColor"/>
-            <path d="M12.1 7.1c1 0 1.8-.6 3-.6 1.1 0 2.2.5 3 1.3-1.8 1-2.2 3.7-.4 5.1-.5 1.4-1.2 2.7-2.1 3.9-.8 1.1-1.6 2-2.7 2s-1.4-.6-2.6-.6-1.6.6-2.6.6-1.8-.9-2.6-2c-1.6-2.3-2.8-6.4-1.2-9 .8-1.3 2.1-2.1 3.6-2.1 1.1 0 2.1.7 2.7.7.6 0 1.6-.8 2.9-.8Z" fill="currentColor"/>
-          </svg>
-          <span class="sr-only">iOS 앱 준비중</span>
-        </a>
+      <div class="hero-copy">
+        <span class="badge">보험설계 업무용 MIO</span>
+        <h1>보험 설계·고객 관리 프로그램</h1>
+        <p class="lead">고지 검토 · 보험 설계 · 보장 비교 · 고객 관리</p>
+        <div class="hero-tags" aria-label="주요 업무">
+          <span>고지 검토</span>
+          <span>보험 설계</span>
+          <span>보장 비교</span>
+          <span>고객 관리</span>
+        </div>
+        <div class="cta-row" aria-label="설치 버튼">
+          <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
+          <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS 설치</a>
+          <a id="androidDownload" class="app-btn android" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk" aria-label="Android 앱 설치" title="Android 앱 설치">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8 5.2 6.7 3M16 5.2 17.3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M7 8.2c.4-2.2 2.4-3.9 5-3.9s4.6 1.7 5 3.9H7Z" fill="currentColor"/>
+              <path d="M6.8 9.2h10.4v6.3c0 .9-.7 1.6-1.6 1.6h-.8v2.1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.1h-2v2.1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.1h-.8c-.9 0-1.6-.7-1.6-1.6V9.2Z" fill="currentColor"/>
+              <path d="M3.8 9.9v4.9M20.2 9.9v4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="10" cy="6.7" r=".55" fill="#07111d"/>
+              <circle cx="14" cy="6.7" r=".55" fill="#07111d"/>
+            </svg>
+            <span class="sr-only">Android 앱 설치</span>
+          </a>
+          <a id="iosDownload" class="app-btn apple disabled" href="#" aria-disabled="true" aria-label="iOS 앱 준비중" title="iOS 앱은 준비 중입니다">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15.7 3.1c-.2 1.5-.9 2.6-2.1 3.3-.8.5-1.7.7-2.3.6.2-1.3.9-2.5 2-3.2.8-.5 1.7-.8 2.4-.7Z" fill="currentColor"/>
+              <path d="M12.1 7.1c1 0 1.8-.6 3-.6 1.1 0 2.2.5 3 1.3-1.8 1-2.2 3.7-.4 5.1-.5 1.4-1.2 2.7-2.1 3.9-.8 1.1-1.6 2-2.7 2s-1.4-.6-2.6-.6-1.6.6-2.6.6-1.8-.9-2.6-2c-1.6-2.3-2.8-6.4-1.2-9 .8-1.3 2.1-2.1 3.6-2.1 1.1 0 2.1.7 2.7.7.6 0 1.6-.8 2.9-.8Z" fill="currentColor"/>
+            </svg>
+            <span class="sr-only">iOS 앱 준비중</span>
+          </a>
+        </div>
+        <p class="mobile-note">Android는 APK 직접 설치, iOS는 준비 중입니다.</p>
+        <p class="version" id="versionLabel">최신 버전 확인 중</p>
       </div>
-      <p class="mobile-note">Android는 APK 직접 설치, iOS는 준비 중입니다.</p>
-      <p class="version" id="versionLabel">최신 버전 확인 중</p>
-      <div class="hero-visual" aria-label="MIO 앱 프리뷰 일러스트">
-        <img src="assets/mio-hero-preview.webp" alt="MIO 앱 대시보드 프리뷰" />
+
+      <div class="native-preview" aria-label="MIO 네이티브 앱 프리뷰">
+        <div class="native-window">
+          <div class="native-top">
+            <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span class="native-version">MIO Native</span>
+          </div>
+          <div class="native-body">
+            <aside class="native-side">
+              <strong>MIO</strong>
+              <span class="active">분석</span>
+              <span>설계</span>
+              <span>계정</span>
+              <span>자료/DB</span>
+            </aside>
+            <div class="native-main">
+              <div class="native-title">
+                <div>
+                  <h2>고지 검토 대시보드</h2>
+                  <p>진료기록, 고지 후보, 설계 비교를 한 화면에서 확인합니다.</p>
+                </div>
+                <span class="native-pill">라이선스 인증됨</span>
+              </div>
+              <div class="native-cards">
+                <div class="native-card"><b>12</b><span>진료 기록</span></div>
+                <div class="native-card"><b>3</b><span>고지 후보</span></div>
+                <div class="native-card"><b>₩42,300</b><span>설계 비교</span></div>
+              </div>
+              <div class="native-table" aria-label="샘플 업무 테이블">
+                <div class="native-row head"><span>구분</span><span>핵심 내용</span><span>상태</span><span>작업</span></div>
+                <div class="native-row"><span>진료 기록 열람</span><span>기간·기관·처방 자동 정리</span><span>완료</span><span>내보내기</span></div>
+                <div class="native-row"><span>고지 자동 작성</span><span>건강체·간편체 후보 검토</span><span>검토중</span><span>복사</span></div>
+                <div class="native-row"><span>보험 설계 분석</span><span>보장타겟별 보험료 비교</span><span>준비됨</span><span>설계표 추가</span></div>
+                <div class="native-row"><span>고객 관리</span><span>고객별 분석 이력 관리</span><span>동기화</span><span>열기</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section" id="preview">
       <div class="section-head">
-        <span class="eyebrow">Preview</span>
-        <h2>실제 업무 흐름처럼 한 화면에서 정리</h2>
-        <p class="section-desc">가상 고객 자료로 구성한 예시 화면입니다. 진료 PDF 분석, 고지문 작성, 입원·수술 검토, 보험 설계표 관리까지 흐름을 빠르게 확인할 수 있습니다.</p>
+        <div>
+          <span class="eyebrow">Preview</span>
+          <h2>업무 흐름을 더 짧게</h2>
+        </div>
       </div>
-
-      <div class="preview-shell">
-        <img src="assets/mio-preview-collage.webp" alt="MIO 주요 화면 프리뷰 콜라주" loading="lazy" />
-      </div>
-
       <div class="feature-grid">
         <article class="feature-card">
-          <img src="assets/mio-preview-dashboard.webp" alt="종합 대시보드 화면 예시" loading="lazy" />
+          <small>Records</small>
           <div>
-            <strong>종합 대시보드</strong>
-            <p>7일 통원, 약처방, 입원·수술 후보를 고객별로 요약합니다.</p>
+            <strong>원클릭 진료 기록 열람</strong>
+            <p>기본·세부·처방·요양급여내역을 통합해 필요한 기록을 빠르게 확인합니다.</p>
           </div>
         </article>
         <article class="feature-card">
-          <img src="assets/mio-preview-disclosure.webp" alt="고지문 화면 예시" loading="lazy" />
+          <small>Disclosure</small>
           <div>
-            <strong>고지문 자동 정리</strong>
-            <p>11대·7대 질환과 건강체/간편체 고지 후보를 복사용 문구로 정돈합니다.</p>
+            <strong>고지 자동 작성 및 검토</strong>
+            <p>고지 후보와 제외 항목을 정리하고 복사용 문구까지 바로 확인합니다.</p>
           </div>
         </article>
         <article class="feature-card">
-          <img src="assets/mio-preview-records.webp" alt="진료 기록 열람 화면 예시" loading="lazy" />
+          <small>Design CRM</small>
           <div>
-            <strong>진료 기록 열람</strong>
-            <p>입원·수술, 약처방, 11대 질환, 전체 원본 탭에서 근거를 확인합니다.</p>
-          </div>
-        </article>
-        <article class="feature-card">
-          <img src="assets/mio-preview-design.webp" alt="보험 설계표 화면 예시" loading="lazy" />
-          <div>
-            <strong>보험 설계표 관리</strong>
-            <p>제3·생명·손해보험 설계표를 분리 관리하고 종합 탭에서 합산합니다.</p>
+            <strong>AI 설계 및 분석 · 스마트 고객 관리</strong>
+            <p>보장 비교, 설계표, 고객별 분석 이력을 같은 계정 흐름에서 관리합니다.</p>
           </div>
         </article>
       </div>
-
-      <p class="privacy-note">프리뷰는 모두 가상 고객·가상 병원명으로 재구성한 예시이며, 실제 고객 PDF나 개인정보를 사용하지 않습니다.</p>
     </section>
   </main>
 
   <footer class="wrap">
     <div class="footer-line">
-      <span>MIO는 고객 PDF·분석 결과·상담 메모를 서버에 저장하지 않으며 업무 데이터는 로컬 PC에 저장됩니다.</span>
-      <span>개인정보 관리와 최종 고지/설계 판단은 사용자 책임입니다. MADE BY RAMBLUE · contact via support@mio.ai.kr</span>
+      <span>MIO는 의료기기가 아니며 보험설계 업무의 정리·검토를 보조하는 프로그램입니다.</span>
+      <span>최종 고지/설계 판단은 원본 자료와 보험사 기준으로 확인해야 합니다. MADE BY RAMBLUE · contact via support@mio.ai.kr</span>
     </div>
   </footer>
 

@@ -654,14 +654,18 @@ function renderPaymentInstructions() {
   if (kakaoButton) {
     kakaoButton.disabled = !kakaoAvailable;
     kakaoButton.classList.toggle("disabled", !kakaoAvailable);
-    kakaoButton.title = kakaoAvailable ? "" : "카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 사용할 수 있습니다.";
+    kakaoButton.title = kakaoAvailable
+      ? "카카오페이 / 바로 결제: 결제 완료 후 같은 계정에 이용권이 자동 발급됩니다."
+      : "카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 사용할 수 있습니다.";
   }
   const naverLink = $("#naverpay-buy-link");
   if (naverLink) {
     naverLink.href = naverUrl || "#";
     naverLink.classList.toggle("disabled", !naverUrl);
     naverLink.setAttribute("aria-disabled", naverUrl ? "false" : "true");
-    naverLink.title = naverUrl ? "" : "네이버페이 구매 페이지가 아직 서버에 설정되지 않았습니다.";
+    naverLink.title = naverUrl
+      ? "네이버페이 / 구매 페이지: 결제 후 주문번호와 주문자명을 입력해 구매 등록합니다."
+      : "네이버페이 구매 페이지가 아직 서버에 설정되지 않았습니다.";
   }
 
   target.innerHTML = `
@@ -669,10 +673,9 @@ function renderPaymentInstructions() {
       <strong>이용권</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    <p class="hint">카카오페이는 버튼을 누르면 바로 결제창으로 이동하고, 결제 완료 후 계정에 이용권이 자동 발급됩니다.</p>
-    <p class="hint">네이버페이는 구매 페이지에서 결제한 뒤 아래 주문번호와 주문자명을 입력하면 서버가 결제완료 상태를 확인해 라이선스를 발급합니다.</p>
+    <p class="hint">카카오페이는 바로 결제, 네이버페이는 구매 페이지 결제 후 주문번호와 주문자명을 입력하는 방식입니다. 라이선스 연결 이후에는 환불되지 않습니다.</p>
     ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}
-    ${kakaoAvailable ? "" : '<div class="empty">카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 활성화됩니다.</div>'}`;
+    ${kakaoAvailable ? "" : '<div class="empty">카카오페이 버튼은 가맹점 심사와 서버 키 설정이 완료된 뒤 활성화됩니다.</div>'}`;
 }
 
 function renderIssuedLicense(data = {}) {

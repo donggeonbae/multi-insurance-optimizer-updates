@@ -280,11 +280,10 @@
 
           <section class="panel">
             <h3>구매 등록</h3>
-            <p class="hint">이용 기간을 선택한 뒤 카카오페이는 바로 결제창으로 이동하고, 네이버페이는 구매 페이지에서 결제한 뒤 주문번호와 주문자명을 입력해 확인합니다. 라이선스가 계정에 연결된 이후에는 환불되지 않습니다. 결제 후 인증되지 않았거나 키 발급이 되지 않았을 경우 주문서를 캡처하여 support@mio.ai.kr로 보내 주세요.</p>
             <div id="payment-instructions" class="payment-instructions" aria-live="polite"></div>
             <div class="payment-action-grid" aria-label="결제 버튼">
-              <button id="kakaopay-checkout-button" class="button kakao-pay full" type="button">카카오페이 바로 결제</button>
-              <a id="naverpay-buy-link" class="button naver-pay full" href="#" target="_blank" rel="noopener">네이버페이 구매 페이지</a>
+              <button id="kakaopay-checkout-button" class="button kakao-pay full payment-method-button" type="button"><span>카카오페이</span><strong>바로 결제</strong></button>
+              <a id="naverpay-buy-link" class="button naver-pay full payment-method-button" href="#" target="_blank" rel="noopener"><span>네이버페이</span><strong>구매 페이지</strong></a>
             </div>
             <form id="payment-form" class="stack-form">
               <label>
