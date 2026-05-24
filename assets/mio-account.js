@@ -652,11 +652,11 @@ function renderPaymentInstructions() {
   const kakaoAvailable = Boolean(kakaoPay.checkout_available || kakaoPay.available);
   const kakaoButton = $("#kakaopay-checkout-button");
   if (kakaoButton) {
-    kakaoButton.disabled = !kakaoAvailable;
-    kakaoButton.classList.toggle("disabled", !kakaoAvailable);
+    kakaoButton.disabled = false;
+    kakaoButton.classList.remove("disabled");
     kakaoButton.title = kakaoAvailable
       ? "카카오페이 / 바로 결제: 결제 완료 후 같은 계정에 이용권이 자동 발급됩니다."
-      : "카카오페이는 가맹점 심사와 서버 키 설정이 완료된 뒤 사용할 수 있습니다.";
+      : "카카오페이 심사 전에도 결제 버튼 클릭 흐름을 확인할 수 있습니다. 실제 결제창은 가맹점 심사와 서버 키 설정 완료 후 열립니다.";
   }
   const naverLink = $("#naverpay-buy-link");
   if (naverLink) {
@@ -673,9 +673,10 @@ function renderPaymentInstructions() {
       <strong>이용권</strong>
       <span>${escapeHtml(months)}개월 · ${formatKrw(amount)} · VAT 포함</span>
     </div>
-    <p class="hint">카카오페이는 바로 결제, 네이버페이는 구매 페이지 결제 후 주문번호와 주문자명을 입력하는 방식입니다. 라이선스 연결 이후에는 환불되지 않습니다.</p>
+    <p class="hint">디지털 소프트웨어 이용권 상품으로 배송지 입력은 없으며, 결제 확인 또는 승인 직후 같은 계정에 라이선스가 제공됩니다. 서비스 제공기간은 선택한 ${escapeHtml(months)}개월입니다.</p>
+    <p class="hint">카카오페이는 바로 결제, 네이버페이는 구매 페이지 결제 후 주문번호와 주문자명을 입력하는 방식입니다. 라이선스 연결 이전 주문은 결제수단별 절차에 따라 취소할 수 있고, 라이선스 연결 이후에는 디지털 콘텐츠 제공이 시작되어 환불되지 않습니다.</p>
     ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}
-    ${kakaoAvailable ? "" : '<div class="empty">카카오페이 버튼은 가맹점 심사와 서버 키 설정이 완료된 뒤 활성화됩니다.</div>'}`;
+    ${kakaoAvailable ? "" : '<div class="empty">카카오페이 버튼은 심사용 결제 흐름 확인을 위해 클릭 가능하지만, 실제 결제창은 가맹점 심사와 서버 키 설정이 완료된 뒤 열립니다.</div>'}`;
 }
 
 function renderIssuedLicense(data = {}) {
