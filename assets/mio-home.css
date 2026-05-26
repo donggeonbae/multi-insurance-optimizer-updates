@@ -853,14 +853,14 @@ th {
 }
 .business-footer {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   margin-top: 8px;
   color: #8fa4ba;
   line-height: 1.65;
 }
 .business-footer span {
-  display: inline-block;
-  margin-right: 10px;
+  display: block;
+  margin-right: 0;
 }
 .business-footer a {
   color: #d8eafd;
