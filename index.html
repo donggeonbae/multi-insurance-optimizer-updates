@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MIO | Insurance CRM</title>
-  <meta name="description" content="MIO는 고지 검토, 보험 설계, 보장 비교, 청구서 작성, 고객 관리를 하나의 흐름으로 연결합니다." />
+  <meta name="description" content="MIO는 고지 검토, 보험 조회, 공식 청구서 자동 기입, 보험 설계, 보장 비교, 고객 관리를 하나의 흐름으로 연결합니다." />
   <meta name="theme-color" content="#f6f7f9" />
   <link rel="icon" href="assets/mio-cat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -243,6 +243,91 @@
     }
     .review-cta p { width: 100%; margin: 0 0 4px; font-weight: 700; font-size: 15.5px; }
     .review-cta small { width: 100%; color: var(--muted); margin-bottom: 10px; }
+    .review-board {
+      margin-top: 26px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: clamp(22px, 4vw, 34px);
+      box-shadow: var(--shadow);
+    }
+    .review-board-head {
+      display: grid;
+      gap: 8px;
+      max-width: 680px;
+    }
+    .review-board-head h3 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -.03em;
+    }
+    .review-board-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .review-form {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+    .review-form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 140px;
+      gap: 10px;
+    }
+    @media (max-width: 620px) { .review-form-grid { grid-template-columns: 1fr; } }
+    .review-form input,
+    .review-form select,
+    .review-form textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface2);
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+    .review-form input,
+    .review-form select { height: 48px; padding: 0 14px; }
+    .review-form textarea {
+      min-height: 116px;
+      padding: 14px;
+      resize: vertical;
+    }
+    .review-form input:focus,
+    .review-form select:focus,
+    .review-form textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+      background: var(--surface);
+    }
+    .review-form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .review-status {
+      min-height: 20px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .public-review-list { margin-top: 18px; }
+    .review-empty {
+      margin: 18px 0 0;
+      border: 1px dashed var(--line2);
+      border-radius: 16px;
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: var(--surface2);
+    }
 
     /* ---------- download ---------- */
     .download { text-align: center; background: var(--surface); border-block: 1px solid var(--line); }
@@ -283,8 +368,8 @@
 
   <header class="hero wrap">
     <div class="eyebrow reveal"><span class="dot"></span>보험설계사를 위한 Insurance CRM</div>
-    <h1 class="reveal" style="--d:.08s">보험 업무의 흐름을<br/><span class="accent">하나로.</span></h1>
-    <p class="sub reveal" style="--d:.16s">진료·고지 분석부터 보험 조회, 공식 청구서 작성, 설계 비교, 고객 관리까지 —
+    <h1 class="reveal" style="--d:.08s">보험 설계와 고객 관리를 하나로.</h1>
+    <p class="sub reveal" style="--d:.16s">진료·고지 분석부터 보험 조회, 공식 청구서 자동 기입, 설계 비교, 고객 관리까지 —
       같은 고객 컨텍스트로 끊김 없이 이어집니다.</p>
     <div class="cta-row reveal" style="--d:.24s" aria-label="설치 버튼">
       <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
@@ -298,7 +383,7 @@
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track" id="marqueeTrack">
-      <span>진료·고지 분석</span><span>보험 조회</span><span>공식 청구서 자동 작성</span><span>설계 비교</span><span>상품 변경센터</span><span>고객 프리셋</span><span>일정 관리</span>
+      <span>진료·고지 분석</span><span>보험 조회</span><span>공식 청구서 자동 기입</span><span>설계 비교</span><span>상품 변경센터</span><span>고객 프리셋</span><span>일정 관리</span>
     </div>
   </div>
 
@@ -315,10 +400,10 @@
       <div class="preview-grid">
         <div class="mini-card b1">PDF 분석 시작<span>진료·요양급여 PDF로 고지·청구 후보 정리</span></div>
         <div class="mini-card b2">보험 조회<span>보유계약을 수집해 보험별로 정리</span></div>
-        <div class="mini-card b3">청구서 작성<span>보험사별 공식 청구서 자동 작성</span></div>
+        <div class="mini-card b3">청구서 자동기입<span>고객 정보와 청구 후보를 공식 양식에 정리</span></div>
         <div class="mini-card b4">설계 비교<span>보장타겟별 회사 보험료 비교</span></div>
       </div>
-      <div class="preview-news"><b>상품 변경 소식</b> · 신규/변경 보험상품을 요약으로 한눈에 확인</div>
+      <div class="preview-news"><b>상품 변경 소식</b><br/>총평, 장점 후보, 주의점으로 신규·변경 상품을 정리</div>
     </div>
   </section>
 
@@ -330,22 +415,22 @@
       <article class="card reveal">
         <span class="num">01</span>
         <h3>진료·고지 분석</h3>
-        <p>진료·처방·요양급여 PDF를 한 번에 분류하고 고지 후보와 청구 후보를 자동 정리합니다.</p>
+        <p>원클릭 진료 기록 열람 후 진료·처방·요양급여 PDF를 분류하고, 고지 자동 작성 및 검토 흐름으로 청구 후보까지 정리합니다.</p>
       </article>
       <article class="card reveal" style="--d:.08s">
         <span class="num">02</span>
-        <h3>공식 청구서 자동 작성</h3>
-        <p>보험사별 공식 청구서 양식에 고객 정보를 칸 단위로 정확히 기입해 PDF로 저장합니다.</p>
+        <h3>공식 청구서 자동 기입</h3>
+        <p>보험사별 공식 청구서 양식에 고객 정보와 청구 후보를 맞춰 넣고 PDF로 저장합니다.</p>
       </article>
       <article class="card reveal" style="--d:.16s">
         <span class="num">03</span>
         <h3>보장 분석 및 설계 비교</h3>
-        <p>보장타겟 기준으로 회사별 보험료·보장금액을 비교하고 설계표로 바로 옮깁니다.</p>
+        <p>AI 설계 및 분석 · 스마트 고객 관리 흐름에서 설계표, 보험료 비교, 체크 보험료 합계를 함께 확인합니다.</p>
       </article>
       <article class="card reveal">
         <span class="num">04</span>
         <h3>상품 변경센터 + 요약</h3>
-        <p>매일 수집한 신규·변경 상품을 요약으로 보여주고, 필요하면 AI 요약으로 공시 원문까지 정리합니다.</p>
+        <p>매일 수집한 신규·변경 상품을 변경요약으로 보여주고, 총평·장점 후보·주의점·확인 포인트를 함께 정리합니다.</p>
       </article>
       <article class="card reveal" style="--d:.08s">
         <span class="num">05</span>
@@ -362,11 +447,19 @@
 
   <section class="section wrap">
     <div class="stats">
-      <div class="stat reveal"><b><em data-count="12">0</em>곳</b><span>보험사 공식 청구서 자동 기입</span></div>
-      <div class="stat reveal" style="--d:.08s"><b><em data-count="1316">0</em>개</b><span>수집 보험상품 DB</span></div>
-      <div class="stat reveal" style="--d:.16s"><b><em data-count="8255">0</em>개</b><span>담보·보장 항목 비교 후보</span></div>
-      <div class="stat reveal" style="--d:.24s"><b><em data-count="2221">0</em>개</b><span>심평원 질병코드 참조</span></div>
-      <div class="stat reveal" style="--d:.32s"><b><em data-count="89">0</em>개</b><span>보장타겟 기준 설계 비교</span></div>
+      <div class="stat reveal"><b><em data-count="32">0</em>곳</b><span>상품공시 DB 보험사</span></div>
+      <div class="stat reveal" style="--d:.08s">
+        <b><em data-count="1315">0</em>개</b>
+        <span>수집 보험상품 DB</span>
+      </div>
+      <div class="stat reveal" style="--d:.16s">
+        <b><em data-count="8255">0</em>개</b>
+        <span>담보·보장 항목 DB</span>
+      </div>
+      <div class="stat reveal" style="--d:.24s">
+        <b><em data-count="2392">0</em>개</b>
+        <span>심평원·코드마스터 코드</span>
+      </div>
     </div>
   </section>
 
@@ -377,25 +470,45 @@
     <div class="reviews">
       <article class="review reveal">
         <div class="stars" aria-label="별점 5점">★★★★★</div>
-        <p>진료내역 PDF만 넣으면 고지 후보가 정리돼서, 청약 전 검토 시간이 눈에 띄게 줄었어요. 청구서 자동 작성은 이제 없으면 안 되는 기능입니다.</p>
-        <div class="who">보험설계사 K님 · 손해보험</div>
+        <p>진료내역 PDF만 넣으면 고지 후보가 정리돼서, 청약 전 검토 시간이 눈에 띄게 줄었어요. 청구서 자동기입까지 이어지는 점이 편합니다.</p>
+        <div class="who">보험설계사 K님</div>
       </article>
       <article class="review reveal" style="--d:.08s">
         <div class="stars" aria-label="별점 5점">★★★★★</div>
         <p>고객 프리셋으로 분석·조회·설계가 한 고객으로 이어지는 흐름이 좋아요. 화면을 오가도 컨텍스트가 끊기지 않습니다.</p>
-        <div class="who">보험설계사 L님 · GA</div>
+        <div class="who">보험설계사 L님</div>
       </article>
       <article class="review reveal" style="--d:.16s">
         <div class="stars" aria-label="별점 4점">★★★★☆</div>
         <p>변경센터 덕분에 신상품 소식을 따로 찾아보지 않아도 돼요. 일정에 같이 떠서 아침에 한 번 훑기 좋습니다.</p>
-        <div class="who">보험설계사 P님 · 생명보험</div>
+        <div class="who">보험설계사 P님</div>
       </article>
     </div>
-    <div class="review-cta reveal" style="--d:.1s">
-      <p>MIO를 쓰고 계신가요? 후기를 들려주세요.</p>
-      <small>보내주신 후기는 검토 후 이곳과 게시판에 소개됩니다.</small>
-      <a class="btn primary" href="mailto:support@mio.ai.kr?subject=%5BMIO%20%ED%9B%84%EA%B8%B0%5D&body=MIO%20%EC%82%AC%EC%9A%A9%20%ED%9B%84%EA%B8%B0%EB%A5%BC%20%EB%82%A8%EA%B2%A8%EC%A3%BC%EC%84%B8%EC%9A%94.%0A%0A-%20%EB%B3%84%EC%A0%90(5%EC%A0%90%20%EB%A7%8C%EC%A0%90)%3A%20%0A-%20%EC%A2%8B%EC%95%98%EB%8D%98%20%EC%A0%90%3A%20%0A-%20%EC%95%84%EC%89%AC%EC%9A%B4%20%EC%A0%90%3A%20">메일로 후기 남기기</a>
-      <a class="btn secondary" href="account/">앱 게시판에서 남기기</a>
+    <div class="review-board reveal" style="--d:.1s">
+      <div class="review-board-head">
+        <p class="kicker">Comment</p>
+        <h3>써보니까 어때요?</h3>
+        <p>익명 또는 원하는 이름으로 MIO 사용 후기를 남겨주세요. 주민번호, 전화번호, 고객명, 진료정보는 적지 마세요.</p>
+      </div>
+      <form class="review-form" id="homepageReviewForm">
+        <div class="review-form-grid">
+          <input id="homepageReviewName" name="display_name" maxlength="24" autocomplete="name" placeholder="이름 또는 익명" />
+          <select id="homepageReviewRating" name="rating" aria-label="별점">
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+        </div>
+        <textarea id="homepageReviewBody" name="body" maxlength="500" required placeholder="후기를 남겨주세요. 예: 고지 후보 정리가 빨라져 상담 전 준비 시간이 줄었어요."></textarea>
+        <div class="review-form-actions">
+          <p class="review-status" id="homepageReviewStatus" role="status" aria-live="polite"></p>
+          <button class="btn primary" type="submit">후기 남기기</button>
+        </div>
+      </form>
+      <div class="reviews public-review-list" id="publicReviewList" aria-live="polite"></div>
+      <p class="review-empty" id="publicReviewEmpty" hidden>아직 공개 후기가 없습니다. 첫 후기를 남겨주세요.</p>
     </div>
   </section>
 
@@ -461,6 +574,91 @@
       }
     }, { threshold: 0.6 });
     document.querySelectorAll("[data-count]").forEach((el) => counterIo.observe(el));
+
+    const HOMEPAGE_REVIEWS_ENDPOINT = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-homepage-reviews";
+    const reviewList = document.getElementById("publicReviewList");
+    const reviewEmpty = document.getElementById("publicReviewEmpty");
+    const reviewStatus = document.getElementById("homepageReviewStatus");
+    const reviewForm = document.getElementById("homepageReviewForm");
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function starText(rating) {
+      const value = Math.max(1, Math.min(5, Number(rating) || 5));
+      return "★".repeat(value) + "☆".repeat(5 - value);
+    }
+
+    function reviewCard(review) {
+      return `
+        <article class="review">
+          <div class="stars" aria-label="별점 ${Number(review.rating || 5)}점">${starText(review.rating)}</div>
+          <p>${escapeHtml(review.body)}</p>
+          <div class="who">${escapeHtml(review.display_name || "익명")}</div>
+        </article>
+      `;
+    }
+
+    function renderPublicReviews(reviews) {
+      const rows = Array.isArray(reviews) ? reviews : [];
+      reviewList.innerHTML = rows.map(reviewCard).join("");
+      reviewEmpty.hidden = rows.length > 0;
+    }
+
+    async function loadPublicReviews() {
+      try {
+        const res = await fetch(`${HOMEPAGE_REVIEWS_ENDPOINT}?limit=9`, { cache: "no-store" });
+        if (!res.ok) throw new Error("review endpoint unavailable");
+        const data = await res.json();
+        renderPublicReviews(data.reviews || []);
+      } catch (err) {
+        renderPublicReviews([]);
+        reviewEmpty.textContent = "후기 목록을 불러오지 못했습니다. 잠시 후 다시 확인해주세요.";
+      }
+    }
+
+    reviewForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = reviewForm.querySelector("button[type='submit']");
+      const payload = {
+        display_name: document.getElementById("homepageReviewName").value,
+        rating: document.getElementById("homepageReviewRating").value,
+        body: document.getElementById("homepageReviewBody").value,
+      };
+      submitButton.disabled = true;
+      reviewStatus.textContent = "후기를 저장하는 중입니다.";
+      try {
+        const res = await fetch(HOMEPAGE_REVIEWS_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          const privacy = Array.isArray(data.warnings) && data.warnings.length ? ` (${data.warnings.join(", ")})` : "";
+          throw new Error(data.reason === "privacy_warning" ? `민감정보로 보이는 내용은 제거해주세요${privacy}.` : "후기 저장에 실패했습니다.");
+        }
+        reviewForm.reset();
+        reviewStatus.textContent = "후기가 등록되었습니다.";
+        const current = [...reviewList.querySelectorAll(".review")].slice(0, 8).map((node) => ({
+          rating: node.querySelector(".stars")?.textContent?.replace(/☆/g, "").length || 5,
+          body: node.querySelector("p")?.textContent || "",
+          display_name: node.querySelector(".who")?.textContent || "익명",
+        }));
+        renderPublicReviews([data.review, ...current]);
+      } catch (err) {
+        reviewStatus.textContent = err.message || "후기 저장에 실패했습니다.";
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+    loadPublicReviews();
 
     async function hydrateVersion() {
       try {
