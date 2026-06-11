@@ -217,7 +217,7 @@
     .card p { margin: 0; color: var(--muted); font-size: 14px; }
 
     /* ---------- stats ---------- */
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; text-align: center; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; text-align: center; }
     @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
     .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 34px 20px; }
     .stat b { display: block; font-size: clamp(36px, 5vw, 52px); font-weight: 900; letter-spacing: -.04em; line-height: 1; }
@@ -363,8 +363,10 @@
   <section class="section wrap">
     <div class="stats">
       <div class="stat reveal"><b><em data-count="12">0</em>곳</b><span>보험사 공식 청구서 자동 기입</span></div>
-      <div class="stat reveal" style="--d:.1s"><b><em data-count="89">0</em>개</b><span>보장타겟 기준 설계 비교</span></div>
-      <div class="stat reveal" style="--d:.2s"><b>매일</b><span>보험상품 변경분 자동 수집·요약</span></div>
+      <div class="stat reveal" style="--d:.08s"><b><em data-count="1316">0</em>개</b><span>수집 보험상품 DB</span></div>
+      <div class="stat reveal" style="--d:.16s"><b><em data-count="8255">0</em>개</b><span>담보·보장 항목 비교 후보</span></div>
+      <div class="stat reveal" style="--d:.24s"><b><em data-count="2221">0</em>개</b><span>심평원 질병코드 참조</span></div>
+      <div class="stat reveal" style="--d:.32s"><b><em data-count="89">0</em>개</b><span>보장타겟 기준 설계 비교</span></div>
     </div>
   </section>
 
@@ -452,7 +454,7 @@
         const dur = 900;
         const tick = (t) => {
           const k = Math.min(1, (t - t0) / dur);
-          el.textContent = String(Math.round(target * (1 - Math.pow(1 - k, 3))));
+          el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))).toLocaleString("ko-KR");
           if (k < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);

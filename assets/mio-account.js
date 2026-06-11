@@ -96,7 +96,7 @@ function checkoutQueryProvider() {
 function applyCheckoutQueryDefaults() {
   const months = checkoutQueryPlan();
   const form = $("#payment-form");
-  if (months && form?.purchased_months) form.purchased_months.value = String(months);
+  if (months) setFormValue(form, "purchased_months", String(months));
 }
 
 function escapeHtml(value) {
@@ -445,6 +445,21 @@ function formDataObject(form) {
   return result;
 }
 
+function formField(formOrSelector, name) {
+  const form = typeof formOrSelector === "string" ? $(formOrSelector) : formOrSelector;
+  return form?.elements?.namedItem(name) || null;
+}
+
+function setFormValue(formOrSelector, name, value) {
+  const field = formField(formOrSelector, name);
+  if (field) field.value = value;
+}
+
+function setFormChecked(formOrSelector, name, value) {
+  const field = formField(formOrSelector, name);
+  if (field) field.checked = Boolean(value);
+}
+
 async function apiPost(action, payload = {}, requireAuth = false) {
   const headers = { "Content-Type": "application/json" };
   if (requireAuth && session?.access_token) {
@@ -487,9 +502,9 @@ function renderAuthState() {
 function renderProfile(profile = {}, user = {}) {
   $("#account-title").textContent = profile.display_name || user.email || "내 계정";
   const form = $("#profile-form");
-  form.display_name.value = profile.display_name || "";
-  form.company_name.value = profile.company_name || "";
-  form.marketing_opt_in.checked = Boolean(profile.marketing_opt_in);
+  setFormValue(form, "display_name", profile.display_name || "");
+  setFormValue(form, "company_name", profile.company_name || "");
+  setFormChecked(form, "marketing_opt_in", profile.marketing_opt_in);
 }
 
 function renderLicenses(licenses = []) {
@@ -853,11 +868,12 @@ function setupAuthTabs() {
 function setupRememberedEmail() {
   const form = $("#login-form");
   const checkbox = $("#remember-email");
-  if (!form?.email || !checkbox) return;
+  const emailInput = formField(form, "email");
+  if (!emailInput || !checkbox) return;
   try {
     const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
     if (savedEmail) {
-      form.email.value = savedEmail;
+      emailInput.value = savedEmail;
       checkbox.checked = true;
     }
   } catch {
@@ -867,10 +883,11 @@ function setupRememberedEmail() {
 
 function saveRememberedEmailIfNeeded(form) {
   const checkbox = $("#remember-email");
-  if (!form?.email || !checkbox) return;
+  const emailInput = formField(form, "email");
+  if (!emailInput || !checkbox) return;
   try {
     if (checkbox.checked) {
-      localStorage.setItem(REMEMBER_EMAIL_KEY, form.email.value.trim());
+      localStorage.setItem(REMEMBER_EMAIL_KEY, emailInput.value.trim());
     } else {
       localStorage.removeItem(REMEMBER_EMAIL_KEY);
     }
@@ -934,7 +951,7 @@ function setupForms() {
       const data = await apiPost("signup", payload);
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
-      if ($("#login-form")?.email && email) $("#login-form").email.value = email;
+      if (email) setFormValue("#login-form", "email", email);
       showMessage(data.message || "인증메일을 발송했습니다. 입력한 이메일함에서 인증 링크를 클릭해 인증을 완료한 뒤 로그인해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
@@ -968,7 +985,7 @@ function setupForms() {
       const data = await apiPost("request_password_reset", payload);
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
-      if ($("#login-form")?.email && email) $("#login-form").email.value = email;
+      if (email) setFormValue("#login-form", "email", email);
       showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
@@ -989,7 +1006,7 @@ function setupForms() {
   });
 
   const paymentForm = $("#payment-form");
-  paymentForm.purchased_months.addEventListener("change", renderPaymentInstructions);
+  formField(paymentForm, "purchased_months")?.addEventListener("change", renderPaymentInstructions);
   $("#kakaopay-checkout-button")?.addEventListener("click", startKakaoPayCheckout);
   applyCheckoutQueryDefaults();
   paymentForm.addEventListener("submit", async (event) => {

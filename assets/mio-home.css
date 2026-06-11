@@ -254,6 +254,42 @@ h3 {
   vertical-align: middle;
 }
 
+.purchase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 12px 0 18px;
+}
+.purchase-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.purchase-card.featured {
+  border-color: var(--blue);
+  background: linear-gradient(180deg, rgba(37,99,235,.10), var(--panel));
+}
+.purchase-card h2 {
+  margin: 0;
+  font-size: 28px;
+}
+.purchase-card strong {
+  color: var(--soft);
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+.purchase-card p,
+.purchase-note p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
 .account-shell {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, .6fr);
@@ -971,6 +1007,7 @@ th {
   .top-links { gap: 8px; }
   .account-hero { padding-top: 40px; }
   .process-strip,
+  .purchase-grid,
   .payment-action-grid,
   .form-grid,
   .tabs {
