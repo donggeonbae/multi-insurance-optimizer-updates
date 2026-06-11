@@ -3,12 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MIO terms page moved</title>
+  <title>MIO 이용약관 페이지 이동</title>
+  <meta name="theme-color" content="#f6f7f9" />
   <link rel="canonical" href="./terms/" />
   <meta http-equiv="refresh" content="0; url=./terms/" />
+  <link rel="icon" href="assets/mio-cat.png" />
+  <script src="assets/mio-theme.js"></script>
+  <link rel="stylesheet" href="assets/mio-home.css?v=20260611-light" />
 </head>
 <body>
-  <p>This page has moved. <a id="fallback-link" href="./terms/">Open the new page</a></p>
+  <header class="wrap site-top">
+    <nav class="nav" aria-label="주요 메뉴">
+      <a class="brand" href="./" aria-label="MIO 홈"><img src="assets/mio-cat.png" alt="" /><span>MIO<small>Multi Insurance Optimizer</small></span></a>
+      <div class="top-links"><a class="pill" href="./">홈</a><a class="pill" href="./account/">계정</a><a class="pill" href="./purchase/">구매</a><a class="pill active" href="./terms/">이용약관</a><a class="pill" href="./privacy/">개인정보처리방침</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="테마 전환" title="테마 전환"><span class="theme-toggle-sun" aria-hidden="true">☀</span><span class="theme-toggle-moon" aria-hidden="true">☾</span></button></div>
+    </nav>
+  </header>
+  <main class="wrap">
+    <section class="account-hero">
+      <span class="badge">Terms of Service</span>
+      <h1>이용약관 페이지로 이동합니다</h1>
+      <p class="lead">자동으로 이동하지 않으면 아래 버튼을 눌러 주세요.</p>
+      <p><a id="fallback-link" class="button primary" href="./terms/">이용약관 열기</a></p>
+    </section>
+  </main>
+  <footer class="wrap site-footer">
+    <div class="footer-line">
+      <div class="business-footer" aria-label="사업자 정보">
+        <span><strong>상호</strong> 람블루</span>
+        <span><strong>대표자</strong> 배동건</span>
+        <span><strong>사업자등록번호</strong> 725-18-02418 · <strong>통신판매업신고번호</strong> 2026-서울관악-0941</span>
+        <span><strong>사업장소재지</strong> 서울특별시 관악구 서림길 82 (삼양) 505호</span>
+        <span><strong>업태/업종</strong> 정보통신업 / 응용 소프트웨어 개발 및 공급업</span>
+        <span><strong>전화번호</strong> 010-3236-2599</span>
+        <span><strong>문의</strong> <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a> · <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7251802418" target="_blank" rel="noopener">사업자정보확인</a></span>
+      </div>
+    </div>
+  </footer>
   <script>
     (function () {
       var destination = new URL("./terms/", window.location.href);

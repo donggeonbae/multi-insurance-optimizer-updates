@@ -489,7 +489,6 @@ function renderProfile(profile = {}, user = {}) {
   const form = $("#profile-form");
   form.display_name.value = profile.display_name || "";
   form.company_name.value = profile.company_name || "";
-  form.phone.value = profile.phone || "";
   form.marketing_opt_in.checked = Boolean(profile.marketing_opt_in);
 }
 
@@ -970,7 +969,7 @@ function setupForms() {
       form.reset();
       document.querySelector('[data-auth-tab="login"]')?.click();
       if ($("#login-form")?.email && email) $("#login-form").email.value = email;
-      showMessage(data.message || "입력한 정보와 일치하는 계정이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
+      showMessage(data.message || "가입된 이메일이면 임시비밀번호를 발송했습니다. 메일로 받은 임시비밀번호를 로그인 비밀번호 칸에 입력해 주세요.");
     } catch (error) {
       showMessage(error.message, true);
     }

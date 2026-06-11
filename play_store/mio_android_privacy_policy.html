@@ -3,99 +3,111 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MIO 개인정보처리방침</title>
+  <title>MIO 개인정보처리방침 | Multi Insurance Optimizer</title>
   <meta name="description" content="MIO 프로그램, 모바일 앱, 홈페이지 계정 및 라이선스 서비스 개인정보처리방침" />
+  <meta name="theme-color" content="#f6f7f9" />
+  <link rel="icon" href="../assets/mio-cat.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="../assets/mio-theme.js"></script>
+  <link rel="stylesheet" href="../assets/mio-home.css?v=20260611-light" />
   <style>
-    :root { color-scheme: dark; font-family: "Noto Sans KR", system-ui, sans-serif; background: #070a0f; color: #f4f7fb; }
-    body { margin: 0; line-height: 1.7; }
-    main { width: min(980px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 72px; }
-    h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.05; margin: 0 0 14px; letter-spacing: -.05em; }
-    h2 { margin-top: 34px; color: #cfe2f6; }
-    p, li { color: #d9e6f4; }
-    a { color: #7cc7ff; }
-    .lead, .note { color: #a8b8ca; }
-    .note { border: 1px solid rgba(180,216,255,.18); background: rgba(255,255,255,.06); border-radius: 18px; padding: 16px 18px; }
+    .privacy-main { padding-bottom: 28px; }
+    .privacy-main > section:not(.account-hero),
+    .privacy-main > nav {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 3vw, 32px);
+      margin: 18px 0;
+    }
+    .privacy-main h2 { margin: 0 0 14px; color: var(--ink); }
+    .privacy-main p,
+    .privacy-main li,
+    .privacy-main td { color: var(--soft); line-height: 1.78; }
+    .privacy-main a { color: var(--blue2); font-weight: 800; }
+    .privacy-main .note {
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      border-radius: 18px;
+      padding: 16px 18px;
+      color: var(--muted);
+    }
+    .privacy-main .summary { background: rgba(37, 99, 235, .06); }
+    .privacy-main .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .privacy-main .toc a {
+      display: block;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      text-decoration: none;
+      background: var(--panel2);
+      color: var(--soft);
+      font-weight: 800;
+    }
+    .privacy-main table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .privacy-main th,
+    .privacy-main td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .privacy-main th { color: var(--blue2); width: 190px; }
+    .privacy-main .warning {
+      border-color: rgba(180, 120, 10, .35);
+      background: rgba(255, 193, 7, .10);
+    }
+    .privacy-main .small { color: var(--muted); font-size: 13px; }
   </style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>MIO 개인정보처리방침</h1>
-    <p class="lead">
-      이 방침은 MIO PC 프로그램, 모바일 앱, 홈페이지 계정, 결제 확인, 라이선스 인증 및 업데이트 서비스에 공통 적용됩니다.
-    </p>
-    <div class="note">
-      <strong>시행일:</strong> 2026년 5월 14일<br>
-      <strong>문의:</strong> MIO 고객지원 <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a>
-    </div>
+  <header class="wrap site-top">
+    <nav class="nav" aria-label="주요 메뉴">
+      <a class="brand" href="../" aria-label="MIO 홈"><img src="../assets/mio-cat.png" alt="" /><span>MIO<small>Multi Insurance Optimizer</small></span></a>
+      <div class="top-links"><a class="pill" href="../">홈</a><a class="pill" href="../account/">계정</a><a class="pill" href="../purchase/">구매</a><a class="pill" href="../terms/">이용약관</a><a class="pill active" href="../privacy/">개인정보처리방침</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="테마 전환" title="테마 전환"><span class="theme-toggle-sun" aria-hidden="true">☀</span><span class="theme-toggle-moon" aria-hidden="true">☾</span></button></div>
+    </nav>
   </header>
-
-  <section>
-    <h2>1. 처리하는 개인정보 항목</h2>
-    <ul>
-      <li>계정: 이메일, 비밀번호 해시, 이름, 생년월일, 회사/지점명, 약관 및 개인정보 동의 일시, 계정 정보 변경 시 선택 입력한 연락처</li>
-      <li>결제 확인: 주문번호, 주문자명, 이용권 기간, 결제 상태, 결제·취소요청 일시, 요청 메모</li>
-      <li>라이선스 및 기기: 라이선스 ID, 라이선스 확인값, 기기 ID, 기기 유형, 앱 버전, 접속 일시</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>2. 이용 목적</h2>
-    <ul>
-      <li>회원가입, 로그인, 이메일 인증, 아이디 찾기, 임시비밀번호 발송</li>
-      <li>3일 무료 체험, 이용권 구매 확인, 라이선스 발급·연장·기기 제한 관리</li>
-      <li>서비스 보안, 부정 이용 방지, 업데이트 및 라이선스 운영</li>
-      <li>법령상 의무 이행과 분쟁 대응</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>3. 고객 PDF 및 업무 데이터</h2>
-    <p>
-      진료기록 PDF, 요양급여내역, 상담 메모, 분석 결과 등 업무 데이터는 기본적으로 사용자 기기에서 처리됩니다.
-      계정 서버에는 고객 PDF 원본이나 분석 결과를 저장하지 않습니다.
-    </p>
-  </section>
-
-  <section>
-    <h2>4. 보관 및 파기</h2>
-    <ul>
-      <li>계정 정보는 회원 탈퇴 또는 관리자 삭제 시 관련 법령상 보관 필요 범위를 제외하고 삭제합니다.</li>
-      <li>결제 및 라이선스 이력은 서비스 운영, 정산, 분쟁 대응을 위해 필요한 기간 동안 보관할 수 있습니다.</li>
-      <li>비활성 기기 내역과 만료 라이선스는 운영 정책에 따라 삭제 또는 비활성화할 수 있습니다.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>5. 제3자 제공 및 처리위탁</h2>
-    <p>
-      MIO는 서비스 운영에 필요한 범위에서 클라우드 인프라, 이메일 발송, 결제·판매 플랫폼, 주문 확인 API를 이용할 수 있습니다.
-      관련 업체에는 서비스 제공에 필요한 최소한의 정보만 처리되도록 관리합니다.
-    </p>
-  </section>
-
-  <section>
-    <h2>6. 이용자의 권리</h2>
-    <p>
-      이용자는 개인정보 열람, 정정, 삭제, 처리정지를 요청할 수 있습니다. 계정 및 라이선스 운영상 즉시 삭제가 어려운 정보는
-      법령과 분쟁 대응에 필요한 범위에서 보관 후 파기합니다.
-    </p>
-  </section>
-
-  <section>
-    <h2>7. 안전성 확보 조치</h2>
-    <ul>
-      <li>이메일 인증 및 비밀번호 해시 저장</li>
-      <li>서버 접근 권한 제한과 관리자 기능 분리</li>
-      <li>라이선스 키 원문 대신 확인값 기반 인증</li>
-      <li>업무 PDF의 서버 미저장 원칙</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>8. 문의</h2>
-    <p>개인정보 관련 문의는 전화번호 010-3236-2599 또는 <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a>로 보내 주세요.</p>
-  </section>
+<main class="wrap privacy-main">
+  <section class="account-hero"><span class="badge">Privacy Policy</span><h1>MIO 개인정보처리방침</h1><p class="lead">이 방침은 MIO PC 프로그램, 모바일 앱, 홈페이지 계정, 결제 확인, 라이선스 인증 및 업데이트 서비스에 공통 적용됩니다.</p><div class="note"><strong>시행일:</strong> 2026년 5월 22일<br><strong>서비스명:</strong> MIO · Multi Insurance Optimizer<br><strong>운영자:</strong> 람블루 / 대표 배동건<br><strong>문의:</strong> <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a></div></section>
+  <section class="summary"><h2>핵심 안내</h2><ul><li>고객 PDF·상담자료·진료내역은 계정 페이지에 업로드하지 않습니다. PC 프로그램의 분석 파일은 기본적으로 사용자 기기에서 처리됩니다.</li><li>계정 서버는 회원가입, 로그인, 이메일 인증, 소셜 로그인, 결제 확인, 라이선스 발급, 기기 등록 등 서비스 운영에 필요한 최소 정보를 처리합니다.</li><li>진료기록, 요양급여내역, 처방 정보에는 민감정보가 포함될 수 있으므로 이용자는 고객의 적법한 동의와 권한을 확보해야 합니다.</li></ul></section>
+  <nav aria-label="개인정보처리방침 목차"><ul class="toc"><li><a href="#items">1. 처리하는 개인정보 항목</a></li><li><a href="#purpose">2. 개인정보 처리 목적</a></li><li><a href="#local-data">3. 고객 PDF 및 업무 자료</a></li><li><a href="#social-login">4. 소셜 로그인</a></li><li><a href="#retention">5. 보유 및 이용기간</a></li><li><a href="#third-party">6. 제3자 제공·처리위탁·국외 처리</a></li><li><a href="#rights">7. 정보주체의 권리</a></li><li><a href="#destruction">8. 파기 절차 및 방법</a></li><li><a href="#security">9. 안전성 확보 조치</a></li><li><a href="#cookies">10. 자동 수집 정보와 쿠키</a></li><li><a href="#children">11. 14세 미만 아동</a></li><li><a href="#contact">12. 개인정보 보호책임자 및 문의</a></li><li><a href="#changes">13. 변경 고지</a></li></ul></nav>
+  <section id="items"><h2>1. 처리하는 개인정보 항목</h2><table><tbody><tr><th>계정 정보</th><td>이메일, 비밀번호 해시, 이름, 회사/지점명, 약관 및 개인정보 동의 일시</td></tr><tr><th>소셜 로그인 정보</th><td>Google, Kakao, Naver 등 외부 로그인 제공자가 전달하는 고유 식별자, 이메일, 프로필 기본 정보. 프로필 사진은 요청하지 않거나 사용하지 않는 것을 원칙으로 합니다.</td></tr><tr><th>이메일 인증·비밀번호 처리</th><td>인증 메일 발송 여부, 인증 완료 시각, 임시 비밀번호 발송 요청 시각, 비밀번호 변경 시각</td></tr><tr><th>결제 확인</th><td>주문번호, 주문자명, 이용권 기간, 상품명, 결제 금액, 결제 상태, 결제·취소요청 일시, 구매등록 처리 결과</td></tr><tr><th>라이선스 및 기기</th><td>라이선스 ID, 라이선스 키, 만료일, 상태, 마지막 인증일, 기기 ID, 기기 유형(PC/모바일), 앱 버전, 등록·해제 일시</td></tr><tr><th>서비스 이용·보안 로그</th><td>로그인 시각, 인증 요청 시각, 서버 요청 결과, 오류 코드, 접속 IP, User-Agent 등 부정 이용 방지와 장애 확인에 필요한 기술 정보</td></tr><tr><th>문의 시 제공 정보</th><td>이용자가 support@mio.ai.kr로 직접 제공한 이메일 주소, 문의 내용, 첨부 파일. 프로그램이 이를 자동 수집하지는 않습니다.</td></tr></tbody></table><p class="note warning">고객명, 주민등록번호, 진료명, 상병명, 원본 파일명 등 민감한 고객자료는 문의 메일이나 계정 페이지에 불필요하게 입력하지 않는 것을 권장합니다.</p></section>
+  <section id="purpose"><h2>2. 개인정보 처리 목적</h2><table><tbody><tr><th>회원 계정 관리</th><td>회원가입, 로그인, 이메일 인증, 소셜 로그인 연결, 아이디 찾기, 비밀번호 변경, 탈퇴 및 재가입 제한 관리</td></tr><tr><th>서비스 제공</th><td>무료 체험 제공, 라이선스 발급·연장·변경·비활성화, 기기 등록 제한, PC/모바일 인증 처리</td></tr><tr><th>결제 확인</th><td>네이버 스마트스토어·커머스 API, 카카오페이 등 결제수단을 통한 주문 확인, 중복 발급 방지, 상품명·기간·금액 검증</td></tr><tr><th>보안 및 부정 이용 방지</th><td>허위 주문번호 입력, 라이선스 공유, 인증 우회, 비정상 접근, 반복 실패 요청 탐지</td></tr><tr><th>고지 및 운영 안내</th><td>인증 메일, 임시 비밀번호, 라이선스 발급 메일, 업데이트 안내, 약관·정책 변경 안내 발송</td></tr></tbody></table></section>
+  <section id="local-data"><h2>3. 고객 PDF 및 업무 자료</h2><ul><li>진료기록 PDF, 요양급여내역, 처방·조제 정보, 자동차보험 관련 자료, 상담 메모, 설계표, OCR 결과, 내보내기 파일은 기본적으로 사용자 기기에서 처리·저장됩니다.</li><li>계정 서버는 고객 PDF 원본과 분석 결과를 상시 업로드하거나 보관하도록 설계되어 있지 않습니다.</li><li>사용자가 직접 이메일, 메신저, 원격지원 등 별도 채널로 자료를 제공하는 경우 해당 자료는 문의 처리 목적 범위에서만 사용하며, 목적 달성 후 삭제하는 것을 원칙으로 합니다.</li><li>이용자는 고객 또는 피보험자의 개인정보·민감정보를 처리하기 전에 관련 법령과 소속 회사 기준에 따른 동의를 확보해야 합니다.</li></ul></section>
+  <section id="social-login"><h2>4. 소셜 로그인</h2><ul><li>Google/Gmail, Kakao, Naver 로그인을 사용하는 경우 외부 제공자의 인증 완료 후 Supabase OAuth/OIDC 세션을 통해 MIO 계정이 생성되거나 기존 계정과 연결됩니다.</li><li>수집 범위는 계정 식별과 로그인에 필요한 고유 식별자와 이메일, 기본 프로필 정보로 제한합니다.</li><li>MIO는 Google Calendar, 연락처, 드라이브 등 추가 API 권한을 사용하지 않는 한 해당 데이터에 접근하지 않습니다.</li></ul></section>
+  <section id="retention"><h2>5. 보유 및 이용기간</h2><table><tbody><tr><th>계정 정보</th><td>회원 탈퇴 또는 계정 삭제 요청 시까지. 단, 부정 가입·재가입 제한, 분쟁 대응에 필요한 최소 식별 정보는 필요한 기간 동안 별도 보관할 수 있습니다.</td></tr><tr><th>결제 및 라이선스 기록</th><td>서비스 제공, 중복 발급 방지, 세무·회계, 전자상거래 분쟁 대응을 위해 관련 법령상 필요한 기간 동안 보관합니다.</td></tr><tr><th>기기 등록 기록</th><td>라이선스 이용 기간 및 부정 사용 방지에 필요한 기간 동안 보관합니다. 이용자가 기기를 해제하면 활성 기기 목록에서는 제거됩니다.</td></tr><tr><th>고객 PDF·분석 파일</th><td>기본적으로 사용자 기기 내에 보관되며, MIO 계정 서버의 보유 대상이 아닙니다.</td></tr></tbody></table></section>
+  <section id="third-party"><h2>6. 제3자 제공·처리위탁·국외 처리</h2><p>MIO는 이용자의 사전 동의가 있거나 법령상 요구되는 경우를 제외하고 개인정보를 제3자에게 판매하거나 제공하지 않습니다. 다만 서비스 운영을 위해 다음 외부 서비스를 이용할 수 있습니다.</p><table><thead><tr><th>수탁자/제공자</th><th>처리 목적</th><th>처리 정보</th></tr></thead><tbody><tr><td>Supabase</td><td>계정, 인증, 라이선스, 결제 확인, Edge Function 운영</td><td>계정·라이선스·기기·결제 확인 정보</td></tr><tr><td>Resend</td><td>인증 메일, 임시 비밀번호, 라이선스 및 업데이트 안내 발송</td><td>이메일 주소, 발송 내용, 발송 결과</td></tr><tr><td>AWS Lightsail / Caddy</td><td>고정 IP 커머스 API 프록시</td><td>주문 확인 API 요청에 필요한 서버 간 요청 정보</td></tr><tr><td>GitHub Pages / GitHub Releases</td><td>홈페이지 게시, 업데이트 파일 배포</td><td>일반 접속 로그, 다운로드 요청 정보</td></tr><tr><td>네이버 스마트스토어·커머스 API</td><td>주문번호와 주문자명 기반 결제완료 확인, 발송처리</td><td>주문번호, 주문자명, 상품명, 결제 상태, 발송 상태</td></tr><tr><td>카카오페이</td><td>결제창 연결 및 결제 승인 확인(활성화 시)</td><td>결제 식별자, 결제 금액, 승인 상태</td></tr><tr><td>Google, Kakao, Naver</td><td>소셜 로그인 인증</td><td>외부 계정 식별자, 이메일, 기본 프로필 정보</td></tr><tr><td>ImprovMX</td><td>support@mio.ai.kr 메일 포워딩</td><td>문의 이메일의 송수신 정보와 본문</td></tr></tbody></table><p>위 서비스 중 일부는 국외 법인 또는 국외 인프라를 사용할 수 있습니다. 국외 처리는 계정 인증, 이메일 발송, 호스팅, 업데이트 배포 등 서비스 제공에 필요한 범위에서 이루어집니다.</p></section>
+  <section id="rights"><h2>7. 정보주체의 권리</h2><ul><li>이용자는 본인의 개인정보에 대해 열람, 정정, 삭제, 처리정지, 동의철회를 요청할 수 있습니다.</li><li>계정 정보는 계정 페이지 또는 프로그램 계정 화면에서 직접 수정할 수 있습니다.</li><li>법령상 보관 의무, 부정 이용 방지, 결제·분쟁 대응에 필요한 정보는 즉시 삭제가 제한될 수 있습니다.</li><li>권리 행사는 support@mio.ai.kr로 요청할 수 있으며, 운영자는 본인 확인 후 지체 없이 처리합니다.</li></ul></section>
+  <section id="destruction"><h2>8. 파기 절차 및 방법</h2><ul><li>보유 기간이 종료되거나 처리 목적이 달성된 개인정보는 복구하기 어려운 방식으로 삭제합니다.</li><li>전자적 파일은 시스템에서 삭제하거나 비식별·익명화하고, 출력물 또는 종이 문서는 파쇄합니다.</li></ul></section>
+  <section id="security"><h2>9. 안전성 확보 조치</h2><ul><li>비밀번호는 평문으로 저장하지 않고 해시 방식으로 처리합니다.</li><li>계정·라이선스·결제 확인 서버는 관리자 권한과 일반 사용자 권한을 분리합니다.</li><li>서버 통신은 HTTPS를 사용하고, API 키와 관리자 비밀값은 클라이언트 앱에 노출하지 않는 것을 원칙으로 합니다.</li><li>네이버 커머스 API는 고정 IP 프록시를 통해 호출하며, 릴리즈 전 서버·커머스 검증을 수행합니다.</li><li>업데이트 릴리즈 문구와 manifest에는 고객명, 원본 파일명, 로컬 경로, 민감 진료정보를 포함하지 않습니다.</li></ul></section>
+  <section id="cookies"><h2>10. 자동 수집 정보와 쿠키</h2><ul><li>홈페이지와 계정 페이지는 로그인 상태 유지, 보안 확인, 사용자 편의를 위해 세션 저장소, 로컬 저장소, 쿠키 또는 유사 기술을 사용할 수 있습니다.</li><li>브라우저 설정에서 쿠키를 차단할 수 있으나, 필수 쿠키나 세션 저장이 차단되면 로그인과 결제 확인 기능이 정상 동작하지 않을 수 있습니다.</li></ul></section>
+  <section id="children"><h2>11. 14세 미만 아동</h2><p>MIO는 보험설계 업무자를 대상으로 하는 업무지원 서비스이며, 14세 미만 아동을 회원으로 받거나 아동의 계정 개인정보를 의도적으로 수집하지 않습니다. 다만 이용자가 분석 대상 자료로 미성년자의 진료기록을 처리하는 경우에는 보호자 동의 등 관련 법령상 요건을 이용자가 직접 확인해야 합니다.</p></section>
+  <section id="contact"><h2>12. 개인정보 보호책임자 및 문의</h2><table><tbody><tr><th>개인정보 보호책임자</th><td>배동건</td></tr><tr><th>상호</th><td>람블루</td></tr><tr><th>대표자</th><td>배동건</td></tr><tr><th>사업자등록번호</th><td>725-18-02418</td></tr><tr><th>통신판매업신고번호</th><td>2026-서울관악-0941</td></tr><tr><th>사업장소재지</th><td>서울특별시 관악구 서림길 82 (삼양) 505호</td></tr><tr><th>업태/업종</th><td>정보통신업 / 응용 소프트웨어 개발 및 공급업</td></tr><tr><th>전화번호</th><td>010-3236-2599</td></tr><tr><th>문의</th><td><a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a> · <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7251802418" target="_blank" rel="noopener">사업자정보확인</a></td></tr></tbody></table><p>개인정보 침해에 대한 상담은 개인정보침해 신고센터, 개인정보분쟁조정위원회, 대검찰청 사이버수사과, 경찰청 사이버수사국 등 관련 기관을 통해서도 도움을 받을 수 있습니다.</p></section>
+  <section id="changes"><h2>13. 변경 고지</h2><p>본 방침은 법령 개정, 서비스 구조 변경, 외부 인증·결제 제공자 변경, 보안 정책 변경에 따라 수정될 수 있습니다. 중요한 변경은 시행 전 홈페이지, 프로그램 또는 이메일을 통해 안내합니다.</p><p class="small">변경 이력: 2026년 5월 22일 — 소셜 로그인, 결제 확인, 라이선스·기기 정책, 위탁·국외 처리, 정보주체 권리 항목 보강.</p></section>
 </main>
+  <footer class="wrap site-footer">
+    <div class="footer-line">
+      <div class="business-footer" aria-label="사업자 정보">
+        <span><strong>상호</strong> 람블루</span>
+        <span><strong>대표자</strong> 배동건</span>
+        <span><strong>사업자등록번호</strong> 725-18-02418 · <strong>통신판매업신고번호</strong> 2026-서울관악-0941</span>
+        <span><strong>사업장소재지</strong> 서울특별시 관악구 서림길 82 (삼양) 505호</span>
+        <span><strong>업태/업종</strong> 정보통신업 / 응용 소프트웨어 개발 및 공급업</span>
+        <span><strong>전화번호</strong> 010-3236-2599</span>
+        <span><strong>문의</strong> <a href="mailto:support@mio.ai.kr">support@mio.ai.kr</a> · <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7251802418" target="_blank" rel="noopener">사업자정보확인</a></span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
