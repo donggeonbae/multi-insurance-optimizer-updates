@@ -283,6 +283,32 @@ h3 {
   font-weight: 900;
   letter-spacing: 0;
 }
+.price-original {
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.discount-note {
+  color: var(--blue) !important;
+  font-weight: 900;
+}
+.purchase-actions {
+  display: grid;
+  gap: 9px;
+  margin-top: 2px;
+}
+.purchase-pay-button {
+  min-height: 58px;
+  padding: 9px 12px;
+}
+.purchase-pay-button .kakaopay-logo {
+  height: 34px;
+}
+.purchase-pay-button .naverpay-logo {
+  height: 36px;
+}
 .purchase-card p,
 .purchase-note p {
   margin: 0;
@@ -817,32 +843,54 @@ select option { background: var(--panel); color: var(--ink); }
   margin: 10px 0 14px;
 }
 .payment-method-button {
-  min-height: 58px;
+  min-height: 66px;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   line-height: 1.12;
+  justify-content: center;
+  padding: 10px 14px;
 }
-.payment-method-button span {
-  font-size: 13px;
+.payment-brand-logo {
+  display: block;
+  max-width: min(200px, 100%);
+  width: auto;
+  object-fit: contain;
+}
+.kakaopay-logo {
+  height: 42px;
+}
+.naverpay-logo {
+  height: 39px;
+}
+.payment-method-caption {
+  font-size: 12px;
   font-weight: 800;
-  opacity: .92;
-}
-.payment-method-button strong {
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: -.03em;
+  opacity: .78;
 }
 .button.kakao-pay {
-  border-color: #fee500;
-  background: #fee500;
+  border-color: #FFEB00;
+  background: #FFEB00;
   color: rgba(0,0,0,.85);
-  box-shadow: 0 18px 42px rgba(254,229,0,.16);
+  box-shadow: 0 18px 42px rgba(255,235,0,.16);
 }
 .button.naver-pay {
-  border-color: #03a94d;
-  background: #03a94d;
-  color: #fff;
-  box-shadow: 0 18px 42px rgba(3,169,77,.18);
+  border-color: #00DE5A;
+  background: #00DE5A;
+  color: #111;
+  box-shadow: 0 18px 42px rgba(0,222,90,.18);
+}
+.payment-method-button.recommended {
+  outline: 3px solid rgba(79,179,255,.26);
+  outline-offset: 3px;
+}
+.payment-method-note {
+  margin: -4px 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.naverpay-registration-note {
+  padding-left: 2px;
 }
 .button.disabled,
 .button[aria-disabled="true"] {
@@ -859,6 +907,39 @@ select option { background: var(--panel); color: var(--ink); }
   border: 1px solid rgba(79,179,255,.18);
   border-radius: 19px;
   background: linear-gradient(135deg, rgba(79,179,255,.11), rgba(255,255,255,.045));
+}
+.payment-plan-select {
+  margin-bottom: 2px;
+}
+.payment-flow-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.payment-flow-cards article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel2);
+}
+.payment-flow-cards article.active {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(79,179,255,.12);
+}
+.payment-flow-cards strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+.payment-flow-cards p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.account-payment-flow {
+  margin-top: 2px;
 }
 .issued-license-key {
   display: grid;
@@ -1009,6 +1090,7 @@ th {
   .process-strip,
   .purchase-grid,
   .payment-action-grid,
+  .payment-flow-cards,
   .form-grid,
   .tabs {
     grid-template-columns: 1fr;

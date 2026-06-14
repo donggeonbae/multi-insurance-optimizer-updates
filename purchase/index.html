@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MIO 라이선스 구매 | Multi Insurance Optimizer</title>
-  <meta name="description" content="MIO 라이선스 구매와 네이버 주문번호 등록을 시작하는 페이지입니다." />
+  <meta name="description" content="MIO 라이선스를 카카오페이 바로 결제 또는 네이버페이 구매 후 주문등록 방식으로 시작하는 페이지입니다." />
   <meta name="theme-color" content="#f6f7f9" />
   <link rel="icon" href="../assets/mio-cat.png" />
   <script src="../assets/mio-theme.js"></script>
@@ -32,7 +32,7 @@
     <section class="account-hero">
       <span class="badge">MIO Purchase</span>
       <h1>라이선스 구매</h1>
-      <p class="lead">이용 기간을 확인한 뒤 계정 페이지에서 결제와 주문번호 등록을 진행합니다.</p>
+      <p class="lead">이용 기간을 고른 뒤 카카오페이는 바로 결제하고, 네이버페이는 구매 후 주문번호를 등록합니다.</p>
     </section>
 
     <section class="purchase-grid" aria-label="라이선스 이용권">
@@ -41,28 +41,63 @@
         <h2>1개월</h2>
         <strong>9,900원</strong>
         <p>짧게 테스트하거나 한 달 단위로 갱신할 때 적합합니다.</p>
-        <a class="button primary full" href="../account/?payment_provider=smartstore&plan=1">1개월 구매 등록</a>
+        <div class="purchase-actions" aria-label="1개월 결제수단">
+          <a class="button kakao-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=kakaopay&plan=1">
+            <img class="payment-brand-logo kakaopay-logo" src="../assets/kakaopay/payment_icon_yellow_large.png" alt="카카오페이" />
+            <span class="payment-method-caption">계정 로그인 후 바로 결제</span>
+          </a>
+          <a class="button naver-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=smartstore&plan=1" title="네이버페이는 구매 후 주문번호와 주문자명을 계정 페이지에 등록해야 이용권이 발급됩니다.">
+            <img class="payment-brand-logo naverpay-logo" src="../assets/naverpay/btn_npaygr_buy.svg" alt="Npay 구매하기" />
+            <span class="payment-method-caption">구매 후 주문등록 필요</span>
+          </a>
+        </div>
       </article>
       <article class="purchase-card featured">
         <span class="eyebrow">Recommended</span>
         <h2>3개월</h2>
-        <strong>27,900원</strong>
+        <strong><span class="price-original">29,700원</span> 27,900원</strong><p class="discount-note">6% 할인</p>
         <p>정기 업무에 맞춰 가장 무난하게 사용할 수 있는 이용권입니다.</p>
-        <a class="button primary full" href="../account/?payment_provider=smartstore&plan=3">3개월 구매 등록</a>
+        <div class="purchase-actions" aria-label="3개월 결제수단">
+          <a class="button kakao-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=kakaopay&plan=3">
+            <img class="payment-brand-logo kakaopay-logo" src="../assets/kakaopay/payment_icon_yellow_large.png" alt="카카오페이" />
+            <span class="payment-method-caption">계정 로그인 후 바로 결제</span>
+          </a>
+          <a class="button naver-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=smartstore&plan=3" title="네이버페이는 구매 후 주문번호와 주문자명을 계정 페이지에 등록해야 이용권이 발급됩니다.">
+            <img class="payment-brand-logo naverpay-logo" src="../assets/naverpay/btn_npaygr_buy.svg" alt="Npay 구매하기" />
+            <span class="payment-method-caption">구매 후 주문등록 필요</span>
+          </a>
+        </div>
       </article>
       <article class="purchase-card">
         <span class="eyebrow">Longer</span>
         <h2>6개월</h2>
-        <strong>54,900원</strong>
+        <strong><span class="price-original">59,400원</span> 54,900원</strong><p class="discount-note">8% 할인</p>
         <p>반기 단위로 고객 관리와 설계 업무를 이어갈 때 적합합니다.</p>
-        <a class="button primary full" href="../account/?payment_provider=smartstore&plan=6">6개월 구매 등록</a>
+        <div class="purchase-actions" aria-label="6개월 결제수단">
+          <a class="button kakao-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=kakaopay&plan=6">
+            <img class="payment-brand-logo kakaopay-logo" src="../assets/kakaopay/payment_icon_yellow_large.png" alt="카카오페이" />
+            <span class="payment-method-caption">계정 로그인 후 바로 결제</span>
+          </a>
+          <a class="button naver-pay full payment-method-button purchase-pay-button" href="../account/?payment_provider=smartstore&plan=6" title="네이버페이는 구매 후 주문번호와 주문자명을 계정 페이지에 등록해야 이용권이 발급됩니다.">
+            <img class="payment-brand-logo naverpay-logo" src="../assets/naverpay/btn_npaygr_buy.svg" alt="Npay 구매하기" />
+            <span class="payment-method-caption">구매 후 주문등록 필요</span>
+          </a>
+        </div>
       </article>
     </section>
 
     <section class="panel purchase-note">
-      <h2>구매 등록 안내</h2>
-      <p>네이버페이 구매 후 계정 페이지에서 주문번호와 주문자명을 입력하면 결제 확인 후 같은 계정에 라이선스가 연결됩니다.</p>
-      <p>카카오페이는 결제창 연결이 활성화된 경우 계정 페이지에서 바로 결제할 수 있습니다.</p>
+      <h2>결제 진행 방식</h2>
+      <div class="payment-flow-cards">
+        <article>
+          <strong>카카오페이</strong>
+          <p>계정 로그인 후 결제창을 바로 열고, 승인 완료 시 같은 계정에 이용권이 자동 연결됩니다.</p>
+        </article>
+        <article>
+          <strong>네이버페이</strong>
+          <p>구매 페이지에서 결제한 뒤 주문번호와 주문자명을 계정 페이지에 등록해야 이용권이 발급됩니다.</p>
+        </article>
+      </div>
     </section>
   </main>
 
