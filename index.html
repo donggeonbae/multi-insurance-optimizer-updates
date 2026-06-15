@@ -235,7 +235,22 @@
     .review:hover { transform: translateY(-4px); border-color: var(--accent-border); }
     .review .stars { color: #f59e0b; font-size: 14px; letter-spacing: 2px; }
     .review p { margin: 0; font-size: 14.5px; line-height: 1.7; }
-    .review .who { margin-top: auto; color: var(--faint); font-size: 12.5px; font-weight: 600; }
+    .review > .who { margin-top: auto; color: var(--faint); font-size: 12.5px; font-weight: 600; }
+    .review .meta { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--faint); font-size: 12.5px; font-weight: 600; }
+    .review .who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .review-delete {
+      border: 1px solid var(--line);
+      background: var(--surface2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    .review-delete:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
     .review-cta {
       margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
       background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 18px; padding: 26px;
@@ -292,6 +307,19 @@
     }
     .review-form input,
     .review-form select { height: 48px; padding: 0 14px; }
+    .review-login-note {
+      min-height: 48px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface2);
+      color: var(--muted);
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 650;
+    }
     .review-form textarea {
       min-height: 116px;
       padding: 14px;
@@ -488,11 +516,11 @@
       <div class="review-board-head">
         <p class="kicker">Comment</p>
         <h3>써보니까 어때요?</h3>
-        <p>익명 또는 원하는 이름으로 MIO 사용 후기를 남겨주세요. 주민번호, 전화번호, 고객명, 진료정보는 적지 마세요.</p>
+        <p>계정 페이지에서 로그인한 뒤 MIO 사용 후기를 남길 수 있습니다.</p>
       </div>
       <form class="review-form" id="homepageReviewForm">
         <div class="review-form-grid">
-          <input id="homepageReviewName" name="display_name" maxlength="24" autocomplete="name" placeholder="이름 또는 익명" />
+          <p class="review-login-note" id="homepageReviewLoginNote">로그인 상태를 확인하는 중입니다.</p>
           <select id="homepageReviewRating" name="rating" aria-label="별점">
             <option value="5">★★★★★</option>
             <option value="4">★★★★☆</option>
@@ -501,7 +529,7 @@
             <option value="1">★☆☆☆☆</option>
           </select>
         </div>
-        <textarea id="homepageReviewBody" name="body" maxlength="500" required placeholder="후기를 남겨주세요. 예: 고지 후보 정리가 빨라져 상담 전 준비 시간이 줄었어요."></textarea>
+        <textarea id="homepageReviewBody" name="body" maxlength="500" required placeholder="후기를 남겨주세요."></textarea>
         <div class="review-form-actions">
           <p class="review-status" id="homepageReviewStatus" role="status" aria-live="polite"></p>
           <button class="btn primary" type="submit">후기 남기기</button>
@@ -546,6 +574,8 @@
 
     // duplicate marquee content for a seamless loop
     const track = document.getElementById("marqueeTrack");
+    const marqueeSeed = track.innerHTML;
+    while (track.scrollWidth < window.innerWidth * 3) track.innerHTML += marqueeSeed;
     track.innerHTML += track.innerHTML;
 
     // reveal on scroll
@@ -580,6 +610,32 @@
     const reviewEmpty = document.getElementById("publicReviewEmpty");
     const reviewStatus = document.getElementById("homepageReviewStatus");
     const reviewForm = document.getElementById("homepageReviewForm");
+    const reviewLoginNote = document.getElementById("homepageReviewLoginNote");
+    const reviewBodyInput = document.getElementById("homepageReviewBody");
+    const reviewRatingInput = document.getElementById("homepageReviewRating");
+    const REVIEW_SESSION_KEY = "mio_account_session_v1";
+
+    function loadReviewSession() {
+      try { return JSON.parse(localStorage.getItem(REVIEW_SESSION_KEY) || "null"); }
+      catch { return null; }
+    }
+
+    function reviewAuthHeaders(extra = {}) {
+      const session = loadReviewSession();
+      return session?.access_token ? { ...extra, Authorization: `Bearer ${session.access_token}` } : extra;
+    }
+
+    function updateReviewFormState() {
+      const session = loadReviewSession();
+      const loggedIn = Boolean(session?.access_token);
+      const name = session?.user?.display_name || session?.user?.email || "";
+      reviewLoginNote.textContent = loggedIn
+        ? `${name || "로그인 계정"}으로 후기가 등록됩니다.`
+        : "계정 페이지에서 로그인하면 후기를 남길 수 있습니다.";
+      reviewBodyInput.disabled = !loggedIn;
+      reviewRatingInput.disabled = !loggedIn;
+      reviewForm.querySelector("button[type='submit']").disabled = !loggedIn;
+    }
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -596,11 +652,14 @@
     }
 
     function reviewCard(review) {
+      const deleteButton = review.can_delete
+        ? `<button class="review-delete" type="button" data-review-delete="${escapeHtml(review.id)}">삭제</button>`
+        : "";
       return `
         <article class="review">
           <div class="stars" aria-label="별점 ${Number(review.rating || 5)}점">${starText(review.rating)}</div>
           <p>${escapeHtml(review.body)}</p>
-          <div class="who">${escapeHtml(review.display_name || "익명")}</div>
+          <div class="meta"><span class="who">${escapeHtml(review.display_name || "MIO 사용자")}</span>${deleteButton}</div>
         </article>
       `;
     }
@@ -613,7 +672,7 @@
 
     async function loadPublicReviews() {
       try {
-        const res = await fetch(`${HOMEPAGE_REVIEWS_ENDPOINT}?limit=9`, { cache: "no-store" });
+        const res = await fetch(`${HOMEPAGE_REVIEWS_ENDPOINT}?limit=9`, { cache: "no-store", headers: reviewAuthHeaders() });
         if (!res.ok) throw new Error("review endpoint unavailable");
         const data = await res.json();
         renderPublicReviews(data.reviews || []);
@@ -626,8 +685,13 @@
     reviewForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const submitButton = reviewForm.querySelector("button[type='submit']");
+      const session = loadReviewSession();
+      if (!session?.access_token) {
+        reviewStatus.textContent = "계정 페이지에서 로그인한 뒤 후기를 남길 수 있습니다.";
+        updateReviewFormState();
+        return;
+      }
       const payload = {
-        display_name: document.getElementById("homepageReviewName").value,
         rating: document.getElementById("homepageReviewRating").value,
         body: document.getElementById("homepageReviewBody").value,
       };
@@ -636,26 +700,55 @@
       try {
         const res = await fetch(HOMEPAGE_REVIEWS_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: reviewAuthHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify(payload),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) {
           const privacy = Array.isArray(data.warnings) && data.warnings.length ? ` (${data.warnings.join(", ")})` : "";
-          throw new Error(data.reason === "privacy_warning" ? `민감정보로 보이는 내용은 제거해주세요${privacy}.` : "후기 저장에 실패했습니다.");
+          throw new Error(data.message || (data.reason === "privacy_warning" ? `민감정보로 보이는 내용은 제거해주세요${privacy}.` : "후기 저장에 실패했습니다."));
         }
         reviewForm.reset();
         reviewStatus.textContent = "후기가 등록되었습니다.";
-        const current = [...reviewList.querySelectorAll(".review")].slice(0, 8).map((node) => ({
-          rating: node.querySelector(".stars")?.textContent?.replace(/☆/g, "").length || 5,
-          body: node.querySelector("p")?.textContent || "",
-          display_name: node.querySelector(".who")?.textContent || "익명",
-        }));
-        renderPublicReviews([data.review, ...current]);
+        updateReviewFormState();
+        await loadPublicReviews();
       } catch (err) {
         reviewStatus.textContent = err.message || "후기 저장에 실패했습니다.";
       } finally {
-        submitButton.disabled = false;
+        submitButton.disabled = !loadReviewSession()?.access_token;
+      }
+    });
+    reviewList.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-review-delete]");
+      if (!button) return;
+      const id = button.getAttribute("data-review-delete");
+      if (!id) return;
+      button.disabled = true;
+      reviewStatus.textContent = "후기를 삭제하는 중입니다.";
+      try {
+        const res = await fetch(HOMEPAGE_REVIEWS_ENDPOINT, {
+          method: "DELETE",
+          headers: reviewAuthHeaders({ "Content-Type": "application/json" }),
+          body: JSON.stringify({ id }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.message || "후기 삭제에 실패했습니다.");
+        reviewStatus.textContent = "후기가 삭제되었습니다.";
+        await loadPublicReviews();
+      } catch (err) {
+        reviewStatus.textContent = err.message || "후기 삭제에 실패했습니다.";
+        button.disabled = false;
+      }
+    });
+    updateReviewFormState();
+    window.addEventListener("focus", () => {
+      updateReviewFormState();
+      loadPublicReviews();
+    });
+    window.addEventListener("storage", (event) => {
+      if (event.key === REVIEW_SESSION_KEY) {
+        updateReviewFormState();
+        loadPublicReviews();
       }
     });
     loadPublicReviews();
@@ -668,7 +761,9 @@
         document.getElementById("versionLabel").textContent = `최신 버전 v${manifest.version}`;
         if (manifest.installer_url) document.getElementById("winDownload").href = manifest.installer_url;
         if (manifest.mac_installer_url) document.getElementById("macDownload").href = manifest.mac_installer_url;
-        if (manifest.android_apk_url) document.getElementById("androidDownload").href = manifest.android_apk_url;
+        if (manifest.android_aab_url || manifest.android_apk_url) {
+          document.getElementById("androidDownload").href = manifest.android_aab_url || manifest.android_apk_url;
+        }
         if (manifest.ios_app_url) {
           const iosDownload = document.getElementById("iosDownload");
           iosDownload.href = manifest.ios_app_url;
