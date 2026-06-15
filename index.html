@@ -289,7 +289,7 @@
     }
     .review-form-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 140px;
+      grid-template-columns: minmax(0, 1fr) 170px 140px;
       gap: 10px;
     }
     @media (max-width: 620px) { .review-form-grid { grid-template-columns: 1fr; } }
@@ -521,6 +521,11 @@
       <form class="review-form" id="homepageReviewForm">
         <div class="review-form-grid">
           <p class="review-login-note" id="homepageReviewLoginNote">로그인 상태를 확인하는 중입니다.</p>
+          <select id="homepageReviewDisplayMode" name="display_mode" aria-label="후기 이름 표시 방식">
+            <option value="masked">이름 일부 숨김</option>
+            <option value="anonymous">익명</option>
+            <option value="profile">닉네임 그대로</option>
+          </select>
           <select id="homepageReviewRating" name="rating" aria-label="별점">
             <option value="5">★★★★★</option>
             <option value="4">★★★★☆</option>
@@ -613,6 +618,7 @@
     const reviewLoginNote = document.getElementById("homepageReviewLoginNote");
     const reviewBodyInput = document.getElementById("homepageReviewBody");
     const reviewRatingInput = document.getElementById("homepageReviewRating");
+    const reviewDisplayModeInput = document.getElementById("homepageReviewDisplayMode");
     const REVIEW_SESSION_KEY = "mio_account_session_v1";
 
     function loadReviewSession() {
@@ -628,12 +634,13 @@
     function updateReviewFormState() {
       const session = loadReviewSession();
       const loggedIn = Boolean(session?.access_token);
-      const name = session?.user?.display_name || session?.user?.email || "";
+      const name = session?.user?.display_name || "";
       reviewLoginNote.textContent = loggedIn
         ? `${name || "로그인 계정"}으로 후기가 등록됩니다.`
         : "계정 페이지에서 로그인하면 후기를 남길 수 있습니다.";
       reviewBodyInput.disabled = !loggedIn;
       reviewRatingInput.disabled = !loggedIn;
+      reviewDisplayModeInput.disabled = !loggedIn;
       reviewForm.querySelector("button[type='submit']").disabled = !loggedIn;
     }
 
@@ -655,11 +662,14 @@
       const deleteButton = review.can_delete
         ? `<button class="review-delete" type="button" data-review-delete="${escapeHtml(review.id)}">삭제</button>`
         : "";
+      const adminEmail = review.account_email
+        ? `<span class="who">계정 ${escapeHtml(review.account_email)}</span>`
+        : "";
       return `
         <article class="review">
           <div class="stars" aria-label="별점 ${Number(review.rating || 5)}점">${starText(review.rating)}</div>
           <p>${escapeHtml(review.body)}</p>
-          <div class="meta"><span class="who">${escapeHtml(review.display_name || "MIO 사용자")}</span>${deleteButton}</div>
+          <div class="meta"><span class="who">${escapeHtml(review.display_name || "MIO 사용자")}</span>${adminEmail}${deleteButton}</div>
         </article>
       `;
     }
@@ -693,6 +703,7 @@
       }
       const payload = {
         rating: document.getElementById("homepageReviewRating").value,
+        display_mode: document.getElementById("homepageReviewDisplayMode").value,
         body: document.getElementById("homepageReviewBody").value,
       };
       submitButton.disabled = true;
