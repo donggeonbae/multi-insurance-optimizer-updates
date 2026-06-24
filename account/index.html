@@ -103,6 +103,7 @@
         <div class="social-divider login-only-content"><span>소셜 계정으로 로그인</span></div>
         <div class="social-login login-only-content" aria-label="소셜 로그인">
           <p class="hint">소셜 계정으로 로그인하면 별도 이메일 인증 없이 바로 인증됩니다.</p>
+          <p class="hint social-consent-note">소셜 계정으로 계속하면 <a href="../terms/">서비스 이용약관</a>과 <a href="../privacy/">개인정보 수집·이용 안내</a>에 동의한 것으로 간주됩니다.</p>
           <div class="social-login-grid">
             <button class="social-button google" type="button" data-oauth-provider="google" aria-label="Google로 계속하기">
               <span class="social-icon" aria-hidden="true">
@@ -174,18 +175,7 @@
               <input name="company_name" type="text" maxlength="120" autocomplete="organization" />
             </label>
           </div>
-          <div class="consent-box" aria-label="필수 확인 및 동의">
-            <strong>필수 확인사항</strong>
-            <label class="checkbox">
-              <input name="terms_accepted" type="checkbox" required />
-              <a href="../terms/">서비스 이용약관 및 계정·라이선스 운영 안내</a>를 확인했습니다.
-            </label>
-            <label class="checkbox">
-              <input name="privacy_accepted" type="checkbox" required />
-              개인정보 수집·이용에 동의합니다. 수집 항목은 이메일, 이름, 회사/지점명, 결제·주문 확인 정보이며 계정관리, 중복가입 방지, 라이선스 발급/관리 목적으로 사용됩니다.
-            </label>
-            <p class="hint">고객 PDF·상담자료·진료내역은 계정 페이지에 업로드하지 않습니다. 자세한 내용은 <a href="../terms/">이용약관</a>과 <a href="../privacy/">개인정보처리방침</a>을 확인해 주세요.</p>
-          </div>
+          <p class="hint signup-consent-note">회원가입을 진행하면 <a href="../terms/">서비스 이용약관</a>과 <a href="../privacy/">개인정보 수집·이용 안내</a>에 동의한 것으로 간주됩니다.</p>
           <button class="button primary full" type="submit">인증메일 발송</button>
           <p class="hint">인증메일 발송 후 입력한 이메일함에서 인증 링크를 클릭하면 인증됩니다. 인증 후 로그인해 주세요.</p>
         </form>
@@ -374,6 +364,6 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="../assets/mio-account.js?v=20260521-account-folder" defer></script>
+  <script src="../assets/mio-account.js?v=20260624-external-payment-token" defer></script>
 </body>
 </html>

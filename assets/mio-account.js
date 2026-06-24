@@ -113,6 +113,20 @@ function checkoutQueryProvider() {
   return ["smartstore", "kakaopay"].includes(provider) ? provider : "";
 }
 
+function externalTransactionTokenFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  return (params.get("external_transaction_token") || params.get("google_external_transaction_token") || "").trim();
+}
+
+function applyExternalTransactionToken(payload) {
+  const token = externalTransactionTokenFromQuery();
+  if (!token) return payload;
+  payload.external_transaction_token = token;
+  payload.google_external_transaction_token = token;
+  payload.external_payment_platform = "google_play";
+  return payload;
+}
+
 function applyCheckoutQueryDefaults() {
   const months = checkoutQueryPlan();
   const form = $("#payment-form");
@@ -861,6 +875,7 @@ async function startKakaoPayCheckout() {
     const payload = formDataObject(form);
     payload.provider = "kakaopay";
     payload.purchased_months = Number(payload.purchased_months || 1);
+    applyExternalTransactionToken(payload);
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
     const data = await apiPost("create_kakaopay_checkout", payload, true);
@@ -974,10 +989,6 @@ function setupForms() {
         showMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.", true);
         return;
       }
-      if (!payload.terms_accepted || !payload.privacy_accepted) {
-        showMessage("필수 확인사항인 서비스 이용약관과 개인정보처리방침 동의를 모두 체크해 주세요.", true);
-        return;
-      }
       delete payload.password_confirm;
       const email = payload.email;
       const data = await apiPost("signup", payload);
@@ -1054,6 +1065,7 @@ function setupForms() {
       const payload = formDataObject(form);
       payload.provider = "smartstore";
       payload.purchased_months = Number(payload.purchased_months || 1);
+      applyExternalTransactionToken(payload);
       button.disabled = true;
       button.setAttribute("aria-busy", "true");
       const data = await apiPost("create_payment_record", payload, true);
