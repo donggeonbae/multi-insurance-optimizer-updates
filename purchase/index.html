@@ -45,10 +45,7 @@
         <strong>9,900원</strong>
         <p>짧게 테스트하거나 한 달 단위로 갱신할 때 적합합니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 1개월 이용권 발급</li></ul>
-        <div class="purchase-actions">
-          <a class="button kakao-pay full" href="../account/?plan=1&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a04968eb4d7d67379059f7c" target="_blank" rel="noopener" data-login-required data-plan="1" data-provider="smartstore">네이버페이 구매</a>
-        </div>
+        <a class="button primary full purchase-action" href="../account/?plan=1">구매하러 가기</a>
       </article>
       <article class="purchase-card featured">
         <span class="eyebrow">Recommended</span>
@@ -56,10 +53,7 @@
         <strong><span class="price-original">29,700원</span> 27,900원</strong><p class="discount-note">6% 할인</p>
         <p>정기 업무에 맞춰 가장 무난하게 사용할 수 있는 이용권입니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 3개월 이용권 발급</li></ul>
-        <div class="purchase-actions">
-          <a class="button kakao-pay full" href="../account/?plan=3&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc2b6d371ac44318b2" target="_blank" rel="noopener" data-login-required data-plan="3" data-provider="smartstore">네이버페이 구매</a>
-        </div>
+        <a class="button primary full purchase-action" href="../account/?plan=3">구매하러 가기</a>
       </article>
       <article class="purchase-card">
         <span class="eyebrow">Longer</span>
@@ -67,10 +61,7 @@
         <strong><span class="price-original">59,400원</span> 54,900원</strong><p class="discount-note">8% 할인</p>
         <p>반기 단위로 고객 관리와 설계 업무를 이어갈 때 적합합니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 6개월 이용권 발급</li></ul>
-        <div class="purchase-actions">
-          <a class="button kakao-pay full" href="../account/?plan=6&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc100adc737385327b" target="_blank" rel="noopener" data-login-required data-plan="6" data-provider="smartstore">네이버페이 구매</a>
-        </div>
+        <a class="button primary full purchase-action" href="../account/?plan=6">구매하러 가기</a>
       </article>
     </section>
 
@@ -104,23 +95,5 @@
       </div>
     </div>
   </footer>
-  <script>
-    (() => {
-      const sessionKey = "mio_account_session_v1";
-      const hasSession = () => {
-        try { return Boolean(JSON.parse(localStorage.getItem(sessionKey) || "null")?.access_token); }
-        catch { return false; }
-      };
-      for (const link of document.querySelectorAll("[data-login-required]")) {
-        link.addEventListener("click", (event) => {
-          if (hasSession()) return;
-          event.preventDefault();
-          const plan = link.dataset.plan || "1";
-          const provider = link.dataset.provider || "smartstore";
-          location.href = `../account/?plan=${encodeURIComponent(plan)}&payment_provider=${encodeURIComponent(provider)}`;
-        });
-      }
-    })();
-  </script>
 </body>
 </html>

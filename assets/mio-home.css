@@ -357,9 +357,7 @@ h3 {
   color: var(--muted);
   line-height: 1.65;
 }
-.purchase-actions {
-  display: grid;
-  gap: 10px;
+.purchase-action {
   margin-top: 18px;
 }
 .payment-flow-lead {
