@@ -47,7 +47,7 @@
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 1개월 이용권 발급</li></ul>
         <div class="purchase-actions">
           <a class="button kakao-pay full" href="../account/?plan=1&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a04968eb4d7d67379059f7c" target="_blank" rel="noopener">네이버페이 구매</a>
+          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a04968eb4d7d67379059f7c" target="_blank" rel="noopener" data-login-required data-plan="1" data-provider="smartstore">네이버페이 구매</a>
         </div>
       </article>
       <article class="purchase-card featured">
@@ -58,7 +58,7 @@
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 3개월 이용권 발급</li></ul>
         <div class="purchase-actions">
           <a class="button kakao-pay full" href="../account/?plan=3&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc2b6d371ac44318b2" target="_blank" rel="noopener">네이버페이 구매</a>
+          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc2b6d371ac44318b2" target="_blank" rel="noopener" data-login-required data-plan="3" data-provider="smartstore">네이버페이 구매</a>
         </div>
       </article>
       <article class="purchase-card">
@@ -69,7 +69,7 @@
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 6개월 이용권 발급</li></ul>
         <div class="purchase-actions">
           <a class="button kakao-pay full" href="../account/?plan=6&payment_provider=kakaopay">카카오페이 바로 결제</a>
-          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc100adc737385327b" target="_blank" rel="noopener">네이버페이 구매</a>
+          <a class="button naver-pay full" href="https://mkt.shopping.naver.com/link/6a0499cc100adc737385327b" target="_blank" rel="noopener" data-login-required data-plan="6" data-provider="smartstore">네이버페이 구매</a>
         </div>
       </article>
     </section>
@@ -104,5 +104,23 @@
       </div>
     </div>
   </footer>
+  <script>
+    (() => {
+      const sessionKey = "mio_account_session_v1";
+      const hasSession = () => {
+        try { return Boolean(JSON.parse(localStorage.getItem(sessionKey) || "null")?.access_token); }
+        catch { return false; }
+      };
+      for (const link of document.querySelectorAll("[data-login-required]")) {
+        link.addEventListener("click", (event) => {
+          if (hasSession()) return;
+          event.preventDefault();
+          const plan = link.dataset.plan || "1";
+          const provider = link.dataset.provider || "smartstore";
+          location.href = `../account/?plan=${encodeURIComponent(plan)}&payment_provider=${encodeURIComponent(provider)}`;
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
