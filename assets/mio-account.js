@@ -51,6 +51,22 @@ function paymentStatusLabel(value) {
   }[value] || value || "-";
 }
 
+function dateLabel(value) {
+  return String(value || "").slice(0, 10) || "-";
+}
+
+function cancelDoneLabel(payment = {}) {
+  const status = String(payment.status || "");
+  if (["cancelled", "refunded"].includes(status)) return "완료";
+  if (status === "cancel_requested") return "처리중";
+  return "-";
+}
+
+function trialActive(expires) {
+  const time = Date.parse(String(expires || ""));
+  return Number.isFinite(time) && time >= Date.now();
+}
+
 function providerLabel(value) {
   return {
     kakaopay: "카카오페이",
@@ -625,7 +641,7 @@ function renderSubscriptionSummary(subscription = {}) {
       <div><strong>${escapeHtml(subscription.active_until || "-")}</strong><span>합산 만료예정</span></div>
       <div><strong>${escapeHtml(cancelableMonths)}개월</strong><span>취소요청 가능</span></div>
     </div>
-    <p class="hint">취소요청은 같은 계정에 결제완료 이용권이 2개 이상이고, 해당 이용권 기간이 아직 시작 전이며, 결제확인일로부터 ${escapeHtml(cancelDays)}일 이내일 때만 가능합니다. 라이선스가 계정에 연결된 이후에는 환불되지 않으며, 실제 환불/매출취소는 스마트스토어 절차로 처리됩니다.</p>`;
+    <p class="hint">취소는 아직 시작 전인 추가 이용권만 신청할 수 있습니다. 결제완료 이용권이 2개 이상이고 결제확인 후 ${escapeHtml(cancelDays)}일 이내일 때 가능합니다.</p>`;
 }
 
 function setupCancelPaymentButtons() {
@@ -656,18 +672,20 @@ function renderPayments(payments = [], subscription = {}) {
   }
   const cancelableIds = new Set(subscription.cancelable_payment_ids || []);
   const rows = payments.map((payment) => `<tr>
-      <td>${escapeHtml(payment.requested_at || "")}</td>
+      <td>${escapeHtml(dateLabel(payment.requested_at))}</td>
       <td>${paymentStatusLabel(payment.status)}</td>
       <td>${providerLabel(payment.provider)}</td>
       <td>${escapeHtml(payment.purchased_months || 1)}개월</td>
       <td>${formatKrw(payment.amount_krw)}</td>
       <td>${escapeHtml(payment.order_ref || "")}</td>
       <td>${escapeHtml(payment.license_id_text || "")}</td>
-      <td>${escapeHtml(payment.paid_at || "")}</td>
-      <td>${cancelableIds.has(payment.id) ? `<button class="button ghost small" type="button" data-cancel-payment="${escapeHtml(payment.id)}">취소요청</button>` : escapeHtml(payment.cancel_requested_at || "")}</td>
+      <td>${escapeHtml(dateLabel(payment.paid_at || payment.confirmed_at))}</td>
+      <td>${escapeHtml(dateLabel(payment.cancel_requested_at))}</td>
+      <td>${escapeHtml(cancelDoneLabel(payment))}</td>
+      <td>${cancelableIds.has(payment.id) ? `<button class="button ghost small" type="button" data-cancel-payment="${escapeHtml(payment.id)}">취소요청</button>` : "-"}</td>
     </tr>`).join("");
   target.innerHTML = `<table>
-    <thead><tr><th>요청일</th><th>상태</th><th>수단</th><th>기간</th><th>금액</th><th>주문/메모</th><th>라이선스</th><th>결제확인일</th><th>취소</th></tr></thead>
+    <thead><tr><th>요청일</th><th>상태</th><th>수단</th><th>기간</th><th>금액</th><th>주문/메모</th><th>라이선스</th><th>결제확인일</th><th>취소신청일</th><th>취소처리</th><th>관리</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
   setupCancelPaymentButtons();
@@ -734,7 +752,7 @@ function renderPaymentInstructions() {
       </article>
     </div>
     <p class="hint">디지털 소프트웨어 이용권 상품으로 배송지 입력은 없으며, 서비스 제공기간은 선택한 ${escapeHtml(months)}개월입니다.</p>
-    <p class="hint">라이선스 연결 이전 주문은 결제수단별 절차에 따라 취소할 수 있고, 라이선스 연결 이후에는 디지털 콘텐츠 제공이 시작되어 환불되지 않습니다.</p>
+    <p class="hint">취소 가능 여부와 처리상태는 결제내역에서 확인할 수 있습니다.</p>
     ${autoVerify ? "" : '<div class="empty">자동 주문 확인 API가 연결되지 않으면 구매 등록은 저장되지 않습니다. 잠시 후 다시 시도하거나 support@mio.ai.kr로 문의해 주세요.</div>'}
     ${kakaoAvailable ? "" : '<div class="empty">카카오페이 가맹점 CID는 발급되어 있습니다. 서버 Secret Key 설정이 완료되면 계정 페이지에서 바로 결제하고 같은 계정에 이용권이 자동 발급됩니다.</div>'}`;
 }
@@ -773,6 +791,10 @@ function renderTrial(data = {}) {
     return;
   }
   if (trial.has_trial_license) {
+    if (expires && !trialActive(expires)) {
+      target.innerHTML = `<div class="empty">무료 체험이 만료되었습니다.<br />체험 만료: ${escapeHtml(expires)}</div>`;
+      return;
+    }
     target.innerHTML = `<div class="empty">무료 체험 라이선스가 발급되어 있습니다.<br />체험 만료: ${escapeHtml(expires || "-")}</div>`;
     return;
   }
