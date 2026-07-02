@@ -360,6 +360,58 @@ h3 {
 .purchase-action {
   margin-top: 18px;
 }
+.purchase-dialog {
+  width: min(430px, calc(100vw - 32px));
+  border: 0;
+  border-radius: 22px;
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+}
+.purchase-dialog::backdrop {
+  background: rgba(0, 0, 0, .45);
+  backdrop-filter: blur(5px);
+}
+.purchase-dialog-card {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.purchase-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.purchase-dialog-head strong {
+  display: block;
+  font-size: 20px;
+}
+.purchase-dialog-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+.purchase-dialog-actions {
+  display: grid;
+  gap: 10px;
+}
+.dialog-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel2);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+.hint.error {
+  color: #dc2626;
+}
 .payment-flow-lead {
   max-width: 860px;
   margin-bottom: 14px !important;

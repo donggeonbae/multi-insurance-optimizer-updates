@@ -45,7 +45,7 @@
         <strong>9,900원</strong>
         <p>짧게 테스트하거나 한 달 단위로 갱신할 때 적합합니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 1개월 이용권 발급</li></ul>
-        <a class="button primary full purchase-action" href="../account/?plan=1">구매하러 가기</a>
+        <a class="button primary full purchase-action" href="../account/?plan=1" data-purchase-plan="1">구매하러 가기</a>
       </article>
       <article class="purchase-card featured">
         <span class="eyebrow">Recommended</span>
@@ -53,7 +53,7 @@
         <strong><span class="price-original">29,700원</span> 27,900원</strong><p class="discount-note">6% 할인</p>
         <p>정기 업무에 맞춰 가장 무난하게 사용할 수 있는 이용권입니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 3개월 이용권 발급</li></ul>
-        <a class="button primary full purchase-action" href="../account/?plan=3">구매하러 가기</a>
+        <a class="button primary full purchase-action" href="../account/?plan=3" data-purchase-plan="3">구매하러 가기</a>
       </article>
       <article class="purchase-card">
         <span class="eyebrow">Longer</span>
@@ -61,7 +61,7 @@
         <strong><span class="price-original">59,400원</span> 54,900원</strong><p class="discount-note">8% 할인</p>
         <p>반기 단위로 고객 관리와 설계 업무를 이어갈 때 적합합니다.</p>
         <ul class="purchase-plan-points"><li>VAT 포함</li><li>결제 후 6개월 이용권 발급</li></ul>
-        <a class="button primary full purchase-action" href="../account/?plan=6">구매하러 가기</a>
+        <a class="button primary full purchase-action" href="../account/?plan=6" data-purchase-plan="6">구매하러 가기</a>
       </article>
     </section>
 
@@ -83,5 +83,97 @@
       </div>
     </div>
   </footer>
+  <dialog class="purchase-dialog" id="purchaseDialog">
+    <form method="dialog" class="purchase-dialog-card">
+      <div class="purchase-dialog-head">
+        <div>
+          <strong id="purchaseDialogTitle">이용권 구매</strong>
+          <p id="purchaseDialogPrice">선택한 이용권을 결제합니다.</p>
+        </div>
+        <button class="dialog-close" value="cancel" aria-label="닫기">×</button>
+      </div>
+      <div class="purchase-dialog-actions">
+        <button class="button kakao-pay full" type="button" id="purchaseKakaoButton">카카오페이 바로 결제</button>
+        <button class="button naver-pay full" type="button" id="purchaseNaverButton">네이버페이 구매</button>
+      </div>
+      <p class="hint" id="purchaseDialogMessage">네이버페이는 결제 후 계정 탭에서 주문번호와 주문자명을 등록하면 이용권이 발급됩니다.</p>
+    </form>
+  </dialog>
+  <script>
+    (() => {
+      const endpoint = "https://osccvepkxhmrfomtfgfj.supabase.co/functions/v1/mio-account";
+      const sessionKey = "mio_account_session_v1";
+      const prices = { 1: "9,900원", 3: "27,900원", 6: "54,900원" };
+      const dialog = document.getElementById("purchaseDialog");
+      const title = document.getElementById("purchaseDialogTitle");
+      const price = document.getElementById("purchaseDialogPrice");
+      const message = document.getElementById("purchaseDialogMessage");
+      const kakaoButton = document.getElementById("purchaseKakaoButton");
+      const naverButton = document.getElementById("purchaseNaverButton");
+      let selectedPlan = 1;
+      let account = null;
+
+      const session = () => {
+        try { return JSON.parse(localStorage.getItem(sessionKey) || "null"); }
+        catch { return null; }
+      };
+      const post = async (payload) => {
+        const token = session()?.access_token || "";
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.ok === false) throw new Error(data.message || "요청 처리에 실패했습니다.");
+        return data;
+      };
+      const naverUrl = () => {
+        const smartstore = account?.payment_options?.smartstore || {};
+        return smartstore.plan_urls?.[String(selectedPlan)] || smartstore.url || "";
+      };
+      const showMessage = (text, error = false) => {
+        message.textContent = text;
+        message.classList.toggle("error", error);
+      };
+
+      for (const link of document.querySelectorAll("[data-purchase-plan]")) {
+        link.addEventListener("click", async (event) => {
+          selectedPlan = Number(link.dataset.purchasePlan || 1);
+          if (!session()?.access_token) return;
+          event.preventDefault();
+          title.textContent = `${selectedPlan}개월 이용권 구매`;
+          price.textContent = `${prices[selectedPlan] || prices[1]} · VAT 포함`;
+          showMessage("결제수단을 선택하세요.");
+          dialog.showModal();
+          try {
+            account = account || await post({ action: "me", register_device: false });
+          } catch {
+            location.href = `../account/?plan=${encodeURIComponent(selectedPlan)}`;
+          }
+        });
+      }
+
+      naverButton.addEventListener("click", () => {
+        const url = naverUrl();
+        if (url) window.open(url, "_blank", "noopener");
+        else location.href = `../account/?plan=${encodeURIComponent(selectedPlan)}&payment_provider=smartstore`;
+      });
+      kakaoButton.addEventListener("click", async () => {
+        const popup = window.open("about:blank", "_blank");
+        kakaoButton.disabled = true;
+        try {
+          const data = await post({ action: "create_kakaopay_checkout", provider: "kakaopay", purchased_months: selectedPlan });
+          popup.location.href = data.next_redirect_url;
+          showMessage("카카오페이 결제창을 열었습니다.");
+        } catch (error) {
+          if (popup && !popup.closed) popup.close();
+          showMessage(error.message, true);
+        } finally {
+          kakaoButton.disabled = false;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
