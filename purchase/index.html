@@ -93,8 +93,14 @@
         <button class="dialog-close" value="cancel" aria-label="닫기">×</button>
       </div>
       <div class="purchase-dialog-actions">
-        <button class="button kakao-pay full" type="button" id="purchaseKakaoButton">카카오페이 바로 결제</button>
-        <button class="button naver-pay full" type="button" id="purchaseNaverButton">네이버페이 구매</button>
+        <button class="button kakao-pay full payment-method-button" type="button" id="purchaseKakaoButton" aria-label="카카오페이 바로 결제">
+          <img class="payment-brand-logo kakaopay-logo" src="../assets/kakaopay/payment_icon_yellow_large.png" alt="카카오페이" />
+          <span class="payment-method-caption">바로 결제</span>
+        </button>
+        <button class="button naver-pay full payment-method-button" type="button" id="purchaseNaverButton" aria-label="네이버페이 구매">
+          <img class="payment-brand-logo naverpay-logo" src="../assets/naverpay/btn_npaygr_buy.svg" alt="Npay 구매하기" />
+          <span class="payment-method-caption">구매 페이지</span>
+        </button>
       </div>
       <p class="hint" id="purchaseDialogMessage">네이버페이는 결제 후 계정 탭에서 주문번호와 주문자명을 등록하면 이용권이 발급됩니다.</p>
     </form>
