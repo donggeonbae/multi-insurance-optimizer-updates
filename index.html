@@ -400,12 +400,11 @@
     <p class="sub reveal" style="--d:.16s">진료·고지 분석부터 보험 조회, 공식 청구서 자동 기입, 설계 비교, 고객 관리까지 —
       같은 고객 컨텍스트로 끊김 없이 이어집니다.</p>
     <div class="cta-row reveal" style="--d:.24s" aria-label="설치 버튼">
-      <a id="winDownload" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
-      <a id="macDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS</a>
-      <a id="androidDownload" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk" aria-label="Android 앱 설치" title="Android 앱 설치">Android</a>
+      <a id="winDownload" data-download-platform="windows" data-version="1.17.2" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/download/v1.17.2/MIO_Setup_v1.17.2.exe">Windows 설치</a>
+      <a id="macDownload" data-download-platform="macos" data-version="1.16.4" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/download/v1.16.4/MIO_macOS_Setup_v1.16.4.pkg">macOS v1.16.4</a>
       <a id="iosDownload" class="btn secondary disabled" href="#" aria-disabled="true" aria-label="iOS 앱 준비중" title="iOS 앱은 준비 중입니다">iOS<span class="sr-only">iOS 앱 준비중</span></a>
     </div>
-    <p class="version reveal" style="--d:.3s" id="versionLabel">최신 버전 확인 중…</p>
+    <p class="version reveal" style="--d:.3s" id="versionLabel">Windows v1.17.2 · macOS v1.16.4</p>
     <div class="scroll-hint reveal" style="--d:.4s" aria-hidden="true"></div>
   </header>
 
@@ -546,9 +545,8 @@
       <h2 class="reveal" style="--d:.06s">지금 시작하세요</h2>
       <p class="lede reveal" style="--d:.12s; margin-left:auto; margin-right:auto;">설치 후 무료로 분석을 시작할 수 있습니다. 업데이트는 자동으로 적용됩니다.</p>
       <div class="cta-row reveal" style="--d:.18s">
-        <a class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Setup.exe">Windows 설치</a>
-        <a class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_macOS_Setup_v1.6.0.pkg">macOS</a>
-        <a class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/MIO_Android_v1.7.1.apk">Android</a>
+        <a data-download-platform="windows" data-version="1.17.2" class="btn primary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/download/v1.17.2/MIO_Setup_v1.17.2.exe">Windows 설치</a>
+        <a data-download-platform="macos" data-version="1.16.4" class="btn secondary" href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/download/v1.16.4/MIO_macOS_Setup_v1.16.4.pkg">macOS v1.16.4</a>
       </div>
     </div>
   </section>
@@ -758,28 +756,37 @@
 
     async function hydrateVersion() {
       try {
-        const res = await fetch("https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest/download/update_manifest.json", { cache: "no-store" });
-        if (!res.ok) throw new Error("manifest unavailable");
-        const manifest = await res.json();
-        document.getElementById("versionLabel").textContent = `최신 버전 v${manifest.version}`;
-        if (manifest.installer_url) document.getElementById("winDownload").href = manifest.installer_url;
-        if (manifest.mac_installer_url) document.getElementById("macDownload").href = manifest.mac_installer_url;
-        if (manifest.android_aab_url || manifest.android_apk_url) {
-          document.getElementById("androidDownload").href = manifest.android_aab_url || manifest.android_apk_url;
-        }
-        if (manifest.ios_app_url) {
-          const iosDownload = document.getElementById("iosDownload");
-          iosDownload.href = manifest.ios_app_url;
-          iosDownload.setAttribute("aria-label", "iOS 앱 설치");
-          iosDownload.title = "iOS 앱 설치";
-          const iosLabel = iosDownload.querySelector(".sr-only");
-          if (iosLabel) iosLabel.textContent = "iOS 앱 설치";
-          iosDownload.classList.remove("disabled");
-          iosDownload.removeAttribute("aria-disabled");
+        const res = await fetch("https://api.github.com/repos/donggeonbae/multi-insurance-optimizer-updates/releases?per_page=30");
+        if (!res.ok) throw new Error("releases unavailable");
+        const releases = await res.json();
+        if (!Array.isArray(releases)) throw new Error("invalid releases");
+        const matchers = {
+          windows: /^MIO_Setup(?:_v[\d.]+)?\.exe$/i,
+          macos: /^MIO_macOS_Setup_v[\d.]+\.(pkg|dmg)$/i,
+        };
+        const published = releases.filter(release => !release.draft && !release.prerelease)
+          .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
+        for (const [platform, matcher] of Object.entries(matchers)) {
+          const findInstaller = release => (release.assets || []).find(asset =>
+            asset.state === "uploaded" && asset.size > 0 && matcher.test(asset.name) &&
+            String(asset.browser_download_url).startsWith("https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/download/"));
+          const release = published.find(release => findInstaller(release));
+          if (!release) continue;
+          const asset = findInstaller(release);
+          const version = String(release.tag_name).match(/^v?(\d+\.\d+\.\d+)/)?.[1];
+          if (!version) continue;
+          document.querySelectorAll(`[data-download-platform="${platform}"]`).forEach(link => {
+            link.href = asset.browser_download_url;
+            link.dataset.version = version;
+            if (platform === "macos") link.textContent = `macOS v${version}`;
+          });
         }
       } catch (err) {
-        document.getElementById("versionLabel").innerHTML = '최신 버전은 <a href="https://github.com/donggeonbae/multi-insurance-optimizer-updates/releases/latest">GitHub Releases</a>에서 확인';
+        // API limits or network failures must not replace the verified pinned installers.
       }
+      const windowsVersion = document.getElementById("winDownload").dataset.version;
+      const macVersion = document.getElementById("macDownload").dataset.version;
+      document.getElementById("versionLabel").textContent = `Windows v${windowsVersion} · macOS v${macVersion}`;
     }
     hydrateVersion();
   </script>
